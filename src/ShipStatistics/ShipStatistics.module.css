@@ -1,0 +1,81 @@
+.panel {
+    background-color: #111111;
+    color: #c5c5c5;
+    font-size: 15px;
+    width: 350px;
+}
+.panel > div {
+    overflow-y: hidden;
+    transition: max-height 0.5s ease-in-out;
+}
+
+.header {
+    background-color: #1d1d1d;
+    display: flex;
+    height: 25px;
+    line-height: 25px;
+    justify-content: space-between;
+}
+
+.header > div {
+    flex: 1;
+    margin: 0px 10px;
+}
+
+.collapsed {
+    max-height: 0px;
+}
+.expanded {
+    max-height: 150px;
+}
+
+
+.line {
+    display: flex;
+    justify-content: space-between;
+    line-height: 20px;
+    height: 20px;
+    margin: 10px 0px;
+}
+.line > span {
+    flex: 1;
+    margin: 0px 5px;
+}
+
+.resistance {
+    background-color: #252124;
+    display: inline-block;
+    height: 20px;
+    margin-left: 5px;
+    position: relative;
+    width: 50px;
+}
+.resistance > span {
+    display: inline-block;
+    left: 0px;
+    position: absolute;
+    text-align: center;
+    width: 100%;
+    z-index: 1;
+}
+.resistance > .resistanceProgress {
+    display: inline-block;
+    height: 100%;
+    left: 0px;
+    position: absolute;
+    z-index: 0;
+}
+
+.resistance > .resistanceProgress[data-type="em"] {
+    background-color: #195e8c;
+}
+.resistance > .resistanceProgress[data-type="thermal"] {
+    background-color: #8c1919;
+}
+.resistance > .resistanceProgress[data-type="kinetic"] {
+    background-color: #727272;
+}
+.resistance > .resistanceProgress[data-type="explosive"] {
+    background-color: #8c5e19;
+}
+

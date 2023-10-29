@@ -1,0 +1,42 @@
+name: Release
+
+on:
+  release:
+    types:
+    - published
+  pull_request_target:
+    branches:
+    - main
+
+jobs:
+  storybook:
+    name: Publish storybook
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Install NodeJS
+      uses: actions/setup-node@v3
+      with:
+        registry-url: https://npm.pkg.github.com
+        scope: "@eveshipfit"
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build storybook
+      run: npm run build-storybook
+
+    - name: Publish to Cloudflare Pages
+      uses: cloudflare/pages-action@v1
+      id: pages
+      with:
+        apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+        projectName: ${{ vars.CLOUDFLARE_PROJECT_NAME }}
+        directory: storybook-static
+        branch: ${{ github.event_name == 'push' && github.ref_name || github.event_name == 'repository_dispatch' && 'main' || format('pr/{0}', github.event.pull_request.number) }}

@@ -1,0 +1,41 @@
+.fit {
+    background-color: #111111;
+    color: #c5c5c5;
+    font-size: 15px;
+    padding-bottom: 60px;
+    padding-left: 50px;
+    position: relative;
+    width: calc(var(--radius) * 2 + 2 * 50px);
+}
+
+.cpuPg {
+    bottom: 0px;
+    position: absolute;
+    right: 0px;
+    text-align: right;
+}
+
+.cpuPgTitle {
+    font-weight: bold;
+    margin-top: 15px;
+}
+
+.cargoHold {
+    bottom: 0px;
+    left: 0px;
+    position: absolute;
+}
+
+.cargoIcon {
+    display: inline-block;
+}
+.cargoText {
+    display: inline-block;
+    margin-left: 10px;
+    margin-top: 5px;
+    text-align: right;
+}
+.cargoPostfix {
+    display: inline-block;
+    margin-left: 5px;
+}

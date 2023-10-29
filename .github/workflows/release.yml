@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  release:
+    types:
+    - published
+
+jobs:
+  registries:
+    name: Publish to GitHub NPM
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Install NodeJS
+      uses: actions/setup-node@v3
+      with:
+        registry-url: https://npm.pkg.github.com
+        scope: "@eveshipfit"
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Set version
+      run: |
+        # Remove the "v" from the version.
+        VERSION=$(echo ${{ github.ref_name }} | cut -b2-)
+        echo "Version: ${VERSION}"
+
+        sed -i 's/version = "0.0.0-git"/version = "'${VERSION}'"/' package.json
+
+    - name: Create NPM package
+      run: npm run build
+
+    - uses: JS-DevTools/npm-publish@v3
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        registry: "https://npm.pkg.github.com"
+        package: package.json
