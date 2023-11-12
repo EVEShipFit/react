@@ -40,23 +40,50 @@ Reader.prototype.fetch_data = async function fetch_data() {
     if (this._buf.length - this._buf_pos >= 2048) return;
     if (this._next_buf !== null) return;
 
-    const {done, value} = await this._reader.read();
-    if (done) {
+    const values = [];
+    let length = 0;
+
+    /* Read for at least 2048 bytes; we know all objects are smaller. */
+    while (length < 2048) {
+        const {done, value} = await this._reader.read();
+        if (done) {
+            break;
+        }
+
+        values.push(value);
+        length += value.length;
+    }
+
+    /* If we read nothing, fast-path into an end-of-file marker. */
+    if (length === 0) {
         this._next_buf = new Uint8Array();
-    } else {
-        this._next_buf = value;
+        return;
+    }
+
+    /* If we read only one chunk, we can use it directly. */
+    if (values.length === 1) {
+        this._next_buf = values[0];
+        return;
+    }
+
+    /* Multiple chunks, copy them into a single buffer. */
+    this._next_buf = new Uint8Array(length);
+    let pos = 0;
+    for (const value of values) {
+        this._next_buf.set(value, pos);
+        pos += value.length;
     }
 }
 
 Reader.prototype.read = function read(len) {
     if (this._next_buf === null) return this._buf;
 
-    if (this._buf_pos > this._buf.length) {
+    if (this._buf_pos >= this._buf.length) {
         this._buf_pos -= this._buf.length;
         this._buf = this._next_buf;
 
         this._next_buf = null;
-    } else if (this._buf_pos + len > this._buf.length) {
+    } else if (this._buf_pos + len >= this._buf.length) {
         this._buf = this._buf.slice(this._buf_pos);
         this._buf_pos = 0;
         return new Uint8Array([...this._buf, ...this._next_buf.slice(0, len - this._buf.length)]);
@@ -124,5 +151,5 @@ Reader.prototype.float = function read_float() {
 };
 
 Reader.prototype.skipType = function(wireType) {
-    throw Error("Please avoid skipping fields; it is really slow.");
+    throw Error("Datafile appears to be corrupted.");
 };
