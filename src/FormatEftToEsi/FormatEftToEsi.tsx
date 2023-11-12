@@ -81,7 +81,8 @@ export function useFormatEftToEsi() {
         continue;
       }
 
-      const itemType = line.split(",")[0].trim();
+      const itemType = line.split(",")[0].split(" x")[0].trim();
+      const itemCount = parseInt(line.split(",")[0].split(" x")[1]?.trim() ?? "1");
       const itemTypeId = lookupTypeByName(itemType);
       if (itemTypeId === undefined) throw new Error(`Unknown item '${itemType}'.`);
 
@@ -99,7 +100,7 @@ export function useFormatEftToEsi() {
       /* Ignore items we don't care about. */
       if (slotType === "") continue;
 
-      esiFit.items.push({"flag": EsiFlagMapping[slotType] + slotIndex[slotType], "quantity": 1, "type_id": itemTypeId});
+      esiFit.items.push({"flag": EsiFlagMapping[slotType] + slotIndex[slotType], "quantity": itemCount, "type_id": itemTypeId});
       slotIndex[slotType]++;
     }
 

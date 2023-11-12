@@ -51,6 +51,8 @@ Loki Core - Augmented Nuclear Reactor
 Loki Defensive - Covert Reconfiguration
 Loki Offensive - Launcher Efficiency Configuration
 Loki Propulsion - Wake Limiter
+
+Hammerhead II x1
 `,
   },
   decorators: [withEveDataProvider],
