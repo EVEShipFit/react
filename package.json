@@ -1,0 +1,72 @@
+{
+  "name": "@eveshipfit/react",
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com/EVEShipFit"
+  },
+  "version": "0.0.0-git",
+  "description": "React component library to quickly and easily show EVE Online ship fits in your own application",
+  "scripts": {
+    "build": "rollup -c",
+    "build-storybook": "storybook build",
+    "dev": "storybook dev -p 6006 --no-open",
+    "lint": "eslint src --ext .js,.tsx --cache"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EVEShipFit/react.git"
+  },
+  "author": "Patric Stout <eveshipfit@truebrain.nl>",
+  "license": "MIT",
+  "dependencies": {
+    "@eveshipfit/dogma-engine": "^1.1.0",
+    "clsx": "^2.0.0"
+  },
+  "devDependencies": {
+    "@babel/preset-env": "^7.23.3",
+    "@babel/preset-react": "^7.23.3",
+    "@babel/preset-typescript": "^7.23.3",
+    "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-node-resolve": "^15.2.3",
+    "@rollup/plugin-terser": "^0.4.4",
+    "@storybook/addon-essentials": "^7.5.3",
+    "@storybook/addon-interactions": "^7.5.3",
+    "@storybook/addon-links": "^7.5.3",
+    "@storybook/blocks": "^7.5.1",
+    "@storybook/react": "^7.5.1",
+    "@storybook/react-webpack5": "^7.5.3",
+    "@storybook/testing-library": "^0.2.2",
+    "@types/react": "^18.2.37",
+    "@typescript-eslint/eslint-plugin": "^6.10.0",
+    "@typescript-eslint/parser": "^6.10.0",
+    "eslint": "^8.53.0",
+    "eslint-config-airbnb": "19.0.4",
+    "eslint-config-airbnb-typescript": "^17.1.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-import": "^2.29.0",
+    "eslint-plugin-jsx-a11y": "^6.8.0",
+    "eslint-plugin-prettier": "^5.0.1",
+    "eslint-plugin-react": "^7.33.2",
+    "eslint-plugin-react-hooks": "^4.6.0",
+    "eslint-plugin-storybook": "^0.6.15",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "rollup": "^4.4.0",
+    "rollup-plugin-dts": "^6.1.0",
+    "rollup-plugin-esbuild": "^6.1.0",
+    "rollup-plugin-node-externals": "^6.1.2",
+    "rollup-plugin-postcss": "^4.0.2",
+    "storybook": "^7.5.3",
+    "tslib": "^2.6.2",
+    "typescript": "^5.2.2",
+    "typescript-plugin-css-modules": "^5.0.2"
+  },
+  "peerDependencies": {
+    "react": "^18.2.0"
+  },
+  "main": "dist/cjs/index.js",
+  "module": "dist/esm/index.js",
+  "files": [
+    "dist"
+  ],
+  "types": "dist/index.d.ts"
+}

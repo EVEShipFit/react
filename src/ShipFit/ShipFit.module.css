@@ -1,0 +1,90 @@
+
+.fit {
+    border-radius: 50%;
+    border: 1px solid black;
+    height: calc(var(--radius) * 2);
+    position: relative;
+    width: calc(var(--radius) * 2);
+
+    --radius-slots: calc(var(--radius) * 0.92);
+}
+
+.outerBand {
+    border-radius: 50%;
+    border: calc((var(--radius) - var(--radius-slots)) * 0.8) solid black;
+    box-sizing: border-box;
+    height: calc(var(--radius) * 2);
+    position: absolute;
+    width: calc(var(--radius) * 2);
+    z-index: 2;
+}
+
+.innerBand {
+    border-radius: 50%;
+    border: calc(var(--radius-slots) / 6 + var(--radius) - var(--radius-slots)) solid black;
+    box-sizing: border-box;
+    height: calc(var(--radius) * 2);
+    opacity: 0.5;
+    position: absolute;
+    width: calc(var(--radius) * 2);
+    z-index: 3;
+}
+
+.hull {
+    height: 1px;
+    left: var(--radius);
+    position: absolute;
+    top: var(--radius);
+    width: 1px;
+}
+
+.hullInner {
+    margin-left: calc(var(--radius) * -1);
+    margin-top: calc(var(--radius) * -1);
+}
+.hullInner > img {
+    border-radius: 50%;
+    height: calc(var(--radius) * 2);
+    width: calc(var(--radius) * 2);
+}
+
+.slots {
+    margin-left: calc(var(--radius) - var(--radius-slots));
+    margin-top: calc(var(--radius) - var(--radius-slots));
+    position: relative;
+}
+
+.slot {
+    height: 1px;
+    left: var(--radius-slots);
+    position: absolute;
+    transform-origin: 0 var(--radius-slots);
+    transform: rotate(var(--rotation));
+    width: 1px;
+    z-index: 4;
+}
+
+.slotInner {
+    border: 1px solid #6c6c6c;
+    height: calc(var(--radius-slots) / 7);
+    left: calc(var(--radius-slots) / 8 / 2 * -1);
+    position: absolute;
+    top: 0px;
+    width: calc(var(--radius-slots) / 8);
+}
+
+.slotInnerInvalid {
+    border: 1px solid red;
+}
+
+.slotItem {
+    --reverse-rotation: calc(-1 * var(--rotation));
+    left: -32px;
+    position: absolute;
+    top: calc(-32px + var(--radius-slots) / 7 / 2);
+    transform: rotate(var(--reverse-rotation)) scale(calc(var(--scale) * 0.8));
+}
+
+.slotItem > img {
+    border-top-left-radius: 32px;
+}
