@@ -1,4 +1,4 @@
-name: Release
+name: Publish
 
 on:
   release:
@@ -39,4 +39,4 @@ jobs:
         accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
         projectName: ${{ vars.CLOUDFLARE_PROJECT_NAME }}
         directory: storybook-static
-        branch: ${{ github.event_name == 'push' && github.ref_name || github.event_name == 'repository_dispatch' && 'main' || format('pr/{0}', github.event.pull_request.number) }}
+        branch: ${{ github.event_name == 'release' && github.ref_name || format('pr/{0}', github.event.pull_request.number) }}
