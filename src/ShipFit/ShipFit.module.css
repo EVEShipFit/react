@@ -65,11 +65,15 @@
 }
 
 .slotInner {
-    border: 1px solid #6c6c6c;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-top-left-radius: 100% 4px;
+    border-top-right-radius: 100% 4px;
+    border: 1px solid rgba(127, 127, 127, 0.5);
     height: calc(var(--radius-slots) / 7);
     left: calc(var(--radius-slots) / 8 / 2 * -1);
     position: absolute;
-    top: 0px;
+    top: 2px;
+    transform: perspective(8px) rotateX(-1.5deg);
     width: calc(var(--radius-slots) / 8);
 }
 
