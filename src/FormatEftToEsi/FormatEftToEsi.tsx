@@ -4,21 +4,31 @@ import { EveDataContext } from '../EveDataProvider';
 import { EsiFit } from "../ShipSnapshotProvider";
 
 /** Mapping between slot types and ESI flags (for first slot in the type). */
-const EsiFlagMapping: Record<string, number> = {
-  "low": 11,
-  "med": 19,
-  "high": 27,
-  "rig": 92,
-  "sub": 125,
+const esiFlagMapping: Record<string, number[]> = {
+  "lowslot": [
+    11, 12, 13, 14, 15, 16, 17, 18
+  ],
+  "medslot": [
+    19, 20, 21, 22, 23, 24, 25, 26
+  ],
+  "hislot": [
+    27, 28, 29, 30, 31, 32, 33, 34
+  ],
+  "rig": [
+    92, 93, 94
+  ],
+  "subsystem": [
+    125, 126, 127, 128
+  ],
 };
 
 /** Mapping between dogma effect IDs and slot types. */
-const EffectIdMapping: Record<number, string> = {
-  11: "low",
-  13: "med",
-  12: "high",
+const effectIdMapping: Record<number, string> = {
+  11: "lowslot",
+  13: "medslot",
+  12: "hislot",
   2663: "rig",
-  3772: "sub",
+  3772: "subsystem",
 };
 
 /**
@@ -62,11 +72,11 @@ export function useFormatEftToEsi() {
     esiFit.name = lines[0].split(",")[1].slice(0, -1).trim();
 
     const slotIndex: Record<string, number> = {
-      "low": 0,
-      "med": 0,
-      "high": 0,
+      "lowslot": 0,
+      "medslot": 0,
+      "hislot": 0,
       "rig": 0,
-      "sub": 0,
+      "subsystem": 0,
     };
 
     let lastSlotType = "";
@@ -92,15 +102,15 @@ export function useFormatEftToEsi() {
       /* Find what type of slot this item goes into. */
       let slotType = "";
       for (const effectId in effects) {
-        slotType = EffectIdMapping[effects[effectId].effectID];
+        slotType = effectIdMapping[effects[effectId].effectID];
         if (slotType) break;
       }
       lastSlotType = slotType;
 
       /* Ignore items we don't care about. */
-      if (slotType === "") continue;
+      if (!slotType) continue;
 
-      esiFit.items.push({"flag": EsiFlagMapping[slotType] + slotIndex[slotType], "quantity": itemCount, "type_id": itemTypeId});
+      esiFit.items.push({"flag": esiFlagMapping[slotType][slotIndex[slotType]], "quantity": itemCount, "type_id": itemTypeId});
       slotIndex[slotType]++;
     }
 
