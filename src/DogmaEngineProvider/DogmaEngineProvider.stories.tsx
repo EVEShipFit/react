@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React from "react";
 
+import { fullFit } from '../../.storybook/fits';
+
 import { EveDataProvider } from '../EveDataProvider';
 import { DogmaEngineContext, DogmaEngineProvider } from './';
 
@@ -28,7 +30,7 @@ const TestDogmaEngine = () => {
   const dogmaEngine = React.useContext(DogmaEngineContext);
 
   if (dogmaEngine?.loaded) {
-    const stats = dogmaEngine.engine?.calculate({hull: 12747, items: [20639]}, {});
+    const stats = dogmaEngine.engine?.calculate(fullFit, {});
 
     return (
       <div>

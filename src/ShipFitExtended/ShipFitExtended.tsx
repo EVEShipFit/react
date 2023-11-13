@@ -78,10 +78,10 @@ export const ShipFitExtended = (props: ShipFitExtendedProps) => {
 
     <div className={styles.cpuPg}>
       <CpuPg title="CPU">
-        <ShipAttribute name="cpuUsage" fixed={1} />/<ShipAttribute name="cpuOutput" fixed={1} />
+        <ShipAttribute name="cpuUnused" fixed={1} />/<ShipAttribute name="cpuOutput" fixed={1} />
       </CpuPg>
       <CpuPg title="Power Grid">
-        <ShipAttribute name="powerUsage" fixed={1} />/<ShipAttribute name="powerOutput" fixed={1} />
+        <ShipAttribute name="powerUnused" fixed={1} />/<ShipAttribute name="powerOutput" fixed={1} />
       </CpuPg>
     </div>
   </div>

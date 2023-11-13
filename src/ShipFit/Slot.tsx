@@ -24,6 +24,13 @@ const esiFlagMapping: Record<string, number[]> = {
   ],
 };
 
+const stateRotation: Record<string, string[]> = {
+  "Passive": ["Passive"],
+  "Online": ["Passive", "Online"],
+  "Active": ["Passive", "Online", "Active"],
+  "Overload": ["Passive", "Online", "Active", "Overload"],
+};
+
 export const Slot = (props: {type: string, index: number, fittable: boolean, rotation: string}) => {
   const eveData = React.useContext(EveDataContext);
   const shipSnapshot = React.useContext(ShipSnapshotContext);
@@ -31,7 +38,7 @@ export const Slot = (props: {type: string, index: number, fittable: boolean, rot
   const rotationStyle = { "--rotation": props.rotation } as React.CSSProperties;
   const esiFlag = esiFlagMapping[props.type][props.index - 1];
 
-  const esiItem = shipSnapshot?.fit?.items.find((item) => item.flag == esiFlag);
+  const esiItem = shipSnapshot?.items?.find((item) => item.flag == esiFlag);
   let item = <></>;
 
   /* Not fittable and nothing fitted; no need to render the slot. */
@@ -43,10 +50,28 @@ export const Slot = (props: {type: string, index: number, fittable: boolean, rot
     item = <img src={`https://images.evetech.net/types/${esiItem.type_id}/icon?size=64`} title={eveData?.typeIDs?.[esiItem.type_id].name} />
   }
 
-  return <div className={styles.slot} style={rotationStyle}>
-    <div className={ctlx(styles.slotInner, { [styles.slotInnerInvalid]: !props.fittable })}>
+  const isOffline = esiItem?.state === "Passive" && esiItem?.max_state !== "Passive";
+
+  function cycleState(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    if (!shipSnapshot?.loaded || !esiItem) return;
+
+    const states = stateRotation[esiItem.max_state];
+    const stateIndex = states.indexOf(esiItem.state);
+
+    let newState;
+    if (e.shiftKey) {
+      newState = states[(stateIndex - 1 + states.length) % states.length];
+    } else {
+      newState = states[(stateIndex + 1) % states.length];
+    }
+
+    shipSnapshot.setItemState(esiItem.flag, newState);
+  }
+
+  return <div className={styles.slot} style={rotationStyle} onClick={cycleState}>
+    <div className={ctlx(styles.slotInner, { [styles.slotInnerInvalid]: !props.fittable, })} data-state={esiItem?.state}>
     </div>
-    <div className={styles.slotItem}>
+    <div className={ctlx(styles.slotItem, { [styles.slotItemOffline]: isOffline })}>
       {item}
     </div>
   </div>

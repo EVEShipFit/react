@@ -12,6 +12,10 @@ export interface ShipSnapshotItemAttribute {
 
 export interface ShipSnapshotItem {
   type_id: number,
+  quantity: number,
+  flag: number,
+  state: string,
+  max_state: string,
   attributes: Map<number, ShipSnapshotItemAttribute>,
   effects: number[],
 }
@@ -24,6 +28,7 @@ export interface EsiFit {
     flag: number;
     type_id: number;
     quantity: number;
+    state?: string;
   }[];
 }
 
@@ -33,69 +38,75 @@ interface ShipSnapshot {
   items?: ShipSnapshotItem[];
 
   fit?: EsiFit;
+
+  setItemState: (flag: number, state: string) => void;
 }
 
-export const ShipSnapshotContext = React.createContext<ShipSnapshot>({});
+export const ShipSnapshotContext = React.createContext<ShipSnapshot>({
+  loaded: undefined,
+  setItemState: () => {},
+});
 
 export interface ShipSnapshotProps {
   /** Children that can use this provider. */
   children: React.ReactNode;
   /** A ship fit in ESI representation. */
   fit: EsiFit;
-  /** A list of skills to apply to the fit (skill_id, skill_level). */
+  /** A list of skills to apply to the fit: {skill_id: skill_level}. */
   skills: Record<number, number>;
-}
-
-const EsiFlagMapping = [
-  11, 12, 13, 14, 15, 16, 17, 18, // lowslot
-  19, 20, 21, 22, 23, 24, 25, 26, // medslot
-  27, 28, 29, 30, 31, 32, 33, 34, // hislot
-  92, 93, 94, // rig
-  125, 126, 127, 128, // subsystem
-];
-
-function esiFitToDogmaFit(fit: EsiFit): {
-  hull: number,
-  items: number[],
-} {
-  const dogmaFit: {
-    hull: number,
-    items: number[],
-  } = {
-    "hull": fit.ship_type_id,
-    "items": [],
-  }
-
-  for (const item of fit.items) {
-    if (EsiFlagMapping.includes(item.flag)) {
-      dogmaFit.items.push(item.type_id);
-    }
-  }
-
-  return dogmaFit;
 }
 
 /**
  * Calculates the current attrbitues and applied effects of a ship fit.
  */
 export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
-  const [shipSnapshot, setShipSnapshot] = React.useState<ShipSnapshot>({});
+  const [shipSnapshot, setShipSnapshot] = React.useState<ShipSnapshot>({
+    loaded: undefined,
+    setItemState: () => {},
+  });
+  const [currentFit, setCurrentFit] = React.useState<EsiFit | undefined>(undefined);
   const dogmaEngine = React.useContext(DogmaEngineContext);
+
+  const setItemState = React.useCallback((flag: number, state: string) => {
+    if (!currentFit) return;
+
+    setCurrentFit((oldFit: EsiFit | undefined) => {
+      if (!oldFit) return oldFit;
+
+      return {
+        ...oldFit,
+        items: oldFit?.items?.map((item) => {
+          if (item.flag === flag) {
+            return {
+              ...item,
+              state: state,
+            };
+          }
+
+          return item;
+        }),
+      };
+    })
+  }, [currentFit]);
 
   React.useEffect(() => {
     if (!dogmaEngine.loaded) return;
-    if (!props.fit || !props.skills) return;
+    if (!currentFit || !props.skills) return;
 
-    const dogmaFit = esiFitToDogmaFit(props.fit);
-    const snapshot = dogmaEngine.engine?.calculate(dogmaFit, props.skills);
+    const snapshot = dogmaEngine.engine?.calculate(currentFit, props.skills);
 
     setShipSnapshot({
       loaded: true,
       hull: snapshot.hull,
       items: snapshot.items,
-      fit: props.fit,
+      fit: currentFit,
+      setItemState,
     });
-  }, [dogmaEngine, props.fit, props.skills]);
+  }, [dogmaEngine, currentFit, props.skills, setItemState]);
+
+  React.useEffect(() => {
+    setCurrentFit(props.fit);
+  }, [props.fit]);
 
   return <ShipSnapshotContext.Provider value={shipSnapshot}>
     {props.children}
