@@ -7,7 +7,7 @@ import { FormatEftToEsi } from './FormatEftToEsi';
 const meta: Meta<typeof FormatEftToEsi> = {
   component: FormatEftToEsi,
   tags: ['autodocs'],
-  title: 'Function/EftToEsiJson',
+  title: 'Function/FormatEftToEsi',
 };
 
 const withEveDataProvider: Decorator<{eft: string}> = (Story) => {
