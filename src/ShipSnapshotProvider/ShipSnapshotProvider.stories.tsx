@@ -1,6 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import React from "react";
 
+import { fullFit } from '../../.storybook/fits';
+
 import { EveDataContext, EveDataProvider } from '../EveDataProvider';
 import { DogmaEngineProvider } from '../DogmaEngineProvider';
 import { ShipSnapshotItemAttribute, ShipSnapshotContext, ShipSnapshotProvider } from './';
@@ -39,7 +41,7 @@ const TestShipSnapshot = () => {
 
 export const Default: Story = {
   args: {
-    fit: {"name": "test", description: "", "ship_type_id": 29984, "items": [{"flag": 11, "quantity": 1, "type_id": 20639}]},
+    fit: fullFit,
     skills: {},
   },
   render: (args) => (
