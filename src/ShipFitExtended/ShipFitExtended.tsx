@@ -56,6 +56,10 @@ const CpuPg = (props: { title: string, children: React.ReactNode }) => {
 
 /**
  * Render a ship fit similar to how it is done in-game.
+ *
+ * The difference between this component and ShipFit, is that this
+ * also adds the cargo hold, drone bay, and CPU/PG usage at the
+ * bottom of the fit.
  */
 export const ShipFitExtended = (props: ShipFitExtendedProps) => {
   const radius = props.radius ?? 365;
