@@ -84,8 +84,7 @@ export const fullFit = {
       {
         "flag": 21,
         "quantity": 1,
-        "type_id": 2281,
-        "state": "Active"
+        "type_id": 2281
       },
       {
         "flag": 22,
