@@ -43,6 +43,11 @@ export interface DogmaEngineProps {
  *   console.log(stats);
  * }
  * ```
+ *
+ * Due to how the EVE SDE is constructed, a skill is by default
+ * assumed to be Level 1. This means that you most likely want
+ * to give all the skills to the calculate() function, even those
+ * that are not trained.
  */
 export const DogmaEngineProvider = (props: DogmaEngineProps) => {
   const [dogmaEngine, setDogmaEngine] = React.useState<DogmaEngine>({});
