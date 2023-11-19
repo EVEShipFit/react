@@ -38,7 +38,7 @@ export interface DogmaEngineProps {
  * const dogmaEngine = React.useContext(DogmaEngineContext);
  *
  * if (dogmaEngine?.loaded) {
- *   // calculate(esiFit: EsiFit, skills: Map<number, number>)
+ *   // calculate(esiFit: EsiFit, skills: Record<string, number>)
  *   const stats = dogmaEngine.engine.calculate(esiFit, {});
  *   console.log(stats);
  * }
