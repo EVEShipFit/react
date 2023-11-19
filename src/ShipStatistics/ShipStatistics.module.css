@@ -26,20 +26,44 @@
     max-height: 0px;
 }
 .expanded {
-    max-height: 150px;
+    max-height: 180px;
 }
 
 
 .line {
     display: flex;
+    height: 20px;
     justify-content: space-between;
     line-height: 20px;
-    height: 20px;
     margin: 10px 0px;
 }
 .line > span {
     flex: 1;
     margin: 0px 5px;
+}
+
+.defense {
+    margin: 20px 0px;
+}
+.defense:last-child {
+    margin-bottom: 10px;
+}
+.defenseShield {
+    display: flex;
+    position: relative;
+    top: -5px;
+}
+.defenseShield > span:first-child {
+    line-height: 30px;
+}
+.defenseShield > span:last-child {
+    line-height: 15px;
+}
+
+.resistanceHeader {
+    display: inline-block;
+    text-align: center;
+    width: 50px;
 }
 
 .resistance {
@@ -79,3 +103,34 @@
     background-color: #8c5e19;
 }
 
+.rechargeRate {
+    position: relative;
+}
+
+.rechargeRateDropdown {
+    font-weight: bold;
+    position: absolute;
+    top: -10px;
+}
+
+.rechargeRateDropdownContent {
+    background-color: #111111;
+    line-height: 25px;
+    position: absolute;
+    top: 30px;
+    width: 150px;
+    z-index: 10;
+}
+
+.rechargeRateDropdownContent > div {
+    cursor: pointer;
+    padding: 0px 5px;
+}
+
+.rechargeRateDropdownContentSelected {
+    background-color: #727272;
+}
+
+.rechargeRateDropdownContent > div:hover {
+    background-color: #4e4e4e;
+}
