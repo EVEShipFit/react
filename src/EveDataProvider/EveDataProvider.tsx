@@ -7,7 +7,7 @@ import { DogmaAttribute, DogmaEffect, TypeDogma, TypeID } from "./DataTypes";
 // eslint-disable-next-line import/extensions
 import * as esf_pb2 from "./esf_pb2.js";
 
-const defaultDataUrl = "https://data.eveship.fit/20231023-4/";
+const defaultDataUrl = "https://data.eveship.fit/20231115-0/";
 
 interface DogmaData {
   loaded?: boolean;
