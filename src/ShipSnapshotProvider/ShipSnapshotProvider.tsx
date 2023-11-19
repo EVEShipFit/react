@@ -53,7 +53,7 @@ export interface ShipSnapshotProps {
   /** A ship fit in ESI representation. */
   fit: EsiFit;
   /** A list of skills to apply to the fit: {skill_id: skill_level}. */
-  skills: Record<number, number>;
+  skills: Record<string, number>;
 }
 
 /**
