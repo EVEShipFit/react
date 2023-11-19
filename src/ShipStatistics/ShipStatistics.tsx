@@ -39,7 +39,7 @@ export const ShipStatistics = () => {
     </Category>
 
     <Category headerLabel="Defense" headerContent={
-      <span>? ehp</span>
+      <span><ShipAttribute name="ehp" fixed={0} /> ehp</span>
     }>
       <CategoryLine>
         No module
