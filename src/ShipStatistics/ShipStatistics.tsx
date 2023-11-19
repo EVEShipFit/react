@@ -3,7 +3,10 @@ import React from "react";
 import { ShipAttribute } from '../ShipAttribute';
 
 import { Category, CategoryLine } from "./Category";
+import { RechargeRate } from "./RechargeRate";
 import { Resistance } from "./Resistance";
+
+import styles from "./ShipStatistics.module.css";
 
 /**
  * Render ship statistics similar to how it is done in-game.
@@ -42,12 +45,23 @@ export const ShipStatistics = () => {
       <span><ShipAttribute name="ehp" fixed={0} /> ehp</span>
     }>
       <CategoryLine>
-        No module
+        <RechargeRate />
+        <span style={{flex: 2}}>
+          <span className={styles.resistanceHeader}>E</span>
+          <span className={styles.resistanceHeader}>T</span>
+          <span className={styles.resistanceHeader}>K</span>
+          <span className={styles.resistanceHeader}>X</span>
+        </span>
       </CategoryLine>
-      <CategoryLine>
-        <span>
-          S
-          <ShipAttribute name="shieldCapacity" fixed={0} /> hp
+      <CategoryLine className={styles.defense}>
+        <span className={styles.defenseShield}>
+          <span>
+            S
+          </span>
+          <span>
+            <ShipAttribute name="shieldCapacity" fixed={0} /> hp<br/>
+            <ShipAttribute name="shieldRechargeRate" fixed={0} divideBy={1000} /> s<br/>
+          </span>
         </span>
         <span style={{flex: 2}}>
           <Resistance name="shieldEmDamageResonance" />
@@ -56,7 +70,7 @@ export const ShipStatistics = () => {
           <Resistance name="shieldExplosiveDamageResonance" />
         </span>
       </CategoryLine>
-      <CategoryLine>
+      <CategoryLine className={styles.defense}>
         <span>
           A
           <ShipAttribute name="armorHP" fixed={0} /> hp
@@ -68,7 +82,7 @@ export const ShipStatistics = () => {
           <Resistance name="armorExplosiveDamageResonance" />
         </span>
       </CategoryLine>
-      <CategoryLine>
+      <CategoryLine className={styles.defense}>
         <span>
           S
           <ShipAttribute name="hp" fixed={0} /> hp

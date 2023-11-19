@@ -1,3 +1,4 @@
+import ctlx from "clsx";
 import React from "react";
 
 import styles from "./ShipStatistics.module.css";
@@ -17,8 +18,8 @@ export const Category = (props: {headerLabel: string, headerContent: React.React
   </div>
 }
 
-export const CategoryLine = (props: {children: React.ReactNode}) => {
-  return <div className={styles.line}>
+export const CategoryLine = (props: {className?: string, children: React.ReactNode}) => {
+  return <div className={ctlx(styles.line, props.className )}>
     {props.children}
   </div>
 }
