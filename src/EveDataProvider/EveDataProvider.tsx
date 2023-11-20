@@ -1,13 +1,12 @@
 import React from "react";
 
 import { DogmaAttribute, DogmaEffect, TypeDogma, TypeID } from "./DataTypes";
+import { defaultDataUrl } from "../settings";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 // eslint-disable-next-line import/extensions
 import * as esf_pb2 from "./esf_pb2.js";
-
-const defaultDataUrl = "https://data.eveship.fit/20231115-0/";
 
 interface DogmaData {
   loaded?: boolean;
@@ -59,7 +58,7 @@ function isLoaded(dogmaData: DogmaData): boolean | undefined {
  * ```
  */
 export const EveDataProvider = (props: DogmaDataProps) => {
-  const dataUrl = props.dataUrl ?? defaultDataUrl;
+  const dataUrl = props.dataUrl ?? `${defaultDataUrl}sde/`;
   const [dogmaData, setDogmaData] = React.useState<DogmaData>({});
 
   React.useEffect(() => {
