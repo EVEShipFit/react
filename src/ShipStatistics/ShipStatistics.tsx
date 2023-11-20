@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import React from "react";
 
 import { ShipAttribute } from '../ShipAttribute';
@@ -7,6 +8,7 @@ import { RechargeRate } from "./RechargeRate";
 import { Resistance } from "./Resistance";
 
 import styles from "./ShipStatistics.module.css";
+import { Icon } from "../Icon";
 
 /**
  * Render ship statistics similar to how it is done in-game.
@@ -47,16 +49,16 @@ export const ShipStatistics = () => {
       <CategoryLine>
         <RechargeRate />
         <span style={{flex: 2}}>
-          <span className={styles.resistanceHeader}>E</span>
-          <span className={styles.resistanceHeader}>T</span>
-          <span className={styles.resistanceHeader}>K</span>
-          <span className={styles.resistanceHeader}>X</span>
+          <span className={styles.resistanceHeader}><Icon name="em-resistance" size={28} /></span>
+          <span className={styles.resistanceHeader}><Icon name="thermal-resistance" size={28} /></span>
+          <span className={styles.resistanceHeader}><Icon name="kinetic-resistance" size={28} /></span>
+          <span className={styles.resistanceHeader}><Icon name="explosive-resistance" size={28} /></span>
         </span>
       </CategoryLine>
       <CategoryLine className={styles.defense}>
-        <span className={styles.defenseShield}>
+        <span className={clsx(styles.statistic, styles.defenseShield)}>
           <span>
-            S
+            <Icon name="shield-hp" size={24} />
           </span>
           <span>
             <ShipAttribute name="shieldCapacity" fixed={0} /> hp<br/>
@@ -71,9 +73,13 @@ export const ShipStatistics = () => {
         </span>
       </CategoryLine>
       <CategoryLine className={styles.defense}>
-        <span>
-          A
-          <ShipAttribute name="armorHP" fixed={0} /> hp
+        <span className={styles.statistic}>
+          <span>
+            <Icon name="armor-hp" size={24} />
+          </span>
+          <span>
+            <ShipAttribute name="armorHP" fixed={0} /> hp
+          </span>
         </span>
         <span style={{flex: 2}}>
           <Resistance name="armorEmDamageResonance" />
@@ -83,9 +89,13 @@ export const ShipStatistics = () => {
         </span>
       </CategoryLine>
       <CategoryLine className={styles.defense}>
-        <span>
-          S
-          <ShipAttribute name="hp" fixed={0} /> hp
+        <span className={styles.statistic}>
+          <span>
+            <Icon name="hull-hp" size={24} />
+          </span>
+          <span>
+            <ShipAttribute name="hp" fixed={0} /> hp
+          </span>
         </span>
         <span style={{flex: 2}}>
           <Resistance name="emDamageResonance" />
@@ -100,19 +110,39 @@ export const ShipStatistics = () => {
       <span><ShipAttribute name="maxTargetRange" fixed={2} divideBy={1000} /> km</span>
     }>
       <CategoryLine>
-        <span title="Scan Strength">
-          <ShipAttribute name="scanStrength" fixed={2} /> points
+        <span title="Scan Strength" className={styles.statistic}>
+          <span>
+            <Icon name="sensor-strength" size={24} />
+          </span>
+          <span>
+            <ShipAttribute name="scanStrength" fixed={2} /> points
+          </span>
         </span>
-        <span title="Scan Resolution">
-          <ShipAttribute name="scanResolution" fixed={0} /> mm
+        <span title="Scan Resolution" className={styles.statistic}>
+          <span>
+            <Icon name="scan-resolution" size={24} />
+          </span>
+          <span>
+            <ShipAttribute name="scanResolution" fixed={0} /> mm
+          </span>
         </span>
       </CategoryLine>
       <CategoryLine>
-        <span title="Signature Radius">
-          <ShipAttribute name="signatureRadius" fixed={0} /> m
+        <span title="Signature Radius" className={styles.statistic}>
+          <span>
+            <Icon name="signature-radius" size={24} />
+          </span>
+          <span>
+            <ShipAttribute name="signatureRadius" fixed={0} /> m
+          </span>
         </span>
-        <span title="Maximum Locked Targets">
-          <ShipAttribute name="maxLockedTargets" fixed={0} />x
+        <span title="Maximum Locked Targets" className={styles.statistic}>
+          <span>
+            <Icon name="maximum-locked-targets" size={24} />
+          </span>
+          <span>
+            <ShipAttribute name="maxLockedTargets" fixed={0} />x
+          </span>
         </span>
       </CategoryLine>
     </Category>
@@ -121,19 +151,39 @@ export const ShipStatistics = () => {
       <span><ShipAttribute name="maxVelocity" fixed={1} /> m/s</span>
     }>
       <CategoryLine>
-        <span title="Mass">
-          <ShipAttribute name="mass" fixed={2} /> t
+        <span title="Mass" className={styles.statistic}>
+          <span>
+            <Icon name="mass" size={24} />
+          </span>
+          <span>
+            <ShipAttribute name="mass" fixed={2} /> t
+          </span>
         </span>
-        <span title="Inertia Modifier">
-          <ShipAttribute name="agility" fixed={4} />x
+        <span title="Inertia Modifier" className={styles.statistic}>
+          <span>
+            <Icon name="inertia-modifier" size={24} />
+          </span>
+          <span>
+            <ShipAttribute name="agility" fixed={4} />x
+          </span>
         </span>
       </CategoryLine>
       <CategoryLine>
-        <span title="Ship Warp Speed">
-          <ShipAttribute name="warpSpeedMultiplier" fixed={2} /> AU/s
+        <span title="Ship Warp Speed" className={styles.statistic}>
+          <span>
+            <Icon name="warp-speed" size={24} />
+          </span>
+          <span>
+            <ShipAttribute name="warpSpeedMultiplier" fixed={2} /> AU/s
+          </span>
         </span>
-        <span title="Align Time">
-          <ShipAttribute name="alignTime" fixed={2} />s
+        <span title="Align Time" className={styles.statistic}>
+          <span>
+            <Icon name="align-time" size={24} />
+          </span>
+          <span>
+            <ShipAttribute name="alignTime" fixed={2} />s
+          </span>
         </span>
       </CategoryLine>
     </Category>

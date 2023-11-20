@@ -42,19 +42,30 @@
     margin: 0px 5px;
 }
 
+.statistic {
+    display: flex;
+}
+.statistic > span:last-child {
+    line-height: 24px;
+    margin-left: 4px;
+}
+
 .defense {
     margin: 20px 0px;
 }
 .defense:last-child {
     margin-bottom: 10px;
 }
+
 .defenseShield {
-    display: flex;
     position: relative;
     top: -5px;
 }
 .defenseShield > span:first-child {
     line-height: 30px;
+}
+.defenseShield > span:first-child > img {
+    padding-top: 4px;
 }
 .defenseShield > span:last-child {
     line-height: 15px;
@@ -62,7 +73,7 @@
 
 .resistanceHeader {
     display: inline-block;
-    text-align: center;
+    margin-left: 5px;
     width: 50px;
 }
 

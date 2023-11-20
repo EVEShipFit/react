@@ -4,21 +4,32 @@ import { useShipAttribute } from '../ShipAttribute';
 
 import styles from "./ShipStatistics.module.css";
 import clsx from "clsx";
+import { IconName, Icon } from "../Icon";
 
-export const RechargeRateItem = (props: {name: string, icon: React.ReactNode}) => {
+export const RechargeRateItem = (props: {name: string, icon: IconName}) => {
   const stringValue = useShipAttribute({
     name: props.name,
     fixed: 1,
   });
 
   if (stringValue == "0.0") {
-    return <span>
-        {props.icon} No Module
+    return <span className={styles.statistic}>
+      <span>
+        <Icon name={props.icon} size={24} />
+      </span>
+      <span>
+        No Module
+      </span>
     </span>
   }
 
-  return <span>
-    {props.icon} {stringValue} hp/s
+  return <span className={styles.statistic}>
+    <span>
+      <Icon name={props.icon} size={24} />
+    </span>
+    <span>
+      {stringValue} hp/s
+    </span>
   </span>
 }
 
@@ -37,10 +48,10 @@ export const RechargeRate = () => {
       <div onClick={() => { setModuleType("shieldBoostRate"); setShowDropdown(false); }} className={clsx({[styles.rechargeRateDropdownContentSelected]: moduleType == "shieldBoostRate"})}>Shield boost rate</div>
     </div> }
     <div onClick={() => setShowDropdown((current) => !current)}>
-      { moduleType == "armorRepairRate" && <RechargeRateItem name="armorRepairRate" icon={<>A</>} /> }
-      { moduleType == "hullRepairRate" && <RechargeRateItem name="hullRepairRate" icon={<>H</>} /> }
-      { moduleType == "passiveShieldRecharge" && <RechargeRateItem name="passiveShieldRecharge" icon={<>P</>} /> }
-      { moduleType == "shieldBoostRate" && <RechargeRateItem name="shieldBoostRate" icon={<>S</>} /> }
+      { moduleType == "armorRepairRate" && <RechargeRateItem name="armorRepairRate" icon="armor-repair-rate" /> }
+      { moduleType == "hullRepairRate" && <RechargeRateItem name="hullRepairRate" icon="hull-repair-rate" /> }
+      { moduleType == "passiveShieldRecharge" && <RechargeRateItem name="passiveShieldRecharge" icon="passive-shield-recharge" /> }
+      { moduleType == "shieldBoostRate" && <RechargeRateItem name="shieldBoostRate" icon="shield-boost-rate" /> }
     </div>
   </span>
 }
