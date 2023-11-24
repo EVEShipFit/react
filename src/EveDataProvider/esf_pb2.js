@@ -29,6 +29,7 @@ export const esf = $root.esf = (() => {
                 if (r.need_data()) {
                     await r.fetch_data();
                 }
+                if (r.is_eof()) break;
 
                 var t = r.uint32();
                 switch (t >>> 3) {
@@ -214,6 +215,7 @@ export const esf = $root.esf = (() => {
                 if (r.need_data()) {
                     await r.fetch_data();
                 }
+                if (r.is_eof()) break;
 
                 var t = r.uint32();
                 switch (t >>> 3) {
@@ -352,6 +354,7 @@ export const esf = $root.esf = (() => {
                 if (r.need_data()) {
                     await r.fetch_data();
                 }
+                if (r.is_eof()) break;
 
                 var t = r.uint32();
                 switch (t >>> 3) {
@@ -472,6 +475,7 @@ export const esf = $root.esf = (() => {
                 if (r.need_data()) {
                     await r.fetch_data();
                 }
+                if (r.is_eof()) break;
 
                 var t = r.uint32();
                 switch (t >>> 3) {
