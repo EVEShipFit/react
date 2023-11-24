@@ -8,7 +8,7 @@ export const FitLink = () => {
   const link = useEveShipFitLink();
 
   /* Detect if the fit is loaded on https://eveship.fit */
-  const isEveShipFit = window.location.hostname === "eveship.fit";
+  const isEveShipFit = typeof window !== "undefined" && window.location.hostname === "eveship.fit";
   const linkText = isEveShipFit ? "link to fit" : "open on eveship.fit";
 
   return <div className={styles.fitlink}>
