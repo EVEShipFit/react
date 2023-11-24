@@ -29,9 +29,8 @@ export interface DogmaDataProps {
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 async function fetchDataFile(dataUrl: string, name: string, pb2: any): Promise<object[]> {
   const response = await fetch(dataUrl + name + ".pb2");
-  const contentLength = response.headers.get("content-length");
   const reader = response.body?.getReader();
-  const result = await pb2.decode(reader, contentLength);
+  const result = await pb2.decode(reader, 0xffffffff);
 
   return result.entries;
 }

@@ -23,6 +23,7 @@ function Reader(reader) {
     this._buf = new Uint8Array();
     this._next_buf = null;
     this._buf_pos = 0;
+    this._eof = false;
 
     this.pos = 0;
     this.len = 0;
@@ -57,6 +58,7 @@ Reader.prototype.fetch_data = async function fetch_data() {
     /* If we read nothing, fast-path into an end-of-file marker. */
     if (length === 0) {
         this._next_buf = new Uint8Array();
+        this._eof = true;
         return;
     }
 
@@ -73,6 +75,10 @@ Reader.prototype.fetch_data = async function fetch_data() {
         this._next_buf.set(value, pos);
         pos += value.length;
     }
+}
+
+Reader.prototype.is_eof = function is_eof() {
+    return this._eof && this._buf_pos >= this._buf.length;
 }
 
 Reader.prototype.read = function read(len) {
