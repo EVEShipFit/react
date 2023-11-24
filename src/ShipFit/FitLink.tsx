@@ -4,12 +4,21 @@ import { useEveShipFitLink } from "../EveShipFitLink";
 
 import styles from "./ShipFit.module.css";
 
+const useIsRemoteViewer = () => {
+  const [remote, setRemote] = React.useState(true);
+
+  React.useEffect(() => {
+    if (typeof window !== "undefined") {
+      setRemote(window.location.hostname !== "eveship.fit");
+    }
+  }, []);
+
+  return remote;
+}
+
 export const FitLink = () => {
   const link = useEveShipFitLink();
-
-  /* Detect if the fit is loaded on https://eveship.fit */
-  const isEveShipFit = typeof window !== "undefined" && window.location.hostname === "eveship.fit";
-  const linkText = isEveShipFit ? "link to fit" : "open on eveship.fit";
+  const linkText = useIsRemoteViewer() ? "open on eveship.fit" : "link to fit";
 
   return <div className={styles.fitlink}>
     <svg viewBox="0 0 730 730" xmlns="http://www.w3.org/2000/svg">
