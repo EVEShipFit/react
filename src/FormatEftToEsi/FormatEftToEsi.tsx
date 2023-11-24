@@ -124,7 +124,9 @@ export interface FormatEftToEsiProps {
 }
 
 /**
- * Use useFormatEftToEsi() instead of this component.
+ * useFormatEftToEsi() converts an EFT string to an ESI JSON object.
+ *
+ * Note: do not use this React component itself, but the useFormatEftToEsi() React hook instead.
  */
 export const FormatEftToEsi = (props: FormatEftToEsiProps) => {
   const esiFit = useFormatEftToEsi();

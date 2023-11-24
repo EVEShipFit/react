@@ -3,6 +3,7 @@ import React from "react";
 import { EveDataContext } from '../EveDataProvider';
 import { ShipSnapshotContext } from '../ShipSnapshotProvider';
 
+import { FitLink } from './FitLink';
 import { Hull } from './Hull';
 import { Slot } from './Slot';
 
@@ -54,6 +55,7 @@ export const ShipFit = (props: ShipFitProps) => {
     <div className={styles.innerBand} />
 
     <Hull />
+    <FitLink />
 
     <div className={styles.slots}>
       <Slot type="subsystem" index={1} fittable={slots.subsystem >= 1} rotation="-125deg" />

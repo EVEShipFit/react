@@ -31,6 +31,8 @@ Loki Propulsion - Wake Limiter
 Hammerhead II x1
 `;
 
+export const hashFit = "fit:v1:H4sIAAAAAAAAClXOMQ7CMAwF0L2n6AE8xD92bLMiRhi4AQMSrND7i7itGrG9JHb+R4QLnet8fyzL8zOf5tv7+7pcaWIoiTY04u7WrcGrLe/LZk+zppkA7CODdTBIGOydKFTVoiRzzfMdIFZrmYdKHOyWlEEdW0ZQW3N7hYNxsJZBHsRgL+ammRagypZBU9RO3yid1bKuEkRyylDy0CxIxTBthXQdScmmIt7I/+72D6JNPx7qugdyAQAA";
+
 export const fullFit = {
     "name": "C3 Ratter : NishEM",
     "ship_type_id": 29984,
