@@ -1,5 +1,7 @@
 export * from './DogmaEngineProvider';
 export * from './EveDataProvider';
+export * from './EveShipFitHash';
+export * from './EveShipFitLink';
 export * from './FormatEftToEsi';
 export * from './Icon';
 export * from './ShipAttribute';
