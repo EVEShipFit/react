@@ -31,7 +31,7 @@ const withShipSnapshotProvider: Decorator<{name: string}> = (Story, context) => 
 
 export const Default: Story = {
   args: {
-    name: "cpuUsage",
+    name: "cpuUsed",
   },
   decorators: [withShipSnapshotProvider],
   parameters: {
