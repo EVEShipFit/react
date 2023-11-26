@@ -107,8 +107,8 @@ export const EsiProvider = (props: EsiProps) => {
       return esiPrivate.accessTokens[characterId];
     }
 
-    const accessToken = await getAccessToken(esiPrivate.refreshTokens[characterId]);
-    if (accessToken === undefined) {
+    const { accessToken, refreshToken } = await getAccessToken(esiPrivate.refreshTokens[characterId]);
+    if (accessToken === undefined || refreshToken === undefined) {
       console.log('Failed to get access token');
       return undefined;
     }
@@ -117,6 +117,10 @@ export const EsiProvider = (props: EsiProps) => {
     setEsiPrivate((oldEsiPrivate: EsiPrivate) => {
       return {
         ...oldEsiPrivate,
+        refreshTokens: {
+          ...oldEsiPrivate.refreshTokens,
+          [characterId]: refreshToken,
+        },
         accessToken: {
           ...oldEsiPrivate.accessTokens,
           [characterId]: accessToken,

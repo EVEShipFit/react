@@ -1,4 +1,4 @@
-export async function getAccessToken(refreshToken: string): Promise<string | undefined> {
+export async function getAccessToken(refreshToken: string): Promise<{ accessToken?: string, refreshToken?: string }> {
   let response;
   try {
     response = await fetch('https://esi.eveship.fit/', {
@@ -8,13 +8,13 @@ export async function getAccessToken(refreshToken: string): Promise<string | und
       }),
     });
   } catch (e) {
-    return undefined;
+    return {};
   }
 
   if (response.status !== 201) {
-    return undefined;
+    return {};
   }
 
   const data = await response.json();
-  return data.access_token;
+  return { accessToken: data.access_token, refreshToken: data.refresh_token };
 };
