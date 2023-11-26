@@ -1,4 +1,6 @@
 export * from './DogmaEngineProvider';
+export * from './EsiCharacterSelection';
+export * from './EsiProvider';
 export * from './EveDataProvider';
 export * from './EveShipFitHash';
 export * from './EveShipFitLink';
