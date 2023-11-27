@@ -1,0 +1,86 @@
+.listing {
+    background-color: #111111;
+    color: #c5c5c5;
+    font-size: 15px;
+    height: 100%;
+    position: relative;
+    width: 100%;
+}
+
+.listingContent {
+    height: calc(100% - 42px);
+    padding-right: 20px;
+    overflow-y: auto;
+}
+
+.header1, .header2, .header3 {
+    display: flex;
+    padding-left: 10px;
+    user-select: none;
+}
+.header1, .header2 {
+    height: 25px;
+    line-height: 25px;
+}
+
+.header1 {
+    background-color: #1d1d1d;
+}
+
+.header1:hover, .header2:hover, .header3:hover {
+    background-color: #4f4f4f;
+}
+
+.collapsed {
+    display: none;
+}
+
+.level1 {
+    padding-left: 20px;
+}
+.level2 {
+    padding-left: 40px;
+}
+.level3 {
+    padding-left: 60px;
+}
+
+.hull {
+    display: flex;
+}
+.hull > span {
+    display: inline-block;
+    height: 32px;
+    line-height: 32px;
+    margin-right: 6px;
+}
+.hull > span:nth-child(2) {
+    flex: 1;
+}
+.hull > span:last-child {
+    text-align: right;
+}
+.hull > span:last-child > img {
+    opacity: 0.5;
+}
+.hull > span:last-child > img:hover {
+    opacity: 1.0;
+}
+
+.hullSimulate {
+    cursor: pointer;
+}
+
+.topbar {
+    display: flex;
+}
+
+.topbar > input {
+    background-color: #1d1d1d;
+    color: #c5c5c5;
+    flex: 1;
+    height: 24px;
+    line-height: 24px;
+    margin: 6px;
+    padding-left: 6px;
+}

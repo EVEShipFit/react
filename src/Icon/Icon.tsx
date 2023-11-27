@@ -20,6 +20,7 @@ const iconMapping = {
   "shield-boost-rate": "texture/classes/fitting/statsicons/shieldboostrate.png",
   "shield-hp": "texture/classes/fitting/statsicons/shieldhp.png",
   "signature-radius": "texture/classes/fitting/statsicons/signatureradius.png",
+  "simulate": "texture/classes/fitting/iconsimulatorhover.png",
   "thermal-resistance": "texture/classes/fitting/statsicons/thermalresistance.png",
   "warp-speed": "texture/classes/fitting/statsicons/warpspeed.png",
 } as const;

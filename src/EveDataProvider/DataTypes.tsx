@@ -19,11 +19,23 @@ export interface TypeID {
   groupID: number,
   categoryID: number,
   published: boolean,
+  factionID?: number,
   marketGroupID?: number,
   capacity?: number,
   mass?: number,
   radius?: number,
   volume?: number,
+}
+
+export interface GroupID {
+  name: string,
+  categoryID: number,
+  published: boolean,
+}
+
+export interface MarketGroup {
+  name: string,
+  parentGroupID?: number,
 }
 
 export interface DogmaAttribute {
