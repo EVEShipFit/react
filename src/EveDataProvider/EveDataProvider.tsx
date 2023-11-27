@@ -1,6 +1,6 @@
 import React from "react";
 
-import { DogmaAttribute, DogmaEffect, TypeDogma, TypeID } from "./DataTypes";
+import { DogmaAttribute, DogmaEffect, GroupID, MarketGroup, TypeDogma, TypeID } from "./DataTypes";
 import { defaultDataUrl } from "../settings";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -11,6 +11,8 @@ import * as esf_pb2 from "./esf_pb2.js";
 interface DogmaData {
   loaded?: boolean;
   typeIDs?: Record<string, TypeID>;
+  groupIDs?: Record<string, GroupID>;
+  marketGroups?: Record<string, MarketGroup>;
   typeDogma?: Record<string, TypeDogma>;
   dogmaEffects?: Record<string, DogmaEffect>;
   dogmaAttributes?: Record<string, DogmaAttribute>;
@@ -37,6 +39,8 @@ async function fetchDataFile(dataUrl: string, name: string, pb2: any): Promise<o
 
 function isLoaded(dogmaData: DogmaData): boolean | undefined {
   if (dogmaData.typeIDs === undefined) return undefined;
+  if (dogmaData.groupIDs === undefined) return undefined;
+  if (dogmaData.marketGroups === undefined) return undefined;
   if (dogmaData.typeDogma === undefined) return undefined;
   if (dogmaData.dogmaEffects === undefined) return undefined;
   if (dogmaData.dogmaAttributes === undefined) return undefined;
@@ -77,6 +81,8 @@ export const EveDataProvider = (props: DogmaDataProps) => {
     }
 
     fetchAndLoadDataFile("typeIDs", esf_pb2.esf.TypeIDs);
+    fetchAndLoadDataFile("groupIDs", esf_pb2.esf.GroupIDs);
+    fetchAndLoadDataFile("marketGroups", esf_pb2.esf.MarketGroups);
     fetchAndLoadDataFile("typeDogma", esf_pb2.esf.TypeDogma);
     fetchAndLoadDataFile("dogmaEffects", esf_pb2.esf.DogmaEffects);
     fetchAndLoadDataFile("dogmaAttributes", esf_pb2.esf.DogmaAttributes);

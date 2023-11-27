@@ -263,6 +263,7 @@ export const esf = $root.esf = (() => {
             TypeID.prototype.groupID = 0;
             TypeID.prototype.categoryID = 0;
             TypeID.prototype.published = false;
+            TypeID.prototype.factionID = 0;
             TypeID.prototype.marketGroupID = 0;
             TypeID.prototype.capacity = 0;
             TypeID.prototype.mass = 0;
@@ -293,22 +294,26 @@ export const esf = $root.esf = (() => {
                             break;
                         }
                     case 5: {
-                            m.marketGroupID = r.int32();
+                            m.factionID = r.int32();
                             break;
                         }
                     case 6: {
-                            m.capacity = r.float();
+                            m.marketGroupID = r.int32();
                             break;
                         }
                     case 7: {
-                            m.mass = r.float();
+                            m.capacity = r.float();
                             break;
                         }
                     case 8: {
-                            m.radius = r.float();
+                            m.mass = r.float();
                             break;
                         }
                     case 9: {
+                            m.radius = r.float();
+                            break;
+                        }
+                    case 10: {
                             m.volume = r.float();
                             break;
                         }
@@ -332,6 +337,211 @@ export const esf = $root.esf = (() => {
         })();
 
         return TypeIDs;
+    })();
+
+    esf.GroupIDs = (function() {
+
+        function GroupIDs(p) {
+            this.entries = {};
+            if (p)
+                for (var ks = Object.keys(p), i = 0; i < ks.length; ++i)
+                    if (p[ks[i]] != null)
+                        this[ks[i]] = p[ks[i]];
+        }
+
+        GroupIDs.prototype.entries = emptyObject;
+
+        GroupIDs.decode = async function decode(r, l) {
+            if (!(r instanceof $Reader))
+                r = $Reader.create(r);
+            var c = l === undefined ? r.len : r.pos + l, m = new $root.esf.GroupIDs(), k, value;
+            while (r.pos < c) {
+                if (r.need_data()) {
+                    await r.fetch_data();
+                }
+                if (r.is_eof()) break;
+
+                var t = r.uint32();
+                switch (t >>> 3) {
+                case 1: {
+                        if (m.entries === emptyObject)
+                            m.entries = {};
+                        var c2 = r.uint32() + r.pos;
+                        k = 0;
+                        value = null;
+                        while (r.pos < c2) {
+                            var tag2 = r.uint32();
+                            switch (tag2 >>> 3) {
+                            case 1:
+                                k = r.int32();
+                                break;
+                            case 2:
+                                value = $root.esf.GroupIDs.GroupID.decode(r, r.uint32());
+                                break;
+                            default:
+                                r.skipType(tag2 & 7);
+                                break;
+                            }
+                        }
+                        m.entries[k] = value;
+                        break;
+                    }
+                default:
+                    r.skipType(t & 7);
+                    break;
+                }
+            }
+            return m;
+        };
+
+        GroupIDs.GroupID = (function() {
+
+            function GroupID(p) {
+                if (p)
+                    for (var ks = Object.keys(p), i = 0; i < ks.length; ++i)
+                        if (p[ks[i]] != null)
+                            this[ks[i]] = p[ks[i]];
+            }
+
+            GroupID.prototype.name = "";
+            GroupID.prototype.categoryID = 0;
+            GroupID.prototype.published = false;
+
+            GroupID.decode = function decode(r, l) {
+                if (!(r instanceof $Reader))
+                    r = $Reader.create(r);
+                var c = l === undefined ? r.len : r.pos + l, m = new $root.esf.GroupIDs.GroupID();
+                while (r.pos < c) {
+                    var t = r.uint32();
+                    switch (t >>> 3) {
+                    case 1: {
+                            m.name = r.string();
+                            break;
+                        }
+                    case 2: {
+                            m.categoryID = r.int32();
+                            break;
+                        }
+                    case 3: {
+                            m.published = r.bool();
+                            break;
+                        }
+                    default:
+                        r.skipType(t & 7);
+                        break;
+                    }
+                }
+                if (!m.hasOwnProperty("name"))
+                    throw Error("missing required 'name'", { instance: m });
+                if (!m.hasOwnProperty("categoryID"))
+                    throw Error("missing required 'categoryID'", { instance: m });
+                if (!m.hasOwnProperty("published"))
+                    throw Error("missing required 'published'", { instance: m });
+                return m;
+            };
+
+            return GroupID;
+        })();
+
+        return GroupIDs;
+    })();
+
+    esf.MarketGroups = (function() {
+
+        function MarketGroups(p) {
+            this.entries = {};
+            if (p)
+                for (var ks = Object.keys(p), i = 0; i < ks.length; ++i)
+                    if (p[ks[i]] != null)
+                        this[ks[i]] = p[ks[i]];
+        }
+
+        MarketGroups.prototype.entries = emptyObject;
+
+        MarketGroups.decode = async function decode(r, l) {
+            if (!(r instanceof $Reader))
+                r = $Reader.create(r);
+            var c = l === undefined ? r.len : r.pos + l, m = new $root.esf.MarketGroups(), k, value;
+            while (r.pos < c) {
+                if (r.need_data()) {
+                    await r.fetch_data();
+                }
+                if (r.is_eof()) break;
+
+                var t = r.uint32();
+                switch (t >>> 3) {
+                case 1: {
+                        if (m.entries === emptyObject)
+                            m.entries = {};
+                        var c2 = r.uint32() + r.pos;
+                        k = 0;
+                        value = null;
+                        while (r.pos < c2) {
+                            var tag2 = r.uint32();
+                            switch (tag2 >>> 3) {
+                            case 1:
+                                k = r.int32();
+                                break;
+                            case 2:
+                                value = $root.esf.MarketGroups.MarketGroup.decode(r, r.uint32());
+                                break;
+                            default:
+                                r.skipType(tag2 & 7);
+                                break;
+                            }
+                        }
+                        m.entries[k] = value;
+                        break;
+                    }
+                default:
+                    r.skipType(t & 7);
+                    break;
+                }
+            }
+            return m;
+        };
+
+        MarketGroups.MarketGroup = (function() {
+
+            function MarketGroup(p) {
+                if (p)
+                    for (var ks = Object.keys(p), i = 0; i < ks.length; ++i)
+                        if (p[ks[i]] != null)
+                            this[ks[i]] = p[ks[i]];
+            }
+
+            MarketGroup.prototype.name = "";
+            MarketGroup.prototype.parentGroupID = 0;
+
+            MarketGroup.decode = function decode(r, l) {
+                if (!(r instanceof $Reader))
+                    r = $Reader.create(r);
+                var c = l === undefined ? r.len : r.pos + l, m = new $root.esf.MarketGroups.MarketGroup();
+                while (r.pos < c) {
+                    var t = r.uint32();
+                    switch (t >>> 3) {
+                    case 1: {
+                            m.name = r.string();
+                            break;
+                        }
+                    case 2: {
+                            m.parentGroupID = r.int32();
+                            break;
+                        }
+                    default:
+                        r.skipType(t & 7);
+                        break;
+                    }
+                }
+                if (!m.hasOwnProperty("name"))
+                    throw Error("missing required 'name'", { instance: m });
+                return m;
+            };
+
+            return MarketGroup;
+        })();
+
+        return MarketGroups;
     })();
 
     esf.DogmaAttributes = (function() {

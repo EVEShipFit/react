@@ -18,6 +18,8 @@ const TestEveData = () => {
   return (
     <div>
       TypeIDs: {eveData.typeIDs ? Object.keys(eveData.typeIDs).length : "loading"}<br/>
+      GroupIDs: {eveData.groupIDs ? Object.keys(eveData.groupIDs).length : "loading"}<br/>
+      MarketGroups: {eveData.marketGroups ? Object.keys(eveData.marketGroups).length : "loading"}<br/>
       TypeDogma: {eveData.typeDogma ? Object.keys(eveData.typeDogma).length : "loading"}<br/>
       DogmaEffects: {eveData.dogmaEffects ? Object.keys(eveData.dogmaEffects).length : "loading"}<br/>
       DogmaAttributes: {eveData.dogmaAttributes ? Object.keys(eveData.dogmaAttributes).length : "loading"}<br/>
