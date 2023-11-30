@@ -8,12 +8,19 @@ const iconMapping = {
   "armor-repair-rate": "texture/classes/fitting/statsicons/armorrepairrate.png",
   "em-resistance": "texture/classes/fitting/statsicons/emresistance.png",
   "explosive-resistance": "texture/classes/fitting/statsicons/explosiveresistance.png",
+  "fitting-alliance": "texture/classes/fitting/taballiancefits.png",
+  "fitting-character": "texture/windowicons/member.png",
+  "fitting-corporation": "texture/windowicons/corporation.png",
+  "fitting-hull": "texture/classes/fitting/tabfittings.png",
+  "fitting-local": "texture/windowicons/note.png",
   "hull-hp": "texture/classes/fitting/statsicons/structurehp.png",
   "hull-repair-rate": "texture/classes/fitting/statsicons/hullrepairrate.png",
   "inertia-modifier": "texture/classes/fitting/statsicons/inertiamodifier.png",
   "kinetic-resistance": "texture/classes/fitting/statsicons/kineticresistance.png",
   "mass": "texture/classes/fitting/statsicons/mass.png",
   "maximum-locked-targets": "texture/classes/fitting/statsicons/maximumlockedtargets.png",
+  "menu-collapse": "texture/shared/triangleright.png",
+  "menu-expand": "texture/shared/triangledown.png",
   "passive-shield-recharge": "texture/classes/fitting/statsicons/passiveshieldrecharge.png",
   "scan-resolution": "texture/classes/fitting/statsicons/scanresolution.png",
   "sensor-strength": "texture/classes/fitting/statsicons/sensorstrength.png",
@@ -32,6 +39,8 @@ export interface IconProps {
   name: IconName;
   /** Size (in pixels) of the icon. */
   size?: number;
+  /** Title of the icon. */
+  title?: string;
 }
 
 /**
@@ -42,5 +51,5 @@ export const Icon = (props: IconProps) => {
   if (icon === undefined) {
     return <span>Unknown icon: {props.name}</span>;
   }
-  return <img src={`${defaultDataUrl}ui/${icon}`} width={props.size} />
+  return <img src={`${defaultDataUrl}ui/${icon}`} width={props.size} title={props.title} />
 };

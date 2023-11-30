@@ -8,41 +8,40 @@
 }
 
 .listingContent {
-    height: calc(100% - 42px);
+    height: calc(100% - 42px - 32px);
     padding-right: 20px;
     overflow-y: auto;
 }
 
-.header1, .header2, .header3 {
+.header1, .header2, .header3, .header4 {
     display: flex;
-    padding-left: 10px;
     user-select: none;
 }
-.header1, .header2 {
+.header1, .header2, .header4 {
     height: 25px;
     line-height: 25px;
+}
+.header1 > span, .header2 > span, .header3 > span, .header4 > span {
+    margin: 0 4px;
 }
 
 .header1 {
     background-color: #1d1d1d;
 }
 
-.header1:hover, .header2:hover, .header3:hover {
+.header1:hover, .header2:hover, .header3:hover, .header4:hover {
     background-color: #4f4f4f;
+}
+.header4.noitem:hover {
+    background-color: #111111;
 }
 
 .collapsed {
     display: none;
 }
 
-.level1 {
-    padding-left: 20px;
-}
-.level2 {
-    padding-left: 40px;
-}
-.level3 {
-    padding-left: 60px;
+.level1, .level2, .level3 {
+    margin-left: 24px;
 }
 
 .hull {
@@ -52,9 +51,8 @@
     display: inline-block;
     height: 32px;
     line-height: 32px;
-    margin-right: 6px;
 }
-.hull > span:nth-child(2) {
+.hull > span:nth-child(3) {
     flex: 1;
 }
 .hull > span:last-child {
@@ -71,6 +69,14 @@
     cursor: pointer;
 }
 
+.fit {
+    cursor: pointer;
+    padding-left: 6px;
+}
+.fit.noitem {
+    cursor: default;
+}
+
 .topbar {
     display: flex;
 }
@@ -81,6 +87,35 @@
     flex: 1;
     height: 24px;
     line-height: 24px;
-    margin: 6px;
+    margin: 6px 0;
     padding-left: 6px;
+}
+
+.filter {
+    display: flex;
+    margin-bottom: 5px;
+}
+.filter > span {
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-block;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    user-select: none;
+    width: 32px;
+}
+.filter > span:hover {
+    background-color: #4f4f4f;
+}
+.filter > span.selected {
+    background-color: #7a7a7a;
+}
+
+.filter > span.disabled {
+    color: #7a7a7a;
+    cursor: default;
+}
+.filter > span.disabled:hover {
+    background-color: #111111;
 }
