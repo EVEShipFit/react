@@ -1,11 +1,16 @@
 import { jwtDecode } from "jwt-decode";
 import React from "react";
+
+import { EsiFit } from "../ShipSnapshotProvider";
+
 import { getAccessToken } from "./EsiAccessToken";
 import { getSkills } from "./EsiSkills";
+import { getCharFittings } from "./EsiFittings";
 
 export interface EsiCharacter {
   name: string;
   skills?: Record<string, number>;
+  charFittings?: EsiFit[];
 }
 
 export interface Esi {
@@ -151,6 +156,23 @@ export const EsiProvider = (props: EsiProps) => {
               [characterId]: {
                 ...oldEsi.characters[characterId],
                 skills,
+              },
+            },
+          };
+        });
+      });
+
+      getCharFittings(characterId, accessToken).then((charFittings) => {
+        if (charFittings === undefined) return;
+
+        setEsi((oldEsi: Esi) => {
+          return {
+            ...oldEsi,
+            characters: {
+              ...oldEsi.characters,
+              [characterId]: {
+                ...oldEsi.characters[characterId],
+                charFittings,
               },
             },
           };
