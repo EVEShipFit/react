@@ -6,6 +6,7 @@ import { EsiFit } from "../ShipSnapshotProvider";
 import { getAccessToken } from "./EsiAccessToken";
 import { getSkills } from "./EsiSkills";
 import { getCharFittings } from "./EsiFittings";
+import { EveDataContext } from "../EveDataProvider";
 
 export interface EsiCharacter {
   name: string;
@@ -41,6 +42,8 @@ export const EsiContext = React.createContext<Esi>({
 });
 
 export interface EsiProps {
+  /** Callback to call when skills are changed. */
+  setSkills: (skills: Record<string, number>) => void;
   /** Children that can use this provider. */
   children: React.ReactNode;
 }
@@ -75,6 +78,8 @@ const useLocalStorage = function <T>(key: string, initialValue: T) {
  * Keeps track (in local storage) of ESI characters and their refresh token.
  */
 export const EsiProvider = (props: EsiProps) => {
+  const eveData = React.useContext(EveDataContext);
+
   const [esi, setEsi] = React.useState<Esi>({
     loaded: undefined,
     characters: {},
@@ -137,16 +142,56 @@ export const EsiProvider = (props: EsiProps) => {
   }, [esiPrivate.accessTokens, esiPrivate.refreshTokens]);
 
   React.useEffect(() => {
+    if (!eveData.loaded) return;
+
     const characterId = esi.currentCharacter;
     if (characterId === undefined) return;
     /* Skills already fetched? We won't do it again till the user reloads. */
-    if (esi.characters[characterId]?.skills !== undefined) return;
+    const currentSkills = esi.characters[characterId]?.skills;
+    if (currentSkills !== undefined) {
+      props.setSkills(currentSkills);
+      return;
+    }
+
+    if (characterId === '.all-0' || characterId === '.all-5') {
+      const level = characterId === '.all-0' ? 0 : 5;
+
+      const skills: Record<string, number> = {};
+      for (const typeId in eveData.typeIDs) {
+        if (eveData?.typeIDs?.[typeId].categoryID !== 16) continue;
+        skills[typeId] = level;
+      }
+
+      setEsi((oldEsi: Esi) => {
+        return {
+          ...oldEsi,
+          characters: {
+            ...oldEsi.characters,
+            [characterId]: {
+              ...oldEsi.characters[characterId],
+              skills,
+              charFittings: [],
+            },
+          },
+        };
+      });
+
+      props.setSkills(skills);
+      return;
+    }
 
     ensureAccessToken(characterId).then((accessToken) => {
       if (accessToken === undefined) return;
 
       getSkills(characterId, accessToken).then((skills) => {
         if (skills === undefined) return;
+
+        /* Ensure all skills are set; also those not learnt. */
+        for (const typeId in eveData.typeIDs) {
+          if (eveData?.typeIDs?.[typeId].categoryID !== 16) continue;
+          if (skills[typeId] !== undefined) continue;
+          skills[typeId] = 0;
+        }
 
         setEsi((oldEsi: Esi) => {
           return {
@@ -160,6 +205,8 @@ export const EsiProvider = (props: EsiProps) => {
             },
           };
         });
+
+        props.setSkills(skills);
       });
 
       getCharFittings(characterId, accessToken).then((charFittings) => {
@@ -182,7 +229,7 @@ export const EsiProvider = (props: EsiProps) => {
 
     /* We only update when currentCharacter changes, and ignore all others. */
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [esi.currentCharacter]);
+  }, [esi.currentCharacter, eveData.loaded]);
 
   React.useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -265,9 +312,19 @@ export const EsiProvider = (props: EsiProps) => {
     }
 
     async function startup() {
+      const charactersDefault = {
+        '.all-0': {
+          name: 'Default character - All Skills L0',
+        },
+        '.all-5': {
+          name: 'Default character - All Skills L5',
+        },
+        ...characters,
+      };
+
       setEsi({
         loaded: true,
-        characters,
+        characters: charactersDefault,
         currentCharacter,
         changeCharacter,
         login,

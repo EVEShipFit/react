@@ -13,17 +13,9 @@ import styles from "./EsiCharacterSelection.module.css";
 export const EsiCharacterSelection = () => {
   const esi = React.useContext(EsiContext);
 
-  if (Object.keys(esi.characters ?? {}).length === 0) {
-    return <div className={styles.character}>
-      <button className={styles.noCharacter} onClick={esi.login}>
-        Login to load characters skills and fits
-      </button>
-    </div>
-  }
-
   return <div className={styles.character}>
     <select onChange={e => esi.changeCharacter(e.target.value)} value={esi.currentCharacter}>
-      {Object.entries(esi.characters).map(([id, name]) => {
+      {Object.entries(esi.characters).sort().map(([id, name]) => {
         return <option key={id} value={id}>{name.name}</option>
       })}
     </select>

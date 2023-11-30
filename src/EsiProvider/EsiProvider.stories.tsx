@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import React from "react";
 
 import { EsiContext, EsiProvider } from './';
+import { EveDataProvider } from '../EveDataProvider';
 
 const meta: Meta<typeof EsiProvider> = {
   component: EsiProvider,
@@ -33,10 +34,13 @@ const TestEsi = () => {
 
 export const Default: Story = {
   args: {
+    setSkills: (skills: Record<string, number>) => { console.log(skills); }
   },
   render: (args) => (
-    <EsiProvider {...args}>
-      <TestEsi />
-    </EsiProvider>
+    <EveDataProvider>
+      <EsiProvider {...args}>
+        <TestEsi />
+      </EsiProvider>
+    </EveDataProvider>
   ),
 };
