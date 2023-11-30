@@ -21,7 +21,7 @@ type Story = StoryObj<typeof HullListing>;
 const withEsiProvider: Decorator<{ changeHull: (typeId: number) => void, changeFit: (fit: EsiFit) => void }> = (Story, context) => {
   return (
     <EveDataProvider>
-      <EsiProvider>
+      <EsiProvider setSkills={console.log}>
         <DogmaEngineProvider>
           <ShipSnapshotProvider {...context.parameters.snapshot}>
             <div style={{height: "400px"}}>

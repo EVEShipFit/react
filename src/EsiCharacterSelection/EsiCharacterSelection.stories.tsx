@@ -3,6 +3,7 @@ import React from "react";
 
 import { EsiProvider } from '../EsiProvider';
 import { EsiCharacterSelection } from './';
+import { EveDataProvider } from '../EveDataProvider';
 
 const meta: Meta<typeof EsiCharacterSelection> = {
   component: EsiCharacterSelection,
@@ -15,9 +16,11 @@ type Story = StoryObj<typeof EsiCharacterSelection>;
 
 const withEsiProvider: Decorator<Record<string, never>> = (Story) => {
   return (
-    <EsiProvider>
-      <Story />
-    </EsiProvider>
+    <EveDataProvider>
+      <EsiProvider setSkills={console.log}>
+        <Story />
+      </EsiProvider>
+    </EveDataProvider>
   );
 }
 
