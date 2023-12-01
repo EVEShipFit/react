@@ -1,4 +1,5 @@
 export * from './DogmaEngineProvider';
+export * from './CalculationDetail';
 export * from './EsiCharacterSelection';
 export * from './EsiProvider';
 export * from './EveDataProvider';

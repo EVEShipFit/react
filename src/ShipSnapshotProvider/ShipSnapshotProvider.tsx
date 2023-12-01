@@ -2,12 +2,18 @@ import React from "react";
 
 import { DogmaEngineContext } from '../DogmaEngineProvider';
 
+export interface ShipSnapshotItemAttributeEffect {
+  operator: string,
+  penalty: boolean,
+  source: "Ship" | { Item: number },
+  source_category: string,
+  source_attribute_id: number,
+};
+
 export interface ShipSnapshotItemAttribute {
   base_value: number,
   value: number,
-  effects: {
-    penalty: boolean,
-  }[],
+  effects: ShipSnapshotItemAttributeEffect[],
 };
 
 export interface ShipSnapshotItem {
