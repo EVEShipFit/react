@@ -156,7 +156,7 @@ export const ShipStatistics = () => {
             <Icon name="mass" size={24} />
           </span>
           <span>
-            <ShipAttribute name="mass" fixed={2} /> t
+            <ShipAttribute name="mass" fixed={2} divideBy={1000} /> t
           </span>
         </span>
         <span title="Inertia Modifier" className={styles.statistic}>
