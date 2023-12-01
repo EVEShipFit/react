@@ -1,0 +1,55 @@
+.entry {
+    cursor: pointer;
+    display: flex;
+}
+.entry > span {
+    flex: 1;
+}
+.entry > span:first-child {
+    display: inline-block;
+    flex: unset;
+    width: 20px;
+}
+
+.entry > span:last-child {
+    display: inline-block;
+    flex: unset;
+    width: 60px;
+}
+.entry:hover {
+    background-color: #cccccc;
+}
+
+.header {
+    cursor: inherit;
+    font-weight: bold;
+}
+.header:hover {
+    background-color: inherit;
+}
+
+.collapsed {
+    display: none;
+}
+
+.effects {
+    background-color: #cccccc;
+    padding: 10px 20px;
+}
+
+.effect {
+    display: flex;
+}
+.effect > span:nth-child(3) {
+    flex: 1;
+}
+.effect > span:nth-child(1) {
+    width: 40px;
+}
+.effect > span:nth-child(2) {
+    width: 200px;
+}
+
+.line:nth-child(odd) {
+    background-color: #f2f2f2;
+}
