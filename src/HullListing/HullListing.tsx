@@ -34,7 +34,9 @@ const factionIdToRace: Record<number, string> = {
   1: "Non-Empire",
 } as const;
 
-const Hull = (props: { typeId: number, entry: ListingFit, changeHull: (typeId: number) => void, changeFit: (fit: EsiFit) => void }) => {
+const Hull = (props: { typeId: number, entry: ListingFit }) => {
+  const shipSnapShot = React.useContext(ShipSnapshotContext);
+
   const getChildren = React.useCallback(() => {
     if (props.entry.fits.length === 0) {
       return <TreeLeaf level={4} content={"No Item"} />;
@@ -42,31 +44,26 @@ const Hull = (props: { typeId: number, entry: ListingFit, changeHull: (typeId: n
       let index = 0;
       return <>{props.entry.fits.map((fit) => {
         index += 1;
-        return <TreeLeaf key={`${fit.ship_type_id}-${index}`} level={4} content={fit.name} onClick={() => props.changeFit(fit)} />;
+        return <TreeLeaf key={`${fit.ship_type_id}-${index}`} level={4} content={fit.name} onClick={() => shipSnapShot.changeFit(fit)} />;
       })}</>;
     }
-  }, [props]);
+  }, [props, shipSnapShot]);
 
-  function onClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+  const onClick = React.useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
     e.stopPropagation();
-    props.changeHull(props.typeId);
-  }
+    shipSnapShot.changeHull(props.typeId);
+  }, [props, shipSnapShot]);
 
   const headerAction = <TreeHeaderAction icon="simulate" onClick={onClick} />;
   const header = <TreeHeader icon={`https://images.evetech.net/types/${props.typeId}/icon?size=32`} text={props.entry.name} action={headerAction} />;
   return <TreeListing level={3} header={header} height={32} getChildren={getChildren} />;
 }
 
-const HullRace = (props: { raceId: number, entries: ListingHulls, changeHull: (typeId: number) => void, changeFit: (fit: EsiFit) => void }) => {
+const HullRace = (props: { raceId: number, entries: ListingHulls }) => {
   const getChildren = React.useCallback(() => {
-    const changeProps = {
-      changeHull: props.changeHull,
-      changeFit: props.changeFit,
-    };
-
     return <>{Object.keys(props.entries).sort((a, b) => props.entries[a].name.localeCompare(props.entries[b].name)).map((typeId) => {
       const entry = props.entries[typeId];
-      return <Hull key={typeId} typeId={parseInt(typeId)} entry={entry} {...changeProps} />
+      return <Hull key={typeId} typeId={parseInt(typeId)} entry={entry} />
     })}</>;
   }, [props]);
 
@@ -76,19 +73,14 @@ const HullRace = (props: { raceId: number, entries: ListingHulls, changeHull: (t
   return <TreeListing level={2} header={header} getChildren={getChildren} />;
 }
 
-const HullGroup = (props: { name: string, entries: ListingGroup, changeHull: (typeId: number) => void, changeFit: (fit: EsiFit) => void }) => {
+const HullGroup = (props: { name: string, entries: ListingGroup }) => {
   const getChildren = React.useCallback(() => {
-    const changeProps = {
-      changeHull: props.changeHull,
-      changeFit: props.changeFit,
-    };
-
     return <>
-      <HullRace raceId={500003} entries={props.entries.Amarr} {...changeProps} />
-      <HullRace raceId={500001} entries={props.entries.Caldari} {...changeProps} />
-      <HullRace raceId={500004} entries={props.entries.Gallente} {...changeProps} />
-      <HullRace raceId={500002} entries={props.entries.Minmatar} {...changeProps} />
-      <HullRace raceId={1} entries={props.entries.NonEmpire} {...changeProps} />
+      <HullRace raceId={500003} entries={props.entries.Amarr} />
+      <HullRace raceId={500001} entries={props.entries.Caldari} />
+      <HullRace raceId={500004} entries={props.entries.Gallente} />
+      <HullRace raceId={500002} entries={props.entries.Minmatar} />
+      <HullRace raceId={1} entries={props.entries.NonEmpire} />
     </>;
   }, [props]);
 
@@ -99,7 +91,7 @@ const HullGroup = (props: { name: string, entries: ListingGroup, changeHull: (ty
 /**
  * Show all the fittings for the current ESI character.
  */
-export const HullListing = (props: { changeHull: (typeId: number) => void, changeFit: (fit: EsiFit) => void }) => {
+export const HullListing = () => {
   const esi = React.useContext(EsiContext);
   const eveData = React.useContext(EveDataContext);
   const shipSnapShot = React.useContext(ShipSnapshotContext);
@@ -202,7 +194,7 @@ export const HullListing = (props: { changeHull: (typeId: number) => void, chang
     <div className={styles.listingContent}>
       {Object.keys(hullGroups).sort().map((groupName) => {
         const groupData = hullGroups[groupName];
-        return <HullGroup key={groupName} name={groupName} entries={groupData} changeHull={props.changeHull} changeFit={props.changeFit} />
+        return <HullGroup key={groupName} name={groupName} entries={groupData} />
       })}
     </div>
   </div>

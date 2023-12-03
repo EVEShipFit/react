@@ -45,11 +45,15 @@ interface ShipSnapshot {
 
   fit?: EsiFit;
 
+  changeHull: (typeId: number) => void;
+  changeFit: (fit: EsiFit) => void;
   setItemState: (flag: number, state: string) => void;
 }
 
 export const ShipSnapshotContext = React.createContext<ShipSnapshot>({
   loaded: undefined,
+  changeHull: () => {},
+  changeFit: () => {},
   setItemState: () => {},
 });
 
@@ -68,6 +72,8 @@ export interface ShipSnapshotProps {
 export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
   const [shipSnapshot, setShipSnapshot] = React.useState<ShipSnapshot>({
     loaded: undefined,
+    changeHull: () => {},
+    changeFit: () => {},
     setItemState: () => {},
   });
   const [currentFit, setCurrentFit] = React.useState<EsiFit | undefined>(undefined);
@@ -95,6 +101,15 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
     })
   }, [currentFit]);
 
+  const changeHull = React.useCallback((typeId: number) => {
+    setCurrentFit({
+      "name": "New Ship",
+      "description": "",
+      "ship_type_id": typeId,
+      "items": []
+    })
+  }, []);
+
   React.useEffect(() => {
     if (!dogmaEngine.loaded) return;
     if (!currentFit || !props.skills) return;
@@ -106,9 +121,11 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
       hull: snapshot.hull,
       items: snapshot.items,
       fit: currentFit,
+      changeHull,
+      changeFit: setCurrentFit,
       setItemState,
     });
-  }, [dogmaEngine, currentFit, props.skills, setItemState]);
+  }, [dogmaEngine, currentFit, props.skills, changeHull, setItemState]);
 
   React.useEffect(() => {
     setCurrentFit(props.fit);

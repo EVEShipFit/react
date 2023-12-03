@@ -6,7 +6,7 @@ import { fullFit } from '../../.storybook/fits';
 import { HullListing } from './';
 import { EsiProvider } from '../EsiProvider';
 import { EveDataProvider } from '../EveDataProvider';
-import { EsiFit, ShipSnapshotProvider } from '../ShipSnapshotProvider';
+import { ShipSnapshotProvider } from '../ShipSnapshotProvider';
 import { DogmaEngineProvider } from '../DogmaEngineProvider';
 
 const meta: Meta<typeof HullListing> = {
@@ -18,7 +18,7 @@ const meta: Meta<typeof HullListing> = {
 export default meta;
 type Story = StoryObj<typeof HullListing>;
 
-const withEsiProvider: Decorator<{ changeHull: (typeId: number) => void, changeFit: (fit: EsiFit) => void }> = (Story, context) => {
+const withEsiProvider: Decorator<Record<string, never>> = (Story, context) => {
   return (
     <EveDataProvider>
       <EsiProvider setSkills={console.log}>
@@ -36,8 +36,6 @@ const withEsiProvider: Decorator<{ changeHull: (typeId: number) => void, changeF
 
 export const Default: Story = {
   args: {
-    changeHull: (typeId: number) => console.log(`changeHull(${typeId})`),
-    changeFit: (fit: EsiFit) => console.log(`changeFit(${fit})`),
   },
   decorators: [withEsiProvider],
   parameters: {
