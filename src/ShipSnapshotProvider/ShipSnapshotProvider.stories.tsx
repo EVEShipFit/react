@@ -26,7 +26,7 @@ const TestShipSnapshot = () => {
         ShipSnapshot: loaded<br/>
         Hull:
         <ul>
-          {Array.from(shipSnapshot.hull?.attributes.entries() || []).map(([id, attribute]: [number, ShipSnapshotItemAttribute]) => <li key="{id}">{eveData?.dogmaAttributes?.[id].name} ({id}): {attribute.value}</li>)}
+          {Array.from(shipSnapshot.hull?.attributes.entries() || []).map(([id, attribute]: [number, ShipSnapshotItemAttribute]) => <li key={id}>{eveData?.dogmaAttributes?.[id].name} ({id}): {attribute.value}</li>)}
         </ul>
       </div>
     )
