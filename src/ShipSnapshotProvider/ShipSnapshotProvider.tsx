@@ -1,6 +1,7 @@
 import React from "react";
 
 import { DogmaEngineContext } from '../DogmaEngineProvider';
+import { EveDataContext } from "../EveDataProvider";
 
 export interface ShipSnapshotItemAttributeEffect {
   operator: string,
@@ -38,10 +39,21 @@ export interface EsiFit {
   }[];
 }
 
+interface ShipSnapshotSlots {
+  hislot: number;
+  medslot: number;
+  lowslot: number;
+  subsystem: number;
+  rig: number;
+};
+
+export type ShipSnapshotSlotsType = keyof ShipSnapshotSlots;
+
 interface ShipSnapshot {
   loaded?: boolean;
   hull?: ShipSnapshotItem;
   items?: ShipSnapshotItem[];
+  slots: ShipSnapshotSlots;
 
   fit?: EsiFit;
 
@@ -52,6 +64,13 @@ interface ShipSnapshot {
 
 export const ShipSnapshotContext = React.createContext<ShipSnapshot>({
   loaded: undefined,
+  slots: {
+    "hislot": 0,
+    "medslot": 0,
+    "lowslot": 0,
+    "subsystem": 0,
+    "rig": 0,
+  },
   changeHull: () => {},
   changeFit: () => {},
   setItemState: () => {},
@@ -70,8 +89,16 @@ export interface ShipSnapshotProps {
  * Calculates the current attrbitues and applied effects of a ship fit.
  */
 export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
+  const eveData = React.useContext(EveDataContext);
   const [shipSnapshot, setShipSnapshot] = React.useState<ShipSnapshot>({
     loaded: undefined,
+    slots: {
+      "hislot": 0,
+      "medslot": 0,
+      "lowslot": 0,
+      "subsystem": 0,
+      "rig": 0,
+    },
     changeHull: () => {},
     changeFit: () => {},
     setItemState: () => {},
@@ -80,10 +107,10 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
   const dogmaEngine = React.useContext(DogmaEngineContext);
 
   const setItemState = React.useCallback((flag: number, state: string) => {
-    if (!currentFit) return;
+    if (currentFit === undefined) return;
 
     setCurrentFit((oldFit: EsiFit | undefined) => {
-      if (!oldFit) return oldFit;
+      if (oldFit === undefined) return undefined;
 
       return {
         ...oldFit,
@@ -112,20 +139,42 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
 
   React.useEffect(() => {
     if (!dogmaEngine.loaded) return;
-    if (!currentFit || !props.skills) return;
+    if (currentFit === undefined || props.skills === undefined) return;
 
     const snapshot = dogmaEngine.engine?.calculate(currentFit, props.skills);
+
+    const slots = {
+      "hislot": 0,
+      "medslot": 0,
+      "lowslot": 0,
+      "subsystem": 0,
+      "rig": 0,
+    };
+
+    slots.hislot = snapshot.hull.attributes.get(eveData?.attributeMapping?.hiSlots || 0)?.value || 0;
+    slots.medslot = snapshot.hull.attributes.get(eveData?.attributeMapping?.medSlots || 0)?.value || 0;
+    slots.lowslot = snapshot.hull.attributes.get(eveData?.attributeMapping?.lowSlots || 0)?.value || 0;
+    slots.subsystem = snapshot.hull.attributes.get(eveData?.attributeMapping?.maxSubSystems || 0)?.value || 0;
+    slots.rig = snapshot.hull?.attributes.get(eveData?.attributeMapping?.rigSlots || 0)?.value || 0;
+
+    const items = snapshot.items;
+    for (const item of items) {
+      slots.hislot += item.attributes.get(eveData?.attributeMapping?.hiSlotModifier || 0)?.value || 0;
+      slots.medslot += item.attributes.get(eveData?.attributeMapping?.medSlotModifier || 0)?.value || 0;
+      slots.lowslot += item.attributes.get(eveData?.attributeMapping?.lowSlotModifier || 0)?.value || 0;
+    }
 
     setShipSnapshot({
       loaded: true,
       hull: snapshot.hull,
       items: snapshot.items,
+      slots,
       fit: currentFit,
       changeHull,
       changeFit: setCurrentFit,
       setItemState,
     });
-  }, [dogmaEngine, currentFit, props.skills, changeHull, setItemState]);
+  }, [eveData, dogmaEngine, currentFit, props.skills, changeHull, setItemState]);
 
   React.useEffect(() => {
     setCurrentFit(props.fit);
