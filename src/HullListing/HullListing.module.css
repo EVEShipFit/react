@@ -8,7 +8,7 @@
 }
 
 .listingContent {
-    height: calc(100% - 42px - 32px);
+    height: calc(100% - 42px - 32px - 5px);
     padding-right: 20px;
     overflow-y: auto;
 }
