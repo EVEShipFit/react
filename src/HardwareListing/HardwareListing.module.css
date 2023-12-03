@@ -1,0 +1,57 @@
+.listing {
+    background-color: #111111;
+    color: #c5c5c5;
+    font-size: 15px;
+    height: 100%;
+    position: relative;
+    width: 100%;
+}
+
+.listingContent {
+    height: calc(100% - 42px - 32px - 5px);
+    overflow-y: auto;
+    padding-right: 20px;
+}
+
+.topbar {
+    display: flex;
+}
+
+.topbar > input {
+    background-color: #1d1d1d;
+    color: #c5c5c5;
+    flex: 1;
+    height: 24px;
+    line-height: 24px;
+    margin: 6px 0;
+    padding-left: 6px;
+}
+
+.filter {
+    display: flex;
+    margin-bottom: 5px;
+}
+.filter > span {
+    border-radius: 5px;
+    cursor: pointer;
+    display: inline-block;
+    height: 32px;
+    line-height: 32px;
+    text-align: center;
+    user-select: none;
+    width: 32px;
+}
+.filter > span:hover {
+    background-color: #4f4f4f;
+}
+.filter > span.selected {
+    background-color: #7a7a7a;
+}
+
+.filter > span.disabled {
+    color: #7a7a7a;
+    cursor: default;
+}
+.filter > span.disabled:hover {
+    background-color: #111111;
+}

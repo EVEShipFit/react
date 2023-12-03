@@ -1,8 +1,8 @@
 .header {
     display: flex;
     height: var(--height);
-    padding: 2px 0;
     line-height: var(--height);
+    padding: 2px 0;
     user-select: none;
 }
 .header > span {
@@ -18,12 +18,13 @@
 
 .headerText {
     flex: 1;
+    white-space: nowrap;
 }
 
 .headerAction {
     cursor: pointer;
-    opacity: 0.5;
     margin-right: 4px;
+    opacity: 0.5;
 }
 .headerAction:hover {
     opacity: 1.0;
