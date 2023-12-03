@@ -1,0 +1,38 @@
+.header {
+    display: flex;
+    height: var(--height);
+    padding: 2px 0;
+    line-height: var(--height);
+    user-select: none;
+}
+.header > span {
+    margin-left: 4px;
+}
+.headerHover:hover {
+    background-color: #4f4f4f;
+}
+
+.header1 {
+    background-color: #1d1d1d;
+}
+
+.headerText {
+    flex: 1;
+}
+
+.headerAction {
+    cursor: pointer;
+    opacity: 0.5;
+    margin-right: 4px;
+}
+.headerAction:hover {
+    opacity: 1.0;
+}
+
+.content {
+    margin-left: 20px;
+}
+
+.leaf {
+    cursor: pointer;
+}

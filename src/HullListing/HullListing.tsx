@@ -5,6 +5,7 @@ import { EsiContext } from "../EsiProvider";
 import { EsiFit, ShipSnapshotContext } from "../ShipSnapshotProvider";
 import { EveDataContext } from "../EveDataProvider";
 import { Icon } from "../Icon";
+import { TreeListing, TreeHeader, TreeHeaderAction, TreeLeaf } from "../TreeListing";
 
 import styles from "./HullListing.module.css";
 
@@ -30,112 +31,69 @@ const factionIdToRace: Record<number, string> = {
   500002: "Minmatar",
   500003: "Amarr",
   500004: "Gallente",
+  1: "Non-Empire",
 } as const;
 
 const Hull = (props: { typeId: number, entry: ListingFit, changeHull: (typeId: number) => void, changeFit: (fit: EsiFit) => void }) => {
-  const [expanded, setExpanded] = React.useState(false);
-
-  let children = <></>;
-  if (expanded) {
+  const getChildren = React.useCallback(() => {
     if (props.entry.fits.length === 0) {
-      children = <>
-        <div className={clsx(styles.header4, styles.fit, styles.noitem)}>
-          No Item
-        </div>
-      </>;
+      return <TreeLeaf level={4} content={"No Item"} />;
     } else {
       let index = 0;
-      children = <>{props.entry.fits.map((fit) => {
+      return <>{props.entry.fits.map((fit) => {
         index += 1;
-        return <div key={`${fit.ship_type_id}-${index}`} className={clsx(styles.header4, styles.fit)} onClick={() => props.changeFit(fit)}>
-          {fit.name}
-        </div>
+        return <TreeLeaf key={`${fit.ship_type_id}-${index}`} level={4} content={fit.name} onClick={() => props.changeFit(fit)} />;
       })}</>;
     }
+  }, [props]);
+
+  function onClick(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    e.stopPropagation();
+    props.changeHull(props.typeId);
   }
 
-  return <div>
-    <div className={clsx(styles.header3, styles.hull)} onClick={() => setExpanded((current) => !current)}>
-      <span>
-        <Icon name={expanded ? "menu-expand" : "menu-collapse"} size={12} />
-      </span>
-      <span>
-        <img src={`https://images.evetech.net/types/${props.typeId}/icon?size=32`} alt="" />
-      </span>
-      <span>
-        {props.entry.name}
-      </span>
-      <span className={styles.hullSimulate} onClick={() => props.changeHull(props.typeId)}>
-        <Icon name="simulate" size={32} />
-      </span>
-    </div>
-    <div className={clsx(styles.level3, {[styles.collapsed]: !expanded})}>
-      {children}
-    </div>
-  </div>
+  const headerAction = <TreeHeaderAction icon="simulate" onClick={onClick} />;
+  const header = <TreeHeader icon={`https://images.evetech.net/types/${props.typeId}/icon?size=32`} text={props.entry.name} action={headerAction} />;
+  return <TreeListing level={3} header={header} height={32} getChildren={getChildren} />;
 }
 
-const HullRace = (props: { name: string, entries: ListingHulls, changeHull: (typeId: number) => void, changeFit: (fit: EsiFit) => void }) => {
-  const [expanded, setExpanded] = React.useState(false);
-
-  if (props.entries === undefined) return null;
-
-  let children = <></>;
-  if (expanded) {
+const HullRace = (props: { raceId: number, entries: ListingHulls, changeHull: (typeId: number) => void, changeFit: (fit: EsiFit) => void }) => {
+  const getChildren = React.useCallback(() => {
     const changeProps = {
       changeHull: props.changeHull,
       changeFit: props.changeFit,
     };
 
-    children = <>{Object.keys(props.entries).sort((a, b) => props.entries[a].name.localeCompare(props.entries[b].name)).map((typeId) => {
+    return <>{Object.keys(props.entries).sort((a, b) => props.entries[a].name.localeCompare(props.entries[b].name)).map((typeId) => {
       const entry = props.entries[typeId];
       return <Hull key={typeId} typeId={parseInt(typeId)} entry={entry} {...changeProps} />
     })}</>;
-  }
+  }, [props]);
 
-  return <div>
-    <div className={styles.header2} onClick={() => setExpanded((current) => !current)}>
-      <span>
-        <Icon name={expanded ? "menu-expand" : "menu-collapse"} size={12} />
-      </span>
-      {props.name} [{Object.keys(props.entries).length}]
-    </div>
-    <div className={clsx(styles.level2, {[styles.collapsed]: !expanded})}>
-      {children}
-    </div>
-  </div>
+  if (props.entries === undefined) return null;
+
+  const header = <TreeHeader icon={`https://images.evetech.net/corporations/${props.raceId}/logo?size=32`} text={`${factionIdToRace[props.raceId]} [${Object.keys(props.entries).length}]`} />;
+  return <TreeListing level={2} header={header} getChildren={getChildren} />;
 }
 
 const HullGroup = (props: { name: string, entries: ListingGroup, changeHull: (typeId: number) => void, changeFit: (fit: EsiFit) => void }) => {
-  const [expanded, setExpanded] = React.useState(false);
-
-  let children = <></>;
-  if (expanded) {
+  const getChildren = React.useCallback(() => {
     const changeProps = {
       changeHull: props.changeHull,
       changeFit: props.changeFit,
     };
 
-    children = <>
-      <HullRace name="Amarr" entries={props.entries.Amarr} {...changeProps} />
-      <HullRace name="Caldari" entries={props.entries.Caldari} {...changeProps} />
-      <HullRace name="Gallente" entries={props.entries.Gallente} {...changeProps} />
-      <HullRace name="Minmatar" entries={props.entries.Minmatar} {...changeProps} />
-      <HullRace name="Non-Empire" entries={props.entries.NonEmpire} {...changeProps} />
+    return <>
+      <HullRace raceId={500003} entries={props.entries.Amarr} {...changeProps} />
+      <HullRace raceId={500001} entries={props.entries.Caldari} {...changeProps} />
+      <HullRace raceId={500004} entries={props.entries.Gallente} {...changeProps} />
+      <HullRace raceId={500002} entries={props.entries.Minmatar} {...changeProps} />
+      <HullRace raceId={1} entries={props.entries.NonEmpire} {...changeProps} />
     </>;
-  }
+  }, [props]);
 
-  return <div>
-    <div className={styles.header1} onClick={() => setExpanded((current) => !current)}>
-      <span>
-        <Icon name={expanded ? "menu-expand" : "menu-collapse"} size={12} />
-      </span>
-      {props.name}
-    </div>
-    <div className={clsx(styles.level1, {[styles.collapsed]: !expanded})}>
-      {children}
-    </div>
-  </div>
+  const header = <TreeHeader text={`${props.name}`} />;
+  return <TreeListing level={1} header={header} getChildren={getChildren} />;
 };
 
 /**
@@ -229,7 +187,7 @@ export const HullListing = (props: { changeHull: (typeId: number) => void, chang
         <Icon name="fitting-local" size={32} title="Not yet implemented" />
       </span>
       <span className={clsx({[styles.selected]: filter.esiCharacter})} onClick={() => setFilter({...filter, esiCharacter: !filter.esiCharacter})}>
-        <Icon name="fitting-character" size={32} title="In-game character fits" />
+        <Icon name="fitting-character" size={32} title="Filter: in-game personal fittings" />
       </span>
       <span className={styles.disabled}>
         <Icon name="fitting-corporation" size={32} title="CCP didn't implement this ESI endpoint (yet?)" />
@@ -238,7 +196,7 @@ export const HullListing = (props: { changeHull: (typeId: number) => void, chang
         <Icon name="fitting-alliance" size={32} title="CCP didn't implement this ESI endpoint (yet?)" />
       </span>
       <span className={clsx({[styles.selected]: filter.currentHull})} onClick={() => setFilter({...filter, currentHull: !filter.currentHull})}>
-        <Icon name="fitting-hull" size={32} title="Current hull" />
+        <Icon name="fitting-hull" size={32} title="Filter: current hull" />
       </span>
     </div>
     <div className={styles.listingContent}>
