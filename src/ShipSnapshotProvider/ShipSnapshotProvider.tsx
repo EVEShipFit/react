@@ -57,6 +57,7 @@ interface ShipSnapshot {
 
   fit?: EsiFit;
 
+  addModule: (typeId: number, slot: ShipSnapshotSlotsType | "dronebay") => void;
   changeHull: (typeId: number) => void;
   changeFit: (fit: EsiFit) => void;
   setItemState: (flag: number, state: string) => void;
@@ -71,10 +72,19 @@ export const ShipSnapshotContext = React.createContext<ShipSnapshot>({
     "subsystem": 0,
     "rig": 0,
   },
+  addModule: () => {},
   changeHull: () => {},
   changeFit: () => {},
   setItemState: () => {},
 });
+
+const slotStart: Record<ShipSnapshotSlotsType, number> = {
+  "hislot": 27,
+  "medslot": 19,
+  "lowslot": 11,
+  "subsystem": 125,
+  "rig": 92,
+};
 
 export interface ShipSnapshotProps {
   /** Children that can use this provider. */
@@ -99,6 +109,7 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
       "subsystem": 0,
       "rig": 0,
     },
+    addModule: () => {},
     changeHull: () => {},
     changeFit: () => {},
     setItemState: () => {},
@@ -107,8 +118,6 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
   const dogmaEngine = React.useContext(DogmaEngineContext);
 
   const setItemState = React.useCallback((flag: number, state: string) => {
-    if (currentFit === undefined) return;
-
     setCurrentFit((oldFit: EsiFit | undefined) => {
       if (oldFit === undefined) return undefined;
 
@@ -126,7 +135,42 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
         }),
       };
     })
-  }, [currentFit]);
+  }, []);
+
+  const addModule = React.useCallback((typeId: number, slot: ShipSnapshotSlotsType | "dronebay") => {
+    setCurrentFit((oldFit: EsiFit | undefined) => {
+      if (oldFit === undefined) return undefined;
+
+      let flag = 0;
+
+      /* Find the first free slot for that slot-type. */
+      if (slot !== "dronebay") {
+        for (let i = slotStart[slot]; i < slotStart[slot] + shipSnapshot.slots[slot]; i++) {
+          if (oldFit.items.find((item) => item.flag === i) !== undefined) continue;
+
+          flag = i;
+          break;
+        }
+      } else {
+        flag = 87;
+      }
+
+      /* Couldn't find a free slot. */
+      if (flag === 0) return oldFit;
+
+      return {
+        ...oldFit,
+        items: [
+          ...oldFit.items,
+          {
+            flag: flag,
+            type_id: typeId,
+            quantity: 1,
+          }
+        ],
+      };
+    })
+  }, [shipSnapshot.slots]);
 
   const changeHull = React.useCallback((typeId: number) => {
     setCurrentFit({
@@ -136,6 +180,16 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
       "items": []
     })
   }, []);
+
+  React.useEffect(() => {
+    setShipSnapshot((oldSnapshot) => ({
+      ...oldSnapshot,
+      addModule,
+      changeHull,
+      changeFit: setCurrentFit,
+      setItemState,
+    }));
+  }, [addModule, changeHull, setItemState]);
 
   React.useEffect(() => {
     if (!dogmaEngine.loaded) return;
@@ -164,17 +218,17 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
       slots.lowslot += item.attributes.get(eveData?.attributeMapping?.lowSlotModifier || 0)?.value || 0;
     }
 
-    setShipSnapshot({
-      loaded: true,
-      hull: snapshot.hull,
-      items: snapshot.items,
-      slots,
-      fit: currentFit,
-      changeHull,
-      changeFit: setCurrentFit,
-      setItemState,
+    setShipSnapshot((oldSnapshot) => {
+      return {
+        ...oldSnapshot,
+        loaded: true,
+        hull: snapshot.hull,
+        items: snapshot.items,
+        slots,
+        fit: currentFit,
+      };
     });
-  }, [eveData, dogmaEngine, currentFit, props.skills, changeHull, setItemState]);
+  }, [eveData, dogmaEngine, currentFit, props.skills]);
 
   React.useEffect(() => {
     setCurrentFit(props.fit);

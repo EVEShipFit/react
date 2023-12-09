@@ -6,6 +6,7 @@ export * from './EveDataProvider';
 export * from './EveShipFitHash';
 export * from './EveShipFitLink';
 export * from './FormatEftToEsi';
+export * from './HardwareListing';
 export * from './HullListing';
 export * from './Icon';
 export * from './ShipAttribute';

@@ -263,12 +263,13 @@ export const esf = $root.esf = (() => {
             TypeID.prototype.groupID = 0;
             TypeID.prototype.categoryID = 0;
             TypeID.prototype.published = false;
-            TypeID.prototype.factionID = 0;
-            TypeID.prototype.marketGroupID = 0;
-            TypeID.prototype.capacity = 0;
-            TypeID.prototype.mass = 0;
-            TypeID.prototype.radius = 0;
-            TypeID.prototype.volume = 0;
+            TypeID.prototype.factionID = undefined;
+            TypeID.prototype.marketGroupID = undefined;
+            TypeID.prototype.metaGroupID = undefined;
+            TypeID.prototype.capacity = undefined;
+            TypeID.prototype.mass = undefined;
+            TypeID.prototype.radius = undefined;
+            TypeID.prototype.volume = undefined;
 
             TypeID.decode = function decode(r, l) {
                 if (!(r instanceof $Reader))
@@ -302,18 +303,22 @@ export const esf = $root.esf = (() => {
                             break;
                         }
                     case 7: {
-                            m.capacity = r.float();
+                            m.metaGroupID = r.int32();
                             break;
                         }
                     case 8: {
-                            m.mass = r.float();
+                            m.capacity = r.float();
                             break;
                         }
                     case 9: {
-                            m.radius = r.float();
+                            m.mass = r.float();
                             break;
                         }
                     case 10: {
+                            m.radius = r.float();
+                            break;
+                        }
+                    case 11: {
                             m.volume = r.float();
                             break;
                         }
@@ -511,7 +516,8 @@ export const esf = $root.esf = (() => {
             }
 
             MarketGroup.prototype.name = "";
-            MarketGroup.prototype.parentGroupID = 0;
+            MarketGroup.prototype.parentGroupID = undefined;
+            MarketGroup.prototype.iconID = undefined;
 
             MarketGroup.decode = function decode(r, l) {
                 if (!(r instanceof $Reader))
@@ -526,6 +532,10 @@ export const esf = $root.esf = (() => {
                         }
                     case 2: {
                             m.parentGroupID = r.int32();
+                            break;
+                        }
+                    case 3: {
+                            m.iconID = r.int32();
                             break;
                         }
                     default:
@@ -738,14 +748,14 @@ export const esf = $root.esf = (() => {
             DogmaEffect.prototype.isWarpSafe = false;
             DogmaEffect.prototype.propulsionChance = false;
             DogmaEffect.prototype.rangeChance = false;
-            DogmaEffect.prototype.dischargeAttributeID = 0;
-            DogmaEffect.prototype.durationAttributeID = 0;
-            DogmaEffect.prototype.rangeAttributeID = 0;
-            DogmaEffect.prototype.falloffAttributeID = 0;
-            DogmaEffect.prototype.trackingSpeedAttributeID = 0;
-            DogmaEffect.prototype.fittingUsageChanceAttributeID = 0;
-            DogmaEffect.prototype.resistanceAttributeID = 0;
-            DogmaEffect.prototype.modifierInfo = emptyArray;
+            DogmaEffect.prototype.dischargeAttributeID = undefined;
+            DogmaEffect.prototype.durationAttributeID = undefined;
+            DogmaEffect.prototype.rangeAttributeID = undefined;
+            DogmaEffect.prototype.falloffAttributeID = undefined;
+            DogmaEffect.prototype.trackingSpeedAttributeID = undefined;
+            DogmaEffect.prototype.fittingUsageChanceAttributeID = undefined;
+            DogmaEffect.prototype.resistanceAttributeID = undefined;
+            DogmaEffect.prototype.modifierInfo = undefined;
 
             DogmaEffect.decode = function decode(r, l) {
                 if (!(r instanceof $Reader))
@@ -855,11 +865,11 @@ export const esf = $root.esf = (() => {
 
                 ModifierInfo.prototype.domain = 0;
                 ModifierInfo.prototype.func = 0;
-                ModifierInfo.prototype.modifiedAttributeID = 0;
-                ModifierInfo.prototype.modifyingAttributeID = 0;
-                ModifierInfo.prototype.operation = 0;
-                ModifierInfo.prototype.groupID = 0;
-                ModifierInfo.prototype.skillTypeID = 0;
+                ModifierInfo.prototype.modifiedAttributeID = undefined;
+                ModifierInfo.prototype.modifyingAttributeID = undefined;
+                ModifierInfo.prototype.operation = undefined;
+                ModifierInfo.prototype.groupID = undefined;
+                ModifierInfo.prototype.skillTypeID = undefined;
 
                 ModifierInfo.decode = function decode(r, l) {
                     if (!(r instanceof $Reader))

@@ -1,1 +1,1 @@
-export const defaultDataUrl = "https://data.eveship.fit/v4.1-20231115/";
+export const defaultDataUrl = "https://data.eveship.fit/v6.1-20231115/";

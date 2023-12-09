@@ -21,6 +21,7 @@ export interface TypeID {
   published: boolean,
   factionID?: number,
   marketGroupID?: number,
+  metaGroupID?: number,
   capacity?: number,
   mass?: number,
   radius?: number,
@@ -36,6 +37,7 @@ export interface GroupID {
 export interface MarketGroup {
   name: string,
   parentGroupID?: number,
+  iconID?: number,
 }
 
 export interface DogmaAttribute {
