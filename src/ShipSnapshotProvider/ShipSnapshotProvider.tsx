@@ -21,8 +21,8 @@ export interface ShipSnapshotItem {
   type_id: number,
   quantity: number,
   flag: number,
-  state: string,
-  max_state: string,
+  state: "Passive" | "Online" | "Active" | "Overload",
+  max_state: "Passive" | "Online" | "Active" | "Overload",
   attributes: Map<number, ShipSnapshotItemAttribute>,
   effects: number[],
 }

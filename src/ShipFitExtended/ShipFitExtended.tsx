@@ -5,10 +5,6 @@ import { ShipAttribute } from "../ShipAttribute";
 
 import styles from "./ShipFitExtended.module.css";
 
-export interface ShipFitExtendedProps {
-  radius?: number;
-}
-
 const CargoHold = () => {
   return <div>
     <div className={styles.cargoIcon}>
@@ -61,15 +57,9 @@ const CpuPg = (props: { title: string, children: React.ReactNode }) => {
  * also adds the cargo hold, drone bay, and CPU/PG usage at the
  * bottom of the fit.
  */
-export const ShipFitExtended = (props: ShipFitExtendedProps) => {
-  const radius = props.radius ?? 365;
-
-  const scaleStyle = {
-    "--radius": `${radius}px`,
-  } as React.CSSProperties;
-
-  return <div className={styles.fit} style={scaleStyle}>
-    <ShipFit radius={radius} />
+export const ShipFitExtended = () => {
+  return <div className={styles.fit}>
+    <ShipFit />
 
     <div className={styles.cargoHold}>
       <CargoHold />

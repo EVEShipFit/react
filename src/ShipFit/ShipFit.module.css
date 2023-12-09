@@ -1,125 +1,124 @@
-
 .fit {
     border-radius: 50%;
     border: 1px solid black;
-    height: calc(var(--radius) * 2);
+    height: 100%;
     position: relative;
-    width: calc(var(--radius) * 2);
-
-    --radius-slots: calc(var(--radius) * 0.92);
+    width: 100%;
 }
 
-.outerBand {
-    border-radius: 50%;
-    border: calc((var(--radius) - var(--radius-slots)) * 0.8) solid black;
-    box-sizing: border-box;
-    height: calc(var(--radius) * 2);
+.ringOuter {
+    filter: drop-shadow(0 0 6px #000000);
     position: absolute;
-    width: calc(var(--radius) * 2);
+    width: 100%;
     z-index: 2;
 }
-
-.innerBand {
-    border-radius: 50%;
-    border: calc(var(--radius-slots) / 6 + var(--radius) - var(--radius-slots)) solid black;
-    box-sizing: border-box;
-    height: calc(var(--radius) * 2);
-    opacity: 0.5;
+.ringInner {
     position: absolute;
-    width: calc(var(--radius) * 2);
-    z-index: 3;
+    width: 100%;
+    z-index: 1;
 }
 
-.hull {
-    height: 1px;
-    left: var(--radius);
-    position: absolute;
-    top: var(--radius);
-    width: 1px;
-}
-
-.hullInner {
-    margin-left: calc(var(--radius) * -1);
-    margin-top: calc(var(--radius) * -1);
-}
-.hullInner > img {
-    border-radius: 50%;
-    height: calc(var(--radius) * 2);
-    width: calc(var(--radius) * 2);
-}
-
-.slots {
-    margin-left: calc(var(--radius) - var(--radius-slots));
-    margin-top: calc(var(--radius) - var(--radius-slots));
-    position: relative;
-}
-
-.slot {
-    height: 1px;
-    left: var(--radius-slots);
-    position: absolute;
-    transform-origin: 0 var(--radius-slots);
-    transform: rotate(var(--rotation));
-    width: 1px;
-    z-index: 4;
-}
-
-.slotInner {
-    border-top-left-radius: 100% 4px;
-    border-top-right-radius: 100% 4px;
-    border: 1px solid black;
-    box-sizing: border-box;
-    height: calc(var(--radius-slots) / 7);
-    left: calc(var(--radius-slots) / 7 / 2 * -1);
-    position: absolute;
-    top: 2px;
-    transform: perspective(8px) rotateX(-1.5deg);
-    width: calc(var(--radius-slots) / 7);
-}
-
-.slotInnerInvalid {
-    border: 1px solid red;
-}
-
-.slotInner[data-state="Passive"] {
-    background-color: #0000002d;
-    border-color: #6c6c6c9f;
-    opacity: 0.3;
-}
-.slotInner[data-state="Online"] {
-    background-color: #9595952d;
-    border-color: #9595959f;
-}
-.slotInner[data-state="Active"] {
-    background-color: #87d3282d;
-    border-color: #87d3289f;
-}
-.slotInner[data-state="Overload"] {
-    background-color: #e8342b2d;
-    border-color: #e8342b9f;
-}
-
-.slotItem {
-    --reverse-rotation: calc(-1 * var(--rotation));
-    left: -32px;
-    position: absolute;
-    top: calc(-32px + var(--radius-slots) / 7 / 2);
-    transform: rotate(var(--reverse-rotation)) scale(calc(var(--scale) * 0.8));
-}
-
-.slotItemOffline {
-    opacity: 0.3;
-}
-
-.slotItem > img {
-    border-top-left-radius: 32px;
-}
-
-.fitlink {
+.fitLink {
     height: 100%;
     left: 0;
     position: absolute;
     top: 0;
     width: 100%;
     z-index: 3;
+}
+
+.hull {
+    height: 100%;
+    position: absolute;
+    width: 100%;
+}
+
+.hull > img {
+    border-radius: 50%;
+    height: calc(100% - 2 * 3%);
+    left: 3%;
+    opacity: 0.8;
+    position: relative;
+    top: 3%;
+    width: calc(100% - 2 * 3%);
+}
+
+.ringTop {
+    height: 100%;
+    position: absolute;
+    width: 100%;
+}
+
+.ringTopItem {
+    height: 100%;
+    pointer-events: none;
+    position: absolute;
+    transform: rotate(var(--rotation));
+    width: 100%;
+    z-index: 4;
+}
+
+.ringTopItem > div, .ringTopItem > svg {
+    --reverse-rotation: calc(-1 * var(--rotation));
+    left: 50%;
+    pointer-events: all;
+    position: absolute;
+    top: 3.5%;
+    transform: rotate(var(--reverse-rotation));
+}
+
+.radialMenu {
+    filter: drop-shadow(0 0 2px #ffffff);
+    position: absolute;
+    margin-top: 3.5%;
+    width: 2.5%;
+}
+
+.slot {
+    height: 9.5%;
+    margin-left: -2.5%;
+    position: relative;
+    user-select: none;
+    width: 7%;
+}
+
+.slot > svg {
+    height: 100%;
+    position: absolute;
+    transform: rotate(var(--rotation));
+    width: 100%;
+    z-index: 4;
+}
+
+.slotImage {
+    height: 100%;
+    position: absolute;
+    margin-top: 8%;
+    margin-left: -10%;
+    width: 100%;
+    z-index: 5;
+}
+
+.slotImage > img {
+    border-top-left-radius: 50%;
+    width: 120%;
+}
+
+.slot > svg {
+    fill: #999999;
+    stroke: #999999;
+}
+.slot[data-state="Active"] > svg {
+    fill: #8ae04a;
+    stroke: #8ae04a;
+}
+.slot[data-state="Overload"] > svg {
+    fill: #fd2d2d;
+    stroke: #fd2d2d;
+}
+.slot[data-state="Offline"] {
+    opacity: 0.3;
+}
+.slot[data-state="Unavailable"] {
+    opacity: 0.1;
 }

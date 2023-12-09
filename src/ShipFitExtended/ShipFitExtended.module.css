@@ -2,10 +2,9 @@
     background-color: #111111;
     color: #c5c5c5;
     font-size: 15px;
-    padding-bottom: 60px;
-    padding-left: 50px;
+    height: 100%;
     position: relative;
-    width: calc(var(--radius) * 2 + 2 * 50px);
+    width: 100%;
 }
 
 .cpuPg {

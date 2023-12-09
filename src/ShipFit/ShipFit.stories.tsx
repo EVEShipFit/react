@@ -17,12 +17,14 @@ const meta: Meta<typeof ShipFit> = {
 export default meta;
 type Story = StoryObj<typeof ShipFit>;
 
-const withShipSnapshotProvider: Decorator<{ radius?: number }> = (Story, context) => {
+const withShipSnapshotProvider: Decorator<Record<string, never>> = (Story, context) => {
   return (
     <EveDataProvider>
       <DogmaEngineProvider>
         <ShipSnapshotProvider {...context.parameters.snapshot}>
-          <Story />
+          <div style={{ width: context.args.width, height: context.args.width }}>
+            <Story />
+          </div>
         </ShipSnapshotProvider>
       </DogmaEngineProvider>
     </EveDataProvider>
@@ -31,7 +33,7 @@ const withShipSnapshotProvider: Decorator<{ radius?: number }> = (Story, context
 
 export const Default: Story = {
   args: {
-    radius: 365,
+    width: 730,
   },
   decorators: [withShipSnapshotProvider],
   parameters: {

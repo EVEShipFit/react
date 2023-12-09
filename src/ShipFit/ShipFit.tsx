@@ -5,70 +5,69 @@ import { ShipSnapshotContext } from '../ShipSnapshotProvider';
 import { FitLink } from './FitLink';
 import { Hull } from './Hull';
 import { Slot } from './Slot';
+import { RadialMenu } from "./RadialMenu";
+import { RingOuter } from "./RingOuter";
+import { RingInner } from "./RingInner";
+import { RingTop, RingTopItem } from "./RingTop";
 
 import styles from "./ShipFit.module.css";
-
-export interface ShipFitProps {
-  radius?: number;
-}
 
 /**
  * Render a ship fit similar to how it is done in-game.
  */
-export const ShipFit = (props: ShipFitProps) => {
-  const radius = props.radius ?? 365;
-
+export const ShipFit = () => {
   const shipSnapshot = React.useContext(ShipSnapshotContext);
   const slots = shipSnapshot.slots;
 
-  const scaleStyle = {
-    "--radius": `${radius}px`,
-    "--scale": `${radius / 365}`
-  } as React.CSSProperties;
-
-  return <div className={styles.fit} style={scaleStyle}>
-    <div className={styles.outerBand} />
-    <div className={styles.innerBand} />
+  return <div className={styles.fit}>
+    <RingOuter />
+    <RingInner />
 
     <Hull />
     <FitLink />
 
-    <div className={styles.slots}>
-      <Slot type="subsystem" index={1} fittable={slots?.subsystem >= 1} rotation="-125deg" />
-      <Slot type="subsystem" index={2} fittable={slots?.subsystem >= 2} rotation="-114deg" />
-      <Slot type="subsystem" index={3} fittable={slots?.subsystem >= 3} rotation="-103deg" />
-      <Slot type="subsystem" index={4} fittable={slots?.subsystem >= 4} rotation="-92deg" />
+    <RingTop>
+      <RingTopItem rotation={-45}><RadialMenu type="hislot" /></RingTopItem>
 
-      <Slot type="rig" index={1} fittable={slots?.rig >= 1} rotation="-73deg" />
-      <Slot type="rig" index={2} fittable={slots?.rig >= 2} rotation="-63deg" />
-      <Slot type="rig" index={3} fittable={slots?.rig >= 3} rotation="-53deg" />
+      <RingTopItem rotation={-36.5 + 71 / 7 * 0}><Slot type="hislot" index={1} fittable={slots?.hislot >= 1} main /></RingTopItem>
+      <RingTopItem rotation={-36.5 + 71 / 7 * 1}><Slot type="hislot" index={2} fittable={slots?.hislot >= 2} /></RingTopItem>
+      <RingTopItem rotation={-36.5 + 71 / 7 * 2}><Slot type="hislot" index={3} fittable={slots?.hislot >= 3} /></RingTopItem>
+      <RingTopItem rotation={-36.5 + 71 / 7 * 3}><Slot type="hislot" index={4} fittable={slots?.hislot >= 4} /></RingTopItem>
+      <RingTopItem rotation={-36.5 + 71 / 7 * 4}><Slot type="hislot" index={5} fittable={slots?.hislot >= 5} /></RingTopItem>
+      <RingTopItem rotation={-36.5 + 71 / 7 * 5}><Slot type="hislot" index={6} fittable={slots?.hislot >= 6} /></RingTopItem>
+      <RingTopItem rotation={-36.5 + 71 / 7 * 6}><Slot type="hislot" index={7} fittable={slots?.hislot >= 7} /></RingTopItem>
+      <RingTopItem rotation={-36.5 + 71 / 7 * 7}><Slot type="hislot" index={8} fittable={slots?.hislot >= 8} /></RingTopItem>
 
-      <Slot type="hislot" index={1} fittable={slots?.hislot >= 1} rotation="-34deg" />
-      <Slot type="hislot" index={2} fittable={slots?.hislot >= 2} rotation="-24deg" />
-      <Slot type="hislot" index={3} fittable={slots?.hislot >= 3} rotation="-14deg" />
-      <Slot type="hislot" index={4} fittable={slots?.hislot >= 4} rotation="-4deg" />
-      <Slot type="hislot" index={5} fittable={slots?.hislot >= 5} rotation="6deg" />
-      <Slot type="hislot" index={6} fittable={slots?.hislot >= 6} rotation="16deg" />
-      <Slot type="hislot" index={7} fittable={slots?.hislot >= 7} rotation="26deg" />
-      <Slot type="hislot" index={8} fittable={slots?.hislot >= 8} rotation="36deg" />
+      <RingTopItem rotation={43}><RadialMenu type="medslot" /></RingTopItem>
 
-      <Slot type="medslot" index={1} fittable={slots?.medslot >= 1} rotation="55deg" />
-      <Slot type="medslot" index={2} fittable={slots?.medslot >= 2} rotation="65deg" />
-      <Slot type="medslot" index={3} fittable={slots?.medslot >= 3} rotation="75deg" />
-      <Slot type="medslot" index={4} fittable={slots?.medslot >= 4} rotation="85deg" />
-      <Slot type="medslot" index={5} fittable={slots?.medslot >= 5} rotation="95deg" />
-      <Slot type="medslot" index={6} fittable={slots?.medslot >= 6} rotation="105deg" />
-      <Slot type="medslot" index={7} fittable={slots?.medslot >= 7} rotation="115deg" />
-      <Slot type="medslot" index={8} fittable={slots?.medslot >= 8} rotation="125deg" />
+      <RingTopItem rotation={53 + 72 / 7 * 0}><Slot type="medslot" index={1} fittable={slots?.medslot >= 1} /></RingTopItem>
+      <RingTopItem rotation={53 + 72 / 7 * 1}><Slot type="medslot" index={2} fittable={slots?.medslot >= 2} /></RingTopItem>
+      <RingTopItem rotation={53 + 72 / 7 * 2}><Slot type="medslot" index={3} fittable={slots?.medslot >= 3} /></RingTopItem>
+      <RingTopItem rotation={53 + 72 / 7 * 3}><Slot type="medslot" index={4} fittable={slots?.medslot >= 4} /></RingTopItem>
+      <RingTopItem rotation={53 + 72 / 7 * 4}><Slot type="medslot" index={5} fittable={slots?.medslot >= 5} /></RingTopItem>
+      <RingTopItem rotation={53 + 72 / 7 * 5}><Slot type="medslot" index={6} fittable={slots?.medslot >= 6} /></RingTopItem>
+      <RingTopItem rotation={53 + 72 / 7 * 6}><Slot type="medslot" index={7} fittable={slots?.medslot >= 7} /></RingTopItem>
+      <RingTopItem rotation={53 + 72 / 7 * 7}><Slot type="medslot" index={8} fittable={slots?.medslot >= 8} /></RingTopItem>
 
-      <Slot type="lowslot" index={1} fittable={slots?.lowslot >= 1} rotation="144deg" />
-      <Slot type="lowslot" index={2} fittable={slots?.lowslot >= 2} rotation="154deg" />
-      <Slot type="lowslot" index={3} fittable={slots?.lowslot >= 3} rotation="164deg" />
-      <Slot type="lowslot" index={4} fittable={slots?.lowslot >= 4} rotation="174deg" />
-      <Slot type="lowslot" index={5} fittable={slots?.lowslot >= 5} rotation="184deg" />
-      <Slot type="lowslot" index={6} fittable={slots?.lowslot >= 6} rotation="194deg" />
-      <Slot type="lowslot" index={7} fittable={slots?.lowslot >= 7} rotation="204deg" />
-      <Slot type="lowslot" index={8} fittable={slots?.lowslot >= 8} rotation="214deg" />
-    </div>
+      <RingTopItem rotation={133}><RadialMenu type="lowslot" /></RingTopItem>
+
+      <RingTopItem rotation={142 + 72 / 7 * 0}><Slot type="lowslot" index={1} fittable={slots?.lowslot >= 1} /></RingTopItem>
+      <RingTopItem rotation={142 + 72 / 7 * 1}><Slot type="lowslot" index={2} fittable={slots?.lowslot >= 2} /></RingTopItem>
+      <RingTopItem rotation={142 + 72 / 7 * 2}><Slot type="lowslot" index={3} fittable={slots?.lowslot >= 3} /></RingTopItem>
+      <RingTopItem rotation={142 + 72 / 7 * 3}><Slot type="lowslot" index={4} fittable={slots?.lowslot >= 4} /></RingTopItem>
+      <RingTopItem rotation={142 + 72 / 7 * 4}><Slot type="lowslot" index={5} fittable={slots?.lowslot >= 5} /></RingTopItem>
+      <RingTopItem rotation={142 + 72 / 7 * 5}><Slot type="lowslot" index={6} fittable={slots?.lowslot >= 6} /></RingTopItem>
+      <RingTopItem rotation={142 + 72 / 7 * 6}><Slot type="lowslot" index={7} fittable={slots?.lowslot >= 7} /></RingTopItem>
+      <RingTopItem rotation={142 + 72 / 7 * 7}><Slot type="lowslot" index={8} fittable={slots?.lowslot >= 8} /></RingTopItem>
+
+      <RingTopItem rotation={-74 + 21 / 2 * 0}><Slot type="rig" index={1} fittable={slots?.rig >= 1} /></RingTopItem>
+      <RingTopItem rotation={-74 + 21 / 2 * 1}><Slot type="rig" index={2} fittable={slots?.rig >= 2} /></RingTopItem>
+      <RingTopItem rotation={-74 + 21 / 2 * 2}><Slot type="rig" index={3} fittable={slots?.rig >= 3} /></RingTopItem>
+
+      <RingTopItem rotation={-128 + 38 / 3 * 0}><Slot type="subsystem" index={1} fittable={slots?.subsystem >= 1} /></RingTopItem>
+      <RingTopItem rotation={-128 + 38 / 3 * 1}><Slot type="subsystem" index={2} fittable={slots?.subsystem >= 2} /></RingTopItem>
+      <RingTopItem rotation={-128 + 38 / 3 * 2}><Slot type="subsystem" index={3} fittable={slots?.subsystem >= 3} /></RingTopItem>
+      <RingTopItem rotation={-128 + 38 / 3 * 3}><Slot type="subsystem" index={4} fittable={slots?.subsystem >= 4} /></RingTopItem>
+    </RingTop>
   </div>
 };

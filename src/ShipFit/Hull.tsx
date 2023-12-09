@@ -17,8 +17,6 @@ export const Hull = () => {
   }
 
   return <div className={styles.hull}>
-    <div className={styles.hullInner}>
-      <img src={`https://images.evetech.net/types/${hull}/render?size=1024`} />
-    </div>
+    <img src={`https://images.evetech.net/types/${hull}/render?size=1024`} />
   </div>
 }

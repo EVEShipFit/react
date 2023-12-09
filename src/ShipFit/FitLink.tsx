@@ -50,7 +50,7 @@ export const FitLink = () => {
     onClick: isRemoteViewer ? undefined : linkPropsClick,
   };
 
-  return <div className={styles.fitlink}>
+  return <div className={styles.fitLink}>
     <svg viewBox="0 0 730 730" xmlns="http://www.w3.org/2000/svg">
       <path
         id="fitlink"
