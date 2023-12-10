@@ -43,45 +43,56 @@ export const Slot = (props: { type: string, index: number, fittable: boolean, ma
   let svg = <></>;
 
   if (props.main !== undefined) {
-    svg = <svg viewBox="235 40 52 50" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMin slice" style={{ display: "none" }}>
-      <g id="slot">
-        <path style={{ fillOpacity: 0.1, strokeWidth: 1, strokeOpacity: 0.5 }} d="M 243 46 A 210 210 0 0 1 279 46.7 L 276 84.7 A 172 172 0 0 0 246 84 L 243 46" />
-      </g>
-      <g id="slot-active">
-        <path style={{ fillOpacity: 0.6, strokeWidth: 1 }} d="M 250 84 L 254 79 L 268 79 L 272 84" />
-      </g>
-      <g id="slot-passive">
-        <path style={{ strokeWidth: 1 }} d="M 245 48 A 208 208 0 0 1 250 47.5 L 248 50 L 245 50" />
-        <path style={{ strokeWidth: 1 }} d="M 277.5 48.5 A 208 208 0 0 0 273 48 L 275 50.5 L 277.5 50.5" />
-        <path style={{ strokeWidth: 1 }} d="M 247 82 A 170 170 0 0 1 252 82 L 250 80 L 246.8 80" />
-        <path style={{ strokeWidth: 1 }} d="M 275 82.5 A 170 170 0 0 0 270 82 L 272 80 L 275.2 80" />
-      </g>
-    </svg>;
+    svg = <>
+      <svg viewBox="235 40 52 50" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMin slice" style={{ display: "none" }}>
+        <g id="slot">
+          <path style={{ fillOpacity: 0.1, strokeWidth: 1, strokeOpacity: 0.5 }} d="M 243 46 A 210 210 0 0 1 279 46.7 L 276 84.7 A 172 172 0 0 0 246 84 L 243 46" />
+        </g>
+        <g id="slot-active">
+          <path style={{ fillOpacity: 0.6, strokeWidth: 1 }} d="M 250 84 L 254 79 L 268 79 L 272 84" />
+        </g>
+        <g id="slot-passive">
+          <path style={{ strokeWidth: 1 }} d="M 245 48 A 208 208 0 0 1 250 47.5 L 248 50 L 245 50" />
+          <path style={{ strokeWidth: 1 }} d="M 277.5 48.5 A 208 208 0 0 0 273 48 L 275 50.5 L 277.5 50.5" />
+          <path style={{ strokeWidth: 1 }} d="M 247 82 A 170 170 0 0 1 252 82 L 250 80 L 246.8 80" />
+          <path style={{ strokeWidth: 1 }} d="M 275 82.5 A 170 170 0 0 0 270 82 L 272 80 L 275.2 80" />
+        </g>
+      </svg>
+      <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" style={{ display: "none" }}>
+        <g id="unfit">
+          <path style={{ fill: "none", strokeWidth: 1 }} d="M 4 6 A 8 8 0 1 1 4 14" />
+          <path style={{ fill: "none", strokeWidth: 1 }} d="M 11 6 L 6 10 L 11 14" />
+          <path style={{ fill: "none", strokeWidth: 1 }} d="M 6 10 L 16 10" />
+        </g>
+        <g id="offline">
+          <path style={{ fill: "none", strokeWidth: 1 }} d="M 12 4 A 8 8 0 1 1 6 4" />
+          <path style={{ fill: "none", strokeWidth: 1 }} d="M 9 2 L 9 12" />
+        </g>
+      </svg>
+    </>;
   }
 
   svg = <>
     {svg}
     <svg viewBox="235 40 52 50" xmlns="http://www.w3.org/2000/svg" className={styles.ringInner} preserveAspectRatio="xMidYMin slice">
       <use href="#slot" />
-      {props.fittable && active && <use href="#slot-active" />}
-      {props.fittable && !active && <use href="#slot-passive" />}
+      {props.fittable && esiItem && active && <use href="#slot-active" />}
+      {props.fittable && esiItem && !active && <use href="#slot-passive" />}
     </svg>
   </>;
 
-  /* Not fittable and nothing fitted; no need to render the slot. */
-  if (esiItem === undefined && !props.fittable) {
-    return <div className={styles.slot} data-state="Unavailable">
-      {svg}
-    </div>
-  }
+  const offlineState = React.useCallback((e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+    e.stopPropagation();
+    if (!shipSnapshot?.loaded || !esiItem) return;
 
-  if (esiItem !== undefined) {
-    item = <img src={`https://images.evetech.net/types/${esiItem.type_id}/icon?size=64`} title={eveData?.typeIDs?.[esiItem.type_id].name} />
-  }
+    if (esiItem.state === "Passive") {
+      shipSnapshot.setItemState(esiItem.flag, "Online");
+    } else {
+      shipSnapshot.setItemState(esiItem.flag, "Passive");
+    }
+  }, [shipSnapshot, esiItem]);
 
-  const state = (esiItem?.state === "Passive" && esiItem?.max_state !== "Passive") ? "Offline" : esiItem?.state;
-
-  function cycleState(e: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+  const cycleState = React.useCallback((e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     if (!shipSnapshot?.loaded || !esiItem) return;
 
     const states = stateRotation[esiItem.max_state];
@@ -95,12 +106,46 @@ export const Slot = (props: { type: string, index: number, fittable: boolean, ma
     }
 
     shipSnapshot.setItemState(esiItem.flag, newState);
+  }, [shipSnapshot, esiItem]);
+
+  const unfitModule = React.useCallback((e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+    e.stopPropagation();
+    if (!shipSnapshot?.loaded || !esiItem) return;
+
+    shipSnapshot.removeModule(esiItem.flag);
+  }, [shipSnapshot, esiItem]);
+
+  /* Not fittable and nothing fitted; no need to render the slot. */
+  if (esiItem === undefined && !props.fittable) {
+    return <div className={styles.slotOuter} data-hasitem={false}>
+      <div className={styles.slot} data-state="Unavailable">
+        {svg}
+      </div>
+    </div>
   }
 
-  return <div className={styles.slot} onClick={cycleState} data-state={state}>
-    {svg}
-    <div className={styles.slotImage}>
-      {item}
+  if (esiItem !== undefined) {
+    item = <img src={`https://images.evetech.net/types/${esiItem.type_id}/icon?size=64`} title={eveData?.typeIDs?.[esiItem.type_id].name} />
+  }
+
+  const state = (esiItem?.state === "Passive" && esiItem?.max_state !== "Passive") ? "Offline" : esiItem?.state;
+
+  return <div className={styles.slotOuter} data-hasitem={esiItem !== undefined}>
+    <div className={styles.slot} onClick={cycleState} data-state={state}>
+      {svg}
+      <div className={styles.slotImage}>
+        {item}
+      </div>
+    </div>
+    <div className={styles.slotOptions}>
+      <svg viewBox="0 0 20 20" width={20} xmlns="http://www.w3.org/2000/svg" onClick={unfitModule}>
+        <use href="#unfit" />
+      </svg>
+      {esiItem?.max_state !== "Passive" &&
+        <svg viewBox="0 0 20 20" width={20} xmlns="http://www.w3.org/2000/svg" onClick={offlineState}>
+          <use href="#offline" />
+        </svg>
+      }
     </div>
   </div>
 }
