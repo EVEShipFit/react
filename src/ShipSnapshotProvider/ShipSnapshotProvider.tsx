@@ -62,6 +62,7 @@ interface ShipSnapshot {
   changeHull: (typeId: number) => void;
   changeFit: (fit: EsiFit) => void;
   setItemState: (flag: number, state: string) => void;
+  setName: (name: string) => void;
 }
 
 export const ShipSnapshotContext = React.createContext<ShipSnapshot>({
@@ -78,6 +79,7 @@ export const ShipSnapshotContext = React.createContext<ShipSnapshot>({
   changeHull: () => {},
   changeFit: () => {},
   setItemState: () => {},
+  setName: () => {},
 });
 
 const slotStart: Record<ShipSnapshotSlotsType, number> = {
@@ -116,6 +118,7 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
     changeHull: () => {},
     changeFit: () => {},
     setItemState: () => {},
+    setName: () => {},
   });
   const [currentFit, setCurrentFit] = React.useState<EsiFit | undefined>(undefined);
   const dogmaEngine = React.useContext(DogmaEngineContext);
@@ -136,6 +139,17 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
 
           return item;
         }),
+      };
+    })
+  }, []);
+
+  const setName = React.useCallback((name: string) => {
+    setCurrentFit((oldFit: EsiFit | undefined) => {
+      if (oldFit === undefined) return undefined;
+
+      return {
+        ...oldFit,
+        name: name,
       };
     })
   }, []);
@@ -205,8 +219,9 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
       changeHull,
       changeFit: setCurrentFit,
       setItemState,
+      setName,
     }));
-  }, [addModule, removeModule, changeHull, setItemState]);
+  }, [addModule, removeModule, changeHull, setItemState, setName]);
 
   React.useEffect(() => {
     if (!dogmaEngine.loaded) return;

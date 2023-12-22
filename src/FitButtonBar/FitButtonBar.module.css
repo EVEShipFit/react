@@ -1,0 +1,87 @@
+
+.fitButtonBar {
+    padding: 10px 0;
+    width: 100%;
+}
+
+.fitButtonBar > div {
+    height: 40px;
+    margin-right: 10px;
+}
+
+.button {
+    background-color: #321d1d;
+    border: 1px solid #9f462f;
+    color: #c5c5c5;
+    cursor: pointer;
+    display: inline-block;
+    height: 40px;
+    line-height: 40px;
+    padding: 0 20px;
+    user-select: none;
+    white-space: nowrap;
+}
+.buttonSmall {
+    height: 20px;
+    line-height: 20px;
+}
+
+.button:hover {
+    background-color: #864735;
+    border-color: #c87d5e;
+}
+
+.collapsed {
+    display: none;
+}
+
+.popupButton {
+    display: inline-block;
+    position: relative;
+}
+
+.popup {
+    bottom: 40px;
+    left: 0px;
+    position: absolute;
+    z-index: 10;
+}
+.popup:before {
+    background-color: #111111;
+    border-bottom: 1px solid #303030;
+    border-right: 1px solid #303030;
+    bottom: 5px;
+    content: "";
+    display: block;
+    height: 10px;
+    left: 30px;
+    position: absolute;
+    transform: rotate(45deg);
+    width: 10px;
+}
+
+.popup > div {
+    background-color: #111111;
+    border: 1px solid #303030;
+    margin-bottom: 10px;
+    padding: 10px;
+}
+
+.renameEdit {
+    margin-right: 10px;
+}
+
+.alreadyExists {
+    text-align: center;
+    max-width: 50%;
+}
+
+.alreadyExistsButtons {
+    margin-top: 10px;
+    text-align: center;
+}
+.alreadyExistsButtons .button {
+    margin-right: 10px;
+    width: 35%;
+}
+
