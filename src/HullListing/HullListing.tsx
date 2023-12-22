@@ -4,19 +4,24 @@ import React from "react";
 import { EsiContext } from "../EsiProvider";
 import { EsiFit, ShipSnapshotContext } from "../ShipSnapshotProvider";
 import { EveDataContext } from "../EveDataProvider";
-import { Icon } from "../Icon";
+import { Icon, IconName } from "../Icon";
 import { TreeListing, TreeHeader, TreeHeaderAction, TreeLeaf } from "../TreeListing";
 import { LocalFitContext } from "../LocalFitProvider";
 
 import styles from "./HullListing.module.css";
 
 interface ListingFit {
+  origin: "local" | "esi-character";
+  fit: EsiFit;
+}
+
+interface ListingHull {
   name: string;
-  fits: EsiFit[];
+  fits: ListingFit[];
 }
 
 interface ListingHulls {
-  [typeId: string]: ListingFit;
+  [typeId: string]: ListingHull;
 }
 
 interface ListingGroup {
@@ -35,7 +40,7 @@ const factionIdToRace: Record<number, string> = {
   1: "Non-Empire",
 } as const;
 
-const Hull = (props: { typeId: number, entry: ListingFit }) => {
+const Hull = (props: { typeId: number, entry: ListingHull }) => {
   const shipSnapShot = React.useContext(ShipSnapshotContext);
 
   const getChildren = React.useCallback(() => {
@@ -43,9 +48,24 @@ const Hull = (props: { typeId: number, entry: ListingFit }) => {
       return <TreeLeaf level={4} content={"No Item"} />;
     } else {
       let index = 0;
-      return <>{props.entry.fits.sort((a, b) => a.name.localeCompare(b.name)).map((fit) => {
+      return <>{props.entry.fits.sort((a, b) => a.fit.name.localeCompare(b.fit.name)).map((fit) => {
         index += 1;
-        return <TreeLeaf key={`${fit.ship_type_id}-${index}`} level={4} content={fit.name} onClick={() => shipSnapShot.changeFit(fit)} />;
+
+        let icon: IconName | undefined;
+        let iconTitle: string | undefined;
+        switch (fit.origin) {
+          case "local":
+            icon = "fitting-local";
+            iconTitle = "Browser-stored fitting";
+            break;
+
+          case "esi-character":
+            icon = "fitting-character";
+            iconTitle = "In-game personal fitting";
+            break;
+        }
+
+        return <TreeLeaf key={`${fit.fit.ship_type_id}-${index}`} level={4} content={fit.fit.name} onClick={() => shipSnapShot.changeFit(fit.fit)} icon={icon} iconTitle={iconTitle} />;
       })}</>;
     }
   }, [props, shipSnapShot]);
@@ -106,14 +126,14 @@ export const HullListing = () => {
     currentHull: false,
   });
 
-  const [localCharacterFits, setLocalCharacterFits] = React.useState<Record<string, EsiFit[]>>({});
-  const [esiCharacterFits, setEsiCharacterFits] = React.useState<Record<string, EsiFit[]>>({});
+  const [localCharacterFits, setLocalCharacterFits] = React.useState<Record<string, ListingFit[]>>({});
+  const [esiCharacterFits, setEsiCharacterFits] = React.useState<Record<string, ListingFit[]>>({});
 
   React.useEffect(() => {
     if (!localFit.loaded) return;
     if (!localFit.fittings) return;
 
-    const newLocalCharacterFits: Record<string, EsiFit[]> = {};
+    const newLocalCharacterFits: Record<string, ListingFit[]> = {};
     for (const fit of localFit.fittings) {
       if (fit.ship_type_id === undefined) continue;
 
@@ -121,7 +141,10 @@ export const HullListing = () => {
         newLocalCharacterFits[fit.ship_type_id] = [];
       }
 
-      newLocalCharacterFits[fit.ship_type_id].push(fit);
+      newLocalCharacterFits[fit.ship_type_id].push({
+        origin: "local",
+        fit
+      });
     }
 
     setLocalCharacterFits(newLocalCharacterFits);
@@ -133,7 +156,7 @@ export const HullListing = () => {
 
     const charFittings = esi.characters[esi.currentCharacter].charFittings || [];
 
-    const newEsiCharacterFits: Record<string, EsiFit[]> = {};
+    const newEsiCharacterFits: Record<string, ListingFit[]> = {};
     for (const fit of charFittings) {
       if (fit.ship_type_id === undefined) continue;
 
@@ -141,7 +164,10 @@ export const HullListing = () => {
         newEsiCharacterFits[fit.ship_type_id] = [];
       }
 
-      newEsiCharacterFits[fit.ship_type_id].push(fit);
+      newEsiCharacterFits[fit.ship_type_id].push({
+        origin: "esi-character",
+        fit,
+      });
     }
 
     setEsiCharacterFits(newEsiCharacterFits);
@@ -161,7 +187,7 @@ export const HullListing = () => {
 
       if (filter.currentHull && shipSnapShot.fit?.ship_type_id !== parseInt(typeId)) continue;
 
-      const fits: EsiFit[] = [];
+      const fits: ListingFit[] = [];
       if (anyFilter) {
         if (filter.localCharacter && Object.keys(localCharacterFits).includes(typeId)) fits.push(...localCharacterFits[typeId]);
         if (filter.esiCharacter && Object.keys(esiCharacterFits).includes(typeId)) fits.push(...esiCharacterFits[typeId]);
