@@ -3,11 +3,11 @@ import React from "react";
 
 import { LocalFitContext } from "../LocalFitProvider";
 import { ModalDialog } from "../ModalDialog";
-import { ShipSnapshotContext } from "../ShipSnapshotProvider";
-
-import styles from "./FitButtonBar.module.css";
+import { EsiFit, ShipSnapshotContext } from "../ShipSnapshotProvider";
 import { useFormatAsEft } from "../FormatAsEft";
 import { useFormatEftToEsi } from "../FormatEftToEsi";
+
+import styles from "./FitButtonBar.module.css";
 
 const SaveButton = () => {
   const shipSnapshot = React.useContext(ShipSnapshotContext);
@@ -92,10 +92,15 @@ const ClipboardButton = () => {
     const textArea = textAreaRef.current;
     if (textArea === null) return;
 
-    const eft = textArea.value;
-    if (eft === "") return;
+    const fitString = textArea.value;
+    if (fitString === "") return;
 
-    const fit = eftToEsiFit(eft);
+    let fit: EsiFit | undefined;
+    if (fitString.startsWith("{")) {
+      fit = JSON.parse(fitString);
+    } else {
+      fit = eftToEsiFit(fitString);
+    }
     if (fit === undefined) return;
 
     shipSnapshot.changeFit(fit);
