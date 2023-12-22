@@ -6,6 +6,8 @@ const iconMapping = {
   "align-time": "texture/classes/fitting/statsicons/aligntime.png",
   "armor-hp": "texture/classes/fitting/statsicons/armorhp.png",
   "armor-repair-rate": "texture/classes/fitting/statsicons/armorrepairrate.png",
+  "cargo-hold": "texture/windowicons/ships.png",
+  "drone-bay": "texture/windowicons/dronebay.png",
   "em-resistance": "texture/classes/fitting/statsicons/emresistance.png",
   "explosive-resistance": "texture/classes/fitting/statsicons/explosiveresistance.png",
   "fitting-alliance": "texture/classes/fitting/taballiancefits.png",
