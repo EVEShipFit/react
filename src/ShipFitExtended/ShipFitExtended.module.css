@@ -7,6 +7,16 @@
     width: 100%;
 }
 
+.fitName {
+    top: 35px;
+    position: absolute;
+    left: 0px;
+}
+
+.fitNameTitle {
+    font-weight: bold;
+}
+
 .cpuPg {
     bottom: 0px;
     position: absolute;
