@@ -6,6 +6,7 @@ import { EsiFit, ShipSnapshotContext } from "../ShipSnapshotProvider";
 import { EveDataContext } from "../EveDataProvider";
 import { Icon } from "../Icon";
 import { TreeListing, TreeHeader, TreeHeaderAction, TreeLeaf } from "../TreeListing";
+import { LocalFitContext } from "../LocalFitProvider";
 
 import styles from "./HullListing.module.css";
 
@@ -93,17 +94,38 @@ const HullGroup = (props: { name: string, entries: ListingGroup }) => {
  */
 export const HullListing = () => {
   const esi = React.useContext(EsiContext);
+  const localFit = React.useContext(LocalFitContext);
   const eveData = React.useContext(EveDataContext);
   const shipSnapShot = React.useContext(ShipSnapshotContext);
 
   const [hullGroups, setHullGroups] = React.useState<ListingGroups>({});
   const [search, setSearch] = React.useState<string>("");
   const [filter, setFilter] = React.useState({
+    localCharacter: false,
     esiCharacter: false,
     currentHull: false,
   });
 
+  const [localCharacterFits, setLocalCharacterFits] = React.useState<Record<string, EsiFit[]>>({});
   const [esiCharacterFits, setEsiCharacterFits] = React.useState<Record<string, EsiFit[]>>({});
+
+  React.useEffect(() => {
+    if (!localFit.loaded) return;
+    if (!localFit.fittings) return;
+
+    const newLocalCharacterFits: Record<string, EsiFit[]> = {};
+    for (const fit of localFit.fittings) {
+      if (fit.ship_type_id === undefined) continue;
+
+      if (newLocalCharacterFits[fit.ship_type_id] === undefined) {
+        newLocalCharacterFits[fit.ship_type_id] = [];
+      }
+
+      newLocalCharacterFits[fit.ship_type_id].push(fit);
+    }
+
+    setLocalCharacterFits(newLocalCharacterFits);
+  }, [localFit]);
 
   React.useEffect(() => {
     if (!esi.loaded) return;
@@ -127,7 +149,7 @@ export const HullListing = () => {
 
   React.useEffect(() => {
     if (!eveData.loaded) return;
-    const anyFilter = filter.esiCharacter;
+    const anyFilter = filter.localCharacter || filter.esiCharacter;
 
     const newHullGroups: ListingGroups = {};
 
@@ -141,11 +163,13 @@ export const HullListing = () => {
 
       const fits: EsiFit[] = [];
       if (anyFilter) {
+        if (filter.localCharacter && Object.keys(localCharacterFits).includes(typeId)) fits.push(...localCharacterFits[typeId]);
         if (filter.esiCharacter && Object.keys(esiCharacterFits).includes(typeId)) fits.push(...esiCharacterFits[typeId]);
         if (fits.length == 0) {
           if (!filter.currentHull || shipSnapShot.fit?.ship_type_id !== parseInt(typeId)) continue;
         }
       } else {
+        if (Object.keys(localCharacterFits).includes(typeId)) fits.push(...localCharacterFits[typeId]);
         if (Object.keys(esiCharacterFits).includes(typeId)) fits.push(...esiCharacterFits[typeId]);
       }
 
@@ -168,15 +192,15 @@ export const HullListing = () => {
     }
 
     setHullGroups(newHullGroups);
-  }, [eveData, search, filter, esiCharacterFits, shipSnapShot.fit?.ship_type_id]);
+  }, [eveData, search, filter, localCharacterFits, esiCharacterFits, shipSnapShot.fit?.ship_type_id]);
 
   return <div className={styles.listing}>
     <div className={styles.topbar}>
       <input type="text" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
     </div>
     <div className={styles.filter}>
-      <span className={styles.disabled}>
-        <Icon name="fitting-local" size={32} title="Not yet implemented" />
+      <span className={clsx({[styles.selected]: filter.localCharacter})} onClick={() => setFilter({...filter, localCharacter: !filter.localCharacter})}>
+        <Icon name="fitting-local" size={32} title="Filter: Browser-stored fittings" />
       </span>
       <span className={clsx({[styles.selected]: filter.esiCharacter})} onClick={() => setFilter({...filter, esiCharacter: !filter.esiCharacter})}>
         <Icon name="fitting-character" size={32} title="Filter: in-game personal fittings" />
