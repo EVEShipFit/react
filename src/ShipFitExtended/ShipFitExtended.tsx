@@ -1,5 +1,6 @@
 import React from "react";
 
+import { Icon } from "../Icon";
 import { ShipFit } from "../ShipFit";
 import { ShipAttribute } from "../ShipAttribute";
 import { ShipSnapshotContext } from "../ShipSnapshotProvider";
@@ -9,7 +10,7 @@ import styles from "./ShipFitExtended.module.css";
 const CargoHold = () => {
   return <div>
     <div className={styles.cargoIcon}>
-      C
+      <Icon name="cargo-hold" size={32} />
     </div>
     <div className={styles.cargoText}>
       <div>
@@ -28,7 +29,7 @@ const CargoHold = () => {
 const DroneBay = () => {
   return <div>
     <div className={styles.cargoIcon}>
-      D
+      <Icon name="drone-bay" size={32} />
     </div>
     <div className={styles.cargoText}>
       <div>
