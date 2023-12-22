@@ -26,7 +26,7 @@ const withEveDataProvider: Decorator<Record<string, never>> = (Story, context) =
       <DogmaEngineProvider>
         <LocalFitProvider>
           <ShipSnapshotProvider {...context.parameters.snapshot}>
-            <div style={{marginTop: "50px"}}>
+            <div style={{marginTop: "100px"}}>
               <ModalDialogAnchor />
               <Story />
             </div>
