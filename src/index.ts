@@ -7,6 +7,7 @@ export * from './EveShipFitHash';
 export * from './EveShipFitLink';
 export * from './FitButtonBar';
 export * from './FormatEftToEsi';
+export * from './FormatAsEft';
 export * from './HardwareListing';
 export * from './HullListing';
 export * from './Icon';

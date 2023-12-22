@@ -6,6 +6,8 @@ import { ModalDialog } from "../ModalDialog";
 import { ShipSnapshotContext } from "../ShipSnapshotProvider";
 
 import styles from "./FitButtonBar.module.css";
+import { useFormatAsEft } from "../FormatAsEft";
+import { useFormatEftToEsi } from "../FormatEftToEsi";
 
 const SaveButton = () => {
   const shipSnapshot = React.useContext(ShipSnapshotContext);
@@ -66,6 +68,75 @@ const SaveButton = () => {
   </>
 }
 
+const ClipboardButton = () => {
+  const shipSnapshot = React.useContext(ShipSnapshotContext);
+  const toEft = useFormatAsEft();
+  const eftToEsiFit = useFormatEftToEsi();
+
+  const [isPopupOpen, setIsPopupOpen] = React.useState(false);
+  const [isPasteOpen, setIsPasteOpen] = React.useState(false);
+  const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
+
+  const copyToClipboard = React.useCallback(() => {
+    const eft = toEft();
+    if (eft === undefined) return;
+
+    navigator.clipboard.writeText(eft);
+
+    setIsPopupOpen(false);
+  }, [toEft]);
+
+  const importFromClipboard = React.useCallback(() => {
+    if (!shipSnapshot.loaded) return;
+
+    const textArea = textAreaRef.current;
+    if (textArea === null) return;
+
+    const eft = textArea.value;
+    if (eft === "") return;
+
+    const fit = eftToEsiFit(eft);
+    if (fit === undefined) return;
+
+    shipSnapshot.changeFit(fit);
+
+    setIsPasteOpen(false);
+    setIsPopupOpen(false);
+  }, [eftToEsiFit, shipSnapshot]);
+
+  return <>
+    <div className={styles.popupButton} onMouseOver={() => setIsPopupOpen(true)} onMouseOut={() => setIsPopupOpen(false)}>
+      <div className={styles.button}>
+        Clipboard
+      </div>
+      <div className={clsx(styles.popup, {[styles.collapsed]: !isPopupOpen})}>
+        <div>
+          <div className={styles.button} onClick={() => setIsPasteOpen(true)}>
+            Import from Clipboard
+          </div>
+          <div className={clsx(styles.button, styles.buttonMax)} onClick={() => copyToClipboard()}>
+            Copy to Clipboard
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ModalDialog visible={isPasteOpen} onClose={() => setIsPasteOpen(false)} className={styles.paste} title="Import from Clipboard">
+      <div>
+        <div>
+          Paste the EFT fit here
+        </div>
+        <div>
+          <textarea autoFocus className={styles.pasteTextarea} ref={textAreaRef} />
+        </div>
+        <span className={clsx(styles.button, styles.buttonSmall)} onClick={() => importFromClipboard()}>
+          Import
+        </span>
+      </div>
+    </ModalDialog>
+  </>
+}
+
 const RenameButton = () => {
   const shipSnapshot = React.useContext(ShipSnapshotContext);
 
@@ -106,6 +177,7 @@ const RenameButton = () => {
 export const FitButtonBar = () => {
   return <div className={styles.fitButtonBar}>
     <SaveButton />
+    <ClipboardButton />
     <RenameButton />
   </div>
 };
