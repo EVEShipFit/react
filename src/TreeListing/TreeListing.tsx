@@ -41,7 +41,7 @@ export const TreeHeader = (props: { icon?: string, text: string, action?: React.
   </>
 }
 
-export const TreeLeaf = (props: { level: number, height?: number, content: string, onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void }) => {
+export const TreeLeaf = (props: { level: number, height?: number, icon?: IconName, iconTitle?: string, content: string, onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void }) => {
   const stylesHeader = styles[`header${props.level}`];
 
   const height = props.height ?? 20;
@@ -50,6 +50,9 @@ export const TreeLeaf = (props: { level: number, height?: number, content: strin
   return <div>
       <TreeContext.Provider value={{size: height}}>
         <div style={style} className={clsx(styles.header, stylesHeader, {[styles.headerHover]: props.onClick !== undefined, [styles.leaf]: props.onClick !== undefined})} onClick={props.onClick}>
+          {props.icon !== undefined && <span className={styles.leafIcon}>
+            <Icon name={props.icon} size={12} title={props.iconTitle} />
+          </span>}
           <span className={styles.headerText}>
             {props.content}
           </span>

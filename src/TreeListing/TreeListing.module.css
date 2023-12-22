@@ -36,4 +36,12 @@
 
 .leaf {
     cursor: pointer;
+    position: relative;
+}
+
+.leafIcon {
+    left: -16px;
+    margin-top: 2px;
+    pointer-events: none;
+    position: absolute;
 }
