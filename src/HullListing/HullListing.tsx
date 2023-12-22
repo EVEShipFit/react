@@ -43,7 +43,7 @@ const Hull = (props: { typeId: number, entry: ListingFit }) => {
       return <TreeLeaf level={4} content={"No Item"} />;
     } else {
       let index = 0;
-      return <>{props.entry.fits.map((fit) => {
+      return <>{props.entry.fits.sort((a, b) => a.name.localeCompare(b.name)).map((fit) => {
         index += 1;
         return <TreeLeaf key={`${fit.ship_type_id}-${index}`} level={4} content={fit.name} onClick={() => shipSnapShot.changeFit(fit)} />;
       })}</>;
