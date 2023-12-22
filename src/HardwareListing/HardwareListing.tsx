@@ -95,11 +95,13 @@ export const HardwareListing = () => {
 
       if (slotType === undefined) continue;
 
-      if (filter.lowslot && slotType !== "lowslot") continue;
-      if (filter.medslot && slotType !== "medslot") continue;
-      if (filter.hislot && slotType !== "hislot") continue;
-      if (filter.rig_subsystem && slotType !== "rig" && slotType !== "subsystem") continue;
-      if (filter.drone && module.categoryID !== 18) continue;
+      if (filter.lowslot || filter.medslot || filter.hislot || filter.rig_subsystem || filter.drone) {
+        if (slotType === "lowslot" && !filter.lowslot) continue;
+        if (slotType === "medslot" && !filter.medslot) continue;
+        if (slotType === "hislot" && !filter.hislot) continue;
+        if ((slotType === "rig" || slotType === "subsystem") && !filter.rig_subsystem) continue;
+        if (module.categoryID === 18 && !filter.drone) continue;
+      }
 
       if (search !== "" && !module.name.toLowerCase().includes(search.toLowerCase())) continue;
 
