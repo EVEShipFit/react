@@ -129,7 +129,7 @@ const ClipboardButton = () => {
     <ModalDialog visible={isPasteOpen} onClose={() => setIsPasteOpen(false)} className={styles.paste} title="Import from Clipboard">
       <div>
         <div>
-          Paste the EFT fit here
+          Paste your fit here
         </div>
         <div>
           <textarea autoFocus className={styles.pasteTextarea} ref={textAreaRef} />
