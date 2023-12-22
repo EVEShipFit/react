@@ -1,9 +1,11 @@
 import clsx from "clsx";
 import React from "react";
 
+import { EsiFit, ShipSnapshotContext } from "../ShipSnapshotProvider";
 import { LocalFitContext } from "../LocalFitProvider";
 import { ModalDialog } from "../ModalDialog";
-import { EsiFit, ShipSnapshotContext } from "../ShipSnapshotProvider";
+import { useClipboard } from "../Helpers/Clipboard";
+import { useEveShipFitLink } from "../EveShipFitLink";
 import { useFormatAsEft } from "../FormatAsEft";
 import { useFormatEftToEsi } from "../FormatEftToEsi";
 
@@ -72,6 +74,7 @@ const ClipboardButton = () => {
   const shipSnapshot = React.useContext(ShipSnapshotContext);
   const toEft = useFormatAsEft();
   const eftToEsiFit = useFormatEftToEsi();
+  const { copy, copied } = useClipboard();
 
   const [isPopupOpen, setIsPopupOpen] = React.useState(false);
   const [isPasteOpen, setIsPasteOpen] = React.useState(false);
@@ -81,10 +84,10 @@ const ClipboardButton = () => {
     const eft = toEft();
     if (eft === undefined) return;
 
-    navigator.clipboard.writeText(eft);
+    copy(eft);
 
     setIsPopupOpen(false);
-  }, [toEft]);
+  }, [copy, toEft]);
 
   const importFromClipboard = React.useCallback(() => {
     if (!shipSnapshot.loaded) return;
@@ -112,7 +115,7 @@ const ClipboardButton = () => {
   return <>
     <div className={styles.popupButton} onMouseOver={() => setIsPopupOpen(true)} onMouseOut={() => setIsPopupOpen(false)}>
       <div className={styles.button}>
-        Clipboard
+        {copied ? "In Clipboard" : "Clipboard"}
       </div>
       <div className={clsx(styles.popup, {[styles.collapsed]: !isPopupOpen})}>
         <div>
@@ -139,6 +142,24 @@ const ClipboardButton = () => {
         </span>
       </div>
     </ModalDialog>
+  </>
+}
+
+const ShareButton = () => {
+  const link = useEveShipFitLink();
+  const { copy, copied } = useClipboard();
+
+  const onClick = React.useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    e.preventDefault();
+    copy(link);
+  }, [copy, link]);
+
+  return <>
+    <div className={styles.popupButton}>
+      <div className={styles.button} onClick={onClick}>
+      {copied ? "In Clipboard" : "Share Link"}
+      </div>
+    </div>
   </>
 }
 
@@ -183,6 +204,7 @@ export const FitButtonBar = () => {
   return <div className={styles.fitButtonBar}>
     <SaveButton />
     <ClipboardButton />
+    <ShareButton />
     <RenameButton />
   </div>
 };
