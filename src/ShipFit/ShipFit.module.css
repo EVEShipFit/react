@@ -71,6 +71,7 @@
     filter: drop-shadow(0 0 2px #ffffff);
     position: absolute;
     margin-top: 3.5%;
+    transform: rotate(var(--reverse-rotation));
     width: 2.5%;
 }
 
