@@ -2,6 +2,7 @@ import React from "react";
 
 import { ShipFit } from "../ShipFit";
 import { ShipAttribute } from "../ShipAttribute";
+import { ShipSnapshotContext } from "../ShipSnapshotProvider";
 
 import styles from "./ShipFitExtended.module.css";
 
@@ -50,6 +51,15 @@ const CpuPg = (props: { title: string, children: React.ReactNode }) => {
   </>
 }
 
+const FitName = () => {
+  const shipSnapshot = React.useContext(ShipSnapshotContext);
+
+  return <>
+    <div className={styles.fitNameTitle}>Name</div>
+    <div className={styles.fitNameContent}>{shipSnapshot?.fit?.name}</div>
+  </>
+}
+
 /**
  * Render a ship fit similar to how it is done in-game.
  *
@@ -60,6 +70,10 @@ const CpuPg = (props: { title: string, children: React.ReactNode }) => {
 export const ShipFitExtended = () => {
   return <div className={styles.fit}>
     <ShipFit />
+
+    <div className={styles.fitName}>
+      <FitName />
+    </div>
 
     <div className={styles.cargoHold}>
       <CargoHold />
