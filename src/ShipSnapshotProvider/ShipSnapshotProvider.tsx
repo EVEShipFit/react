@@ -187,13 +187,15 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
   }, []);
 
   const changeHull = React.useCallback((typeId: number) => {
+    const hullName = eveData?.typeIDs?.[typeId].name;
+
     setCurrentFit({
-      "name": "New Ship",
+      "name": `New ${hullName}`,
       "description": "",
       "ship_type_id": typeId,
       "items": []
     })
-  }, []);
+  }, [eveData]);
 
   React.useEffect(() => {
     setShipSnapshot((oldSnapshot) => ({
