@@ -16,16 +16,16 @@ import { Icon } from "../Icon";
 export const ShipStatistics = () => {
   return <div>
     <Category headerLabel="Capacitor" headerContent={
-      <span>Stable</span>
+      <span>?</span>
     }>
       <CategoryLine>
         <span>
-          <ShipAttribute name="capacity" fixed={0} /> GJ / ? s
+          <ShipAttribute name="capacitorCapacity" fixed={0} /> GJ / <ShipAttribute name="rechargeRate" fixed={2} divideBy={1000} /> s
         </span>
       </CategoryLine>
       <CategoryLine>
         <span>
-          ? GJ/s (100.0%)
+          Δ <ShipAttribute name="capacitorPeakDelta" fixed={0} /> GJ/s (<ShipAttribute name="capacitorPeakDeltaPercentage" fixed={1} />%)
         </span>
       </CategoryLine>
     </Category>
