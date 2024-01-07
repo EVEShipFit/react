@@ -4,6 +4,7 @@ import React from "react";
 import { fullFit } from '../../.storybook/fits';
 
 import { DogmaEngineProvider } from '../DogmaEngineProvider';
+import { EsiProvider } from '../EsiProvider';
 import { EveDataProvider  } from '../EveDataProvider';
 import { ShipSnapshotProvider } from '../ShipSnapshotProvider';
 import { ShipFitExtended } from './';
@@ -17,16 +18,20 @@ const meta: Meta<typeof ShipFitExtended> = {
 export default meta;
 type Story = StoryObj<typeof ShipFitExtended>;
 
-const withShipSnapshotProvider: Decorator<Record<string, never>> = (Story, context) => {
+const useShipSnapshotProvider: Decorator<Record<string, never>> = (Story, context) => {
+  const [skills, setSkills] = React.useState<Record<string, number>>({});
+
   return (
     <EveDataProvider>
-      <DogmaEngineProvider>
-        <ShipSnapshotProvider {...context.parameters.snapshot}>
-          <div style={{ width: context.args.width, height: context.args.width }}>
-            <Story />
-          </div>
-        </ShipSnapshotProvider>
-      </DogmaEngineProvider>
+      <EsiProvider setSkills={setSkills}>
+        <DogmaEngineProvider>
+          <ShipSnapshotProvider {...context.parameters.snapshot} skills={skills}>
+            <div style={{ width: context.args.width, height: context.args.width }}>
+              <Story />
+            </div>
+          </ShipSnapshotProvider>
+        </DogmaEngineProvider>
+      </EsiProvider>
     </EveDataProvider>
   );
 }
@@ -35,11 +40,10 @@ export const Default: Story = {
   args: {
     width: 730,
   },
-  decorators: [withShipSnapshotProvider],
+  decorators: [useShipSnapshotProvider],
   parameters: {
     snapshot: {
       fit: fullFit,
-      skills: {},
     }
   },
 };

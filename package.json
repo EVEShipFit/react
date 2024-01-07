@@ -62,7 +62,7 @@
     "typescript-plugin-css-modules": "^5.0.2"
   },
   "peerDependencies": {
-    "@eveshipfit/dogma-engine": "^2.3.2",
+    "@eveshipfit/dogma-engine": "^2.4.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
