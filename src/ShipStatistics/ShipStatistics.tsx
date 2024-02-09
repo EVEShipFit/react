@@ -2,6 +2,8 @@ import clsx from "clsx";
 import React from "react";
 
 import { ShipAttribute } from '../ShipAttribute';
+import { EveDataContext } from "../EveDataProvider";
+import { ShipSnapshotContext } from "../ShipSnapshotProvider";
 
 import { Category, CategoryLine } from "./Category";
 import { RechargeRate } from "./RechargeRate";
@@ -14,18 +16,37 @@ import { Icon } from "../Icon";
  * Render ship statistics similar to how it is done in-game.
  */
 export const ShipStatistics = () => {
+  const eveData = React.useContext(EveDataContext);
+  const shipSnapshot = React.useContext(ShipSnapshotContext);
+
+  let capacitorState = "Stable";
+
+  if (shipSnapshot?.loaded) {
+    const attributeId = eveData.attributeMapping?.capacitorDepletesIn || 0;
+    const capacitorDepletesIn = shipSnapshot.hull?.attributes.get(attributeId)?.value;
+
+    if (capacitorDepletesIn !== undefined && capacitorDepletesIn > 0) {
+      const hours = Math.floor(capacitorDepletesIn / 3600);
+      const minutes = Math.floor((capacitorDepletesIn % 3600) / 60);
+      const seconds = Math.floor(capacitorDepletesIn % 60);
+      capacitorState = `Depletes in ${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+    } else {
+      capacitorState = "Stable";
+    }
+  }
+
   return <div>
     <Category headerLabel="Capacitor" headerContent={
-      <span>?</span>
+      <span className={clsx({[styles.capacitorStable]: capacitorState === "Stable", [styles.capacitorUnstable]: capacitorState !== "Stable"})}>{capacitorState}</span>
     }>
       <CategoryLine>
         <span>
-          <ShipAttribute name="capacitorCapacity" fixed={0} /> GJ / <ShipAttribute name="rechargeRate" fixed={2} divideBy={1000} /> s
+          <ShipAttribute name="capacitorCapacity" fixed={1} /> GJ / <ShipAttribute name="rechargeRate" fixed={2} divideBy={1000} /> s
         </span>
       </CategoryLine>
       <CategoryLine>
         <span>
-          Δ <ShipAttribute name="capacitorPeakDelta" fixed={0} /> GJ/s (<ShipAttribute name="capacitorPeakDeltaPercentage" fixed={1} />%)
+          Δ <ShipAttribute name="capacitorPeakDelta" fixed={1} /> GJ/s (<ShipAttribute name="capacitorPeakDeltaPercentage" fixed={1} />%)
         </span>
       </CategoryLine>
     </Category>
