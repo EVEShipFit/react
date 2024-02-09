@@ -145,3 +145,10 @@
 .rechargeRateDropdownContent > div:hover {
     background-color: #4e4e4e;
 }
+
+.capacitorStable {
+    color: #8dc169;
+}
+.capacitorUnstable {
+    color: #ff454b;
+}
