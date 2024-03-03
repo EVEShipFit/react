@@ -24,21 +24,43 @@ interface ListingGroup {
   items: ListingItem[];
 }
 
-const ModuleGroup = (props: { level: number, group: ListingGroup }) => {
+const ModuleGroup = (props: { level: number; group: ListingGroup }) => {
   const shipSnapShot = React.useContext(ShipSnapshotContext);
 
   const getChildren = React.useCallback(() => {
-    return <>
-      {props.group.items.sort((a, b) => a.meta - b.meta || a.name.localeCompare(b.name)).map((item) => {
-        return <TreeLeaf key={item.typeId} level={2} content={item.name} onClick={() => shipSnapShot.addModule(item.typeId, item.slotType)} />;
-      })}
-      {Object.keys(props.group.groups).sort((a, b) => props.group.groups[a].meta - props.group.groups[b].meta || props.group.groups[a].name.localeCompare(props.group.groups[b].name)).map((groupId) => {
-        return <ModuleGroup key={groupId} level={props.level + 1} group={props.group.groups[groupId]} />
-      })}
-    </>;
+    return (
+      <>
+        {props.group.items
+          .sort((a, b) => a.meta - b.meta || a.name.localeCompare(b.name))
+          .map((item) => {
+            return (
+              <TreeLeaf
+                key={item.typeId}
+                level={2}
+                content={item.name}
+                onClick={() => shipSnapShot.addModule(item.typeId, item.slotType)}
+              />
+            );
+          })}
+        {Object.keys(props.group.groups)
+          .sort(
+            (a, b) =>
+              props.group.groups[a].meta - props.group.groups[b].meta ||
+              props.group.groups[a].name.localeCompare(props.group.groups[b].name),
+          )
+          .map((groupId) => {
+            return <ModuleGroup key={groupId} level={props.level + 1} group={props.group.groups[groupId]} />;
+          })}
+      </>
+    );
   }, [props, shipSnapShot]);
 
-  const header = <TreeHeader icon={props.group.iconID === undefined ? "" : `${defaultDataUrl}icons/${props.group.iconID}.png`} text={props.group.name} />;
+  const header = (
+    <TreeHeader
+      icon={props.group.iconID === undefined ? "" : `${defaultDataUrl}icons/${props.group.iconID}.png`}
+      text={props.group.name}
+    />
+  );
   return <TreeListing level={props.level} header={header} getChildren={getChildren} />;
 };
 
@@ -76,19 +98,27 @@ export const HardwareListing = () => {
     for (const typeId in eveData.typeIDs) {
       const module = eveData.typeIDs[typeId];
       /* Modules (7), Drones (18), Subsystems (32), and Structures (66) */
-      if (module.categoryID !== 7 && module.categoryID !== 18 && module.categoryID !== 32 && module.categoryID !== 66) continue;
+      if (module.categoryID !== 7 && module.categoryID !== 18 && module.categoryID !== 32 && module.categoryID !== 66)
+        continue;
       if (module.marketGroupID === undefined) continue;
       if (!module.published) continue;
 
-      let slotType: ShipSnapshotSlotsType | "dronebay" | undefined = eveData.typeDogma?.[typeId]?.dogmaEffects.map((effect) => {
-        switch (effect.effectID) {
-          case 11: return "lowslot";
-          case 13: return "medslot";
-          case 12: return "hislot";
-          case 2663: return "rig";
-          case 3772: return "subsystem";
-        }
-      }).filter((slot) => slot !== undefined)[0];
+      let slotType: ShipSnapshotSlotsType | "dronebay" | undefined = eveData.typeDogma?.[typeId]?.dogmaEffects
+        .map((effect) => {
+          switch (effect.effectID) {
+            case 11:
+              return "lowslot";
+            case 13:
+              return "medslot";
+            case 12:
+              return "hislot";
+            case 2663:
+              return "rig";
+            case 3772:
+              return "subsystem";
+          }
+        })
+        .filter((slot) => slot !== undefined)[0];
       if (module.categoryID === 18) {
         slotType = "dronebay";
       }
@@ -191,31 +221,50 @@ export const HardwareListing = () => {
     setModuleGroups(newModuleGroups);
   }, [eveData, search, filter]);
 
-  return <div className={styles.listing}>
-    <div className={styles.topbar}>
-      <input type="text" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
+  return (
+    <div className={styles.listing}>
+      <div className={styles.topbar}>
+        <input type="text" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
+      </div>
+      <div className={styles.filter}>
+        <span
+          className={clsx({ [styles.selected]: filter.lowslot })}
+          onClick={() => setFilter({ ...filter, lowslot: !filter.lowslot })}
+        >
+          <Icon name="fitting-lowslot" size={32} title="Filter: Low Slot" />
+        </span>
+        <span
+          className={clsx({ [styles.selected]: filter.medslot })}
+          onClick={() => setFilter({ ...filter, medslot: !filter.medslot })}
+        >
+          <Icon name="fitting-medslot" size={32} title="Filter: Mid Slot" />
+        </span>
+        <span
+          className={clsx({ [styles.selected]: filter.hislot })}
+          onClick={() => setFilter({ ...filter, hislot: !filter.hislot })}
+        >
+          <Icon name="fitting-hislot" size={32} title="Filter: High Slot" />
+        </span>
+        <span
+          className={clsx({ [styles.selected]: filter.rig_subsystem })}
+          onClick={() => setFilter({ ...filter, rig_subsystem: !filter.rig_subsystem })}
+        >
+          <Icon name="fitting-rig-subsystem" size={32} title="Filter: Rig & Subsystem Slots" />
+        </span>
+        <span
+          className={clsx({ [styles.selected]: filter.drone })}
+          onClick={() => setFilter({ ...filter, drone: !filter.drone })}
+        >
+          <Icon name="fitting-drones" size={32} title="Filter: Drones" />
+        </span>
+      </div>
+      <div className={styles.listingContent}>
+        {Object.keys(moduleGroups.groups)
+          .sort((a, b) => moduleGroups.groups[a].name.localeCompare(moduleGroups.groups[b].name))
+          .map((groupId) => {
+            return <ModuleGroup key={groupId} level={1} group={moduleGroups.groups[groupId]} />;
+          })}
+      </div>
     </div>
-    <div className={styles.filter}>
-      <span className={clsx({[styles.selected]: filter.lowslot})} onClick={() => setFilter({...filter, lowslot: !filter.lowslot})}>
-        <Icon name="fitting-lowslot" size={32} title="Filter: Low Slot" />
-      </span>
-      <span className={clsx({[styles.selected]: filter.medslot})} onClick={() => setFilter({...filter, medslot: !filter.medslot})}>
-        <Icon name="fitting-medslot" size={32} title="Filter: Mid Slot" />
-      </span>
-      <span className={clsx({[styles.selected]: filter.hislot})} onClick={() => setFilter({...filter, hislot: !filter.hislot})}>
-        <Icon name="fitting-hislot" size={32} title="Filter: High Slot" />
-      </span>
-      <span className={clsx({[styles.selected]: filter.rig_subsystem})} onClick={() => setFilter({...filter, rig_subsystem: !filter.rig_subsystem})}>
-        <Icon name="fitting-rig-subsystem" size={32} title="Filter: Rig & Subsystem Slots" />
-      </span>
-      <span className={clsx({[styles.selected]: filter.drone})} onClick={() => setFilter({...filter, drone: !filter.drone})}>
-        <Icon name="fitting-drones" size={32} title="Filter: Drones" />
-      </span>
-    </div>
-    <div className={styles.listingContent}>
-      {Object.keys(moduleGroups.groups).sort((a, b) => moduleGroups.groups[a].name.localeCompare(moduleGroups.groups[b].name)).map((groupId) => {
-        return <ModuleGroup key={groupId} level={1} group={moduleGroups.groups[groupId]} />
-      })}
-    </div>
-  </div>
+  );
 };

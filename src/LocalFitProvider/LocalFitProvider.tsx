@@ -33,13 +33,16 @@ export const LocalFitProvider = (props: LocalFitProps) => {
 
   const [localFitValue, setLocalFitValue] = useLocalStorage<EsiFit[]>("fits", []);
 
-  const addFit = React.useCallback((fit: EsiFit) => {
-    setLocalFitValue((oldFits) => {
-      const newFits = oldFits.filter((oldFit) => oldFit.name !== fit.name);
-      newFits.push(fit);
-      return newFits;
-    });
-  }, [setLocalFitValue]);
+  const addFit = React.useCallback(
+    (fit: EsiFit) => {
+      setLocalFitValue((oldFits) => {
+        const newFits = oldFits.filter((oldFit) => oldFit.name !== fit.name);
+        newFits.push(fit);
+        return newFits;
+      });
+    },
+    [setLocalFitValue],
+  );
 
   React.useEffect(() => {
     setLocalFit({
@@ -49,7 +52,5 @@ export const LocalFitProvider = (props: LocalFitProps) => {
     });
   }, [localFitValue, addFit]);
 
-  return <LocalFitContext.Provider value={localFit}>
-    {props.children}
-  </LocalFitContext.Provider>
+  return <LocalFitContext.Provider value={localFit}>{props.children}</LocalFitContext.Provider>;
 };

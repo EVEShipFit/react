@@ -37,12 +37,15 @@ export const ModalDialog = (props: ModalDialogProps) => {
   if (!props.visible) return null;
   if (modalDialogAnchor === null) return null;
 
-  return createPortal(<div className={styles.modalDialog} onClick={() => props.onClose()}>
-    <div className={clsx(styles.content, props.className)} onClick={(e) => e.stopPropagation()}>
-      <div className={styles.header}>{props.title}</div>
-      {props.children}
-    </div>
-  </div>, modalDialogAnchor);
+  return createPortal(
+    <div className={styles.modalDialog} onClick={() => props.onClose()}>
+      <div className={clsx(styles.content, props.className)} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.header}>{props.title}</div>
+        {props.children}
+      </div>
+    </div>,
+    modalDialogAnchor,
+  );
 };
 
 /**
@@ -52,6 +55,5 @@ export const ModalDialog = (props: ModalDialogProps) => {
  * will always use the full size of this <div> when rendering its content.
  */
 export const ModalDialogAnchor = () => {
-  return <div id="modalDialogAnchor">
-  </div>
-}
+  return <div id="modalDialogAnchor"></div>;
+};

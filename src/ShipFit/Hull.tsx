@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ShipSnapshotContext } from '../ShipSnapshotProvider';
+import { ShipSnapshotContext } from "../ShipSnapshotProvider";
 
 import styles from "./ShipFit.module.css";
 
@@ -13,10 +13,12 @@ export const Hull = () => {
 
   const hull = shipSnapshot?.fit?.ship_type_id;
   if (hull === undefined) {
-    return <></>
+    return <></>;
   }
 
-  return <div className={styles.hull}>
-    <img src={`https://images.evetech.net/types/${hull}/render?size=1024`} />
-  </div>
-}
+  return (
+    <div className={styles.hull}>
+      <img src={`https://images.evetech.net/types/${hull}/render?size=1024`} />
+    </div>
+  );
+};

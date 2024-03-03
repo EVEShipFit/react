@@ -1,12 +1,12 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 
-import { LocalFitContext, LocalFitProvider } from './';
+import { LocalFitContext, LocalFitProvider } from "./";
 
 const meta: Meta<typeof LocalFitProvider> = {
   component: LocalFitProvider,
-  tags: ['autodocs'],
-  title: 'Provider/LocalFitProvider',
+  tags: ["autodocs"],
+  title: "Provider/LocalFitProvider",
 };
 
 export default meta;
@@ -18,22 +18,23 @@ const TestLocalFit = () => {
   if (!localFit.loaded) {
     return (
       <div>
-        LocalFit: loading<br/>
+        LocalFit: loading
+        <br />
       </div>
     );
   }
 
   return (
     <div>
-      LocalFit: loaded<br/>
+      LocalFit: loaded
+      <br />
       <pre>{JSON.stringify(localFit, null, 2)}</pre>
     </div>
   );
-}
+};
 
 export const Default: Story = {
-  args: {
-  },
+  args: {},
   render: (args) => (
     <LocalFitProvider {...args}>
       <TestLocalFit />

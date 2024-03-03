@@ -9,7 +9,8 @@
     "build": "rollup -c",
     "build-storybook": "storybook build",
     "dev": "storybook dev -p 6006 --no-open",
-    "lint": "eslint src --ext .js,.tsx --cache"
+    "lint": "eslint src --ext .js,.tsx --cache && prettier -c src",
+    "prettier": "prettier -w src"
   },
   "repository": {
     "type": "git",

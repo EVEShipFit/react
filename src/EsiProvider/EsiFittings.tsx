@@ -6,7 +6,7 @@ export async function getCharFittings(characterId: string, accessToken: string):
     response = await fetch(`https://esi.evetech.net/v1/characters/${characterId}/fittings/`, {
       headers: {
         authorization: `Bearer ${accessToken}`,
-        'content-type': 'application/json',
+        "content-type": "application/json",
       },
     });
   } catch (e) {

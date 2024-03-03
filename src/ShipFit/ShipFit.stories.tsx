@@ -1,17 +1,17 @@
-import type { Decorator, Meta, StoryObj } from '@storybook/react';
+import type { Decorator, Meta, StoryObj } from "@storybook/react";
 import React from "react";
 
-import { fullFit } from '../../.storybook/fits';
+import { fullFit } from "../../.storybook/fits";
 
-import { DogmaEngineProvider } from '../DogmaEngineProvider';
-import { EveDataProvider  } from '../EveDataProvider';
-import { ShipSnapshotProvider } from '../ShipSnapshotProvider';
-import { ShipFit } from './';
+import { DogmaEngineProvider } from "../DogmaEngineProvider";
+import { EveDataProvider } from "../EveDataProvider";
+import { ShipSnapshotProvider } from "../ShipSnapshotProvider";
+import { ShipFit } from "./";
 
 const meta: Meta<typeof ShipFit> = {
   component: ShipFit,
-  tags: ['autodocs'],
-  title: 'Component/ShipFit',
+  tags: ["autodocs"],
+  title: "Component/ShipFit",
 };
 
 export default meta;
@@ -29,7 +29,7 @@ const withShipSnapshotProvider: Decorator<Record<string, never>> = (Story, conte
       </DogmaEngineProvider>
     </EveDataProvider>
   );
-}
+};
 
 export const Default: Story = {
   args: {
@@ -40,6 +40,6 @@ export const Default: Story = {
     snapshot: {
       fit: fullFit,
       skills: {},
-    }
+    },
   },
 };

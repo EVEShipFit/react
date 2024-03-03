@@ -40,7 +40,7 @@ const factionIdToRace: Record<number, string> = {
   1: "Non-Empire",
 } as const;
 
-const Hull = (props: { typeId: number, entry: ListingHull }) => {
+const Hull = (props: { typeId: number; entry: ListingHull }) => {
   const shipSnapShot = React.useContext(ShipSnapshotContext);
 
   const getChildren = React.useCallback(() => {
@@ -48,61 +48,98 @@ const Hull = (props: { typeId: number, entry: ListingHull }) => {
       return <TreeLeaf level={4} content={"No Item"} />;
     } else {
       let index = 0;
-      return <>{props.entry.fits.sort((a, b) => a.fit.name.localeCompare(b.fit.name)).map((fit) => {
-        index += 1;
+      return (
+        <>
+          {props.entry.fits
+            .sort((a, b) => a.fit.name.localeCompare(b.fit.name))
+            .map((fit) => {
+              index += 1;
 
-        let icon: IconName | undefined;
-        let iconTitle: string | undefined;
-        switch (fit.origin) {
-          case "local":
-            icon = "fitting-local";
-            iconTitle = "Browser-stored fitting";
-            break;
+              let icon: IconName | undefined;
+              let iconTitle: string | undefined;
+              switch (fit.origin) {
+                case "local":
+                  icon = "fitting-local";
+                  iconTitle = "Browser-stored fitting";
+                  break;
 
-          case "esi-character":
-            icon = "fitting-character";
-            iconTitle = "In-game personal fitting";
-            break;
-        }
+                case "esi-character":
+                  icon = "fitting-character";
+                  iconTitle = "In-game personal fitting";
+                  break;
+              }
 
-        return <TreeLeaf key={`${fit.fit.ship_type_id}-${index}`} level={4} content={fit.fit.name} onClick={() => shipSnapShot.changeFit(fit.fit)} icon={icon} iconTitle={iconTitle} />;
-      })}</>;
+              return (
+                <TreeLeaf
+                  key={`${fit.fit.ship_type_id}-${index}`}
+                  level={4}
+                  content={fit.fit.name}
+                  onClick={() => shipSnapShot.changeFit(fit.fit)}
+                  icon={icon}
+                  iconTitle={iconTitle}
+                />
+              );
+            })}
+        </>
+      );
     }
   }, [props, shipSnapShot]);
 
-  const onClick = React.useCallback((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    e.stopPropagation();
-    shipSnapShot.changeHull(props.typeId);
-  }, [props, shipSnapShot]);
+  const onClick = React.useCallback(
+    (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+      e.stopPropagation();
+      shipSnapShot.changeHull(props.typeId);
+    },
+    [props, shipSnapShot],
+  );
 
   const headerAction = <TreeHeaderAction icon="simulate" onClick={onClick} />;
-  const header = <TreeHeader icon={`https://images.evetech.net/types/${props.typeId}/icon?size=32`} text={props.entry.name} action={headerAction} />;
+  const header = (
+    <TreeHeader
+      icon={`https://images.evetech.net/types/${props.typeId}/icon?size=32`}
+      text={props.entry.name}
+      action={headerAction}
+    />
+  );
   return <TreeListing level={3} header={header} height={32} getChildren={getChildren} />;
-}
+};
 
-const HullRace = (props: { raceId: number, entries: ListingHulls }) => {
+const HullRace = (props: { raceId: number; entries: ListingHulls }) => {
   const getChildren = React.useCallback(() => {
-    return <>{Object.keys(props.entries).sort((a, b) => props.entries[a].name.localeCompare(props.entries[b].name)).map((typeId) => {
-      const entry = props.entries[typeId];
-      return <Hull key={typeId} typeId={parseInt(typeId)} entry={entry} />
-    })}</>;
+    return (
+      <>
+        {Object.keys(props.entries)
+          .sort((a, b) => props.entries[a].name.localeCompare(props.entries[b].name))
+          .map((typeId) => {
+            const entry = props.entries[typeId];
+            return <Hull key={typeId} typeId={parseInt(typeId)} entry={entry} />;
+          })}
+      </>
+    );
   }, [props]);
 
   if (props.entries === undefined) return null;
 
-  const header = <TreeHeader icon={`https://images.evetech.net/corporations/${props.raceId}/logo?size=32`} text={`${factionIdToRace[props.raceId]} [${Object.keys(props.entries).length}]`} />;
+  const header = (
+    <TreeHeader
+      icon={`https://images.evetech.net/corporations/${props.raceId}/logo?size=32`}
+      text={`${factionIdToRace[props.raceId]} [${Object.keys(props.entries).length}]`}
+    />
+  );
   return <TreeListing level={2} header={header} getChildren={getChildren} />;
-}
+};
 
-const HullGroup = (props: { name: string, entries: ListingGroup }) => {
+const HullGroup = (props: { name: string; entries: ListingGroup }) => {
   const getChildren = React.useCallback(() => {
-    return <>
-      <HullRace raceId={500003} entries={props.entries.Amarr} />
-      <HullRace raceId={500001} entries={props.entries.Caldari} />
-      <HullRace raceId={500004} entries={props.entries.Gallente} />
-      <HullRace raceId={500002} entries={props.entries.Minmatar} />
-      <HullRace raceId={1} entries={props.entries.NonEmpire} />
-    </>;
+    return (
+      <>
+        <HullRace raceId={500003} entries={props.entries.Amarr} />
+        <HullRace raceId={500001} entries={props.entries.Caldari} />
+        <HullRace raceId={500004} entries={props.entries.Gallente} />
+        <HullRace raceId={500002} entries={props.entries.Minmatar} />
+        <HullRace raceId={1} entries={props.entries.NonEmpire} />
+      </>
+    );
   }, [props]);
 
   const header = <TreeHeader text={`${props.name}`} />;
@@ -143,7 +180,7 @@ export const HullListing = () => {
 
       newLocalCharacterFits[fit.ship_type_id].push({
         origin: "local",
-        fit
+        fit,
       });
     }
 
@@ -189,8 +226,10 @@ export const HullListing = () => {
 
       const fits: ListingFit[] = [];
       if (anyFilter) {
-        if (filter.localCharacter && Object.keys(localCharacterFits).includes(typeId)) fits.push(...localCharacterFits[typeId]);
-        if (filter.esiCharacter && Object.keys(esiCharacterFits).includes(typeId)) fits.push(...esiCharacterFits[typeId]);
+        if (filter.localCharacter && Object.keys(localCharacterFits).includes(typeId))
+          fits.push(...localCharacterFits[typeId]);
+        if (filter.esiCharacter && Object.keys(esiCharacterFits).includes(typeId))
+          fits.push(...esiCharacterFits[typeId]);
         if (fits.length == 0) {
           if (!filter.currentHull || shipSnapShot.fit?.ship_type_id !== parseInt(typeId)) continue;
         }
@@ -214,38 +253,51 @@ export const HullListing = () => {
       newHullGroups[group][race][typeId] = {
         name: hull.name,
         fits,
-      }
+      };
     }
 
     setHullGroups(newHullGroups);
   }, [eveData, search, filter, localCharacterFits, esiCharacterFits, shipSnapShot.fit?.ship_type_id]);
 
-  return <div className={styles.listing}>
-    <div className={styles.topbar}>
-      <input type="text" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
+  return (
+    <div className={styles.listing}>
+      <div className={styles.topbar}>
+        <input type="text" placeholder="Search" value={search} onChange={(e) => setSearch(e.target.value)} />
+      </div>
+      <div className={styles.filter}>
+        <span
+          className={clsx({ [styles.selected]: filter.localCharacter })}
+          onClick={() => setFilter({ ...filter, localCharacter: !filter.localCharacter })}
+        >
+          <Icon name="fitting-local" size={32} title="Filter: Browser-stored fittings" />
+        </span>
+        <span
+          className={clsx({ [styles.selected]: filter.esiCharacter })}
+          onClick={() => setFilter({ ...filter, esiCharacter: !filter.esiCharacter })}
+        >
+          <Icon name="fitting-character" size={32} title="Filter: in-game personal fittings" />
+        </span>
+        <span className={styles.disabled}>
+          <Icon name="fitting-corporation" size={32} title="CCP didn't implement this ESI endpoint (yet?)" />
+        </span>
+        <span className={styles.disabled}>
+          <Icon name="fitting-alliance" size={32} title="CCP didn't implement this ESI endpoint (yet?)" />
+        </span>
+        <span
+          className={clsx({ [styles.selected]: filter.currentHull })}
+          onClick={() => setFilter({ ...filter, currentHull: !filter.currentHull })}
+        >
+          <Icon name="fitting-hull" size={32} title="Filter: current hull" />
+        </span>
+      </div>
+      <div className={styles.listingContent}>
+        {Object.keys(hullGroups)
+          .sort()
+          .map((groupName) => {
+            const groupData = hullGroups[groupName];
+            return <HullGroup key={groupName} name={groupName} entries={groupData} />;
+          })}
+      </div>
     </div>
-    <div className={styles.filter}>
-      <span className={clsx({[styles.selected]: filter.localCharacter})} onClick={() => setFilter({...filter, localCharacter: !filter.localCharacter})}>
-        <Icon name="fitting-local" size={32} title="Filter: Browser-stored fittings" />
-      </span>
-      <span className={clsx({[styles.selected]: filter.esiCharacter})} onClick={() => setFilter({...filter, esiCharacter: !filter.esiCharacter})}>
-        <Icon name="fitting-character" size={32} title="Filter: in-game personal fittings" />
-      </span>
-      <span className={styles.disabled}>
-        <Icon name="fitting-corporation" size={32} title="CCP didn't implement this ESI endpoint (yet?)" />
-      </span>
-      <span className={styles.disabled}>
-        <Icon name="fitting-alliance" size={32} title="CCP didn't implement this ESI endpoint (yet?)" />
-      </span>
-      <span className={clsx({[styles.selected]: filter.currentHull})} onClick={() => setFilter({...filter, currentHull: !filter.currentHull})}>
-        <Icon name="fitting-hull" size={32} title="Filter: current hull" />
-      </span>
-    </div>
-    <div className={styles.listingContent}>
-      {Object.keys(hullGroups).sort().map((groupName) => {
-        const groupData = hullGroups[groupName];
-        return <HullGroup key={groupName} name={groupName} entries={groupData} />
-      })}
-    </div>
-  </div>
+  );
 };

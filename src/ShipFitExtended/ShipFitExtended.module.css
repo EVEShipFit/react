@@ -1,49 +1,49 @@
 .fit {
-    background-color: #111111;
-    color: #c5c5c5;
-    font-size: 15px;
-    height: 100%;
-    position: relative;
-    width: 100%;
+  background-color: #111111;
+  color: #c5c5c5;
+  font-size: 15px;
+  height: 100%;
+  position: relative;
+  width: 100%;
 }
 
 .fitName {
-    top: 35px;
-    position: absolute;
-    left: 0px;
+  top: 35px;
+  position: absolute;
+  left: 0px;
 }
 
 .fitNameTitle {
-    font-weight: bold;
+  font-weight: bold;
 }
 
 .cpuPg {
-    bottom: 0px;
-    position: absolute;
-    right: 0px;
-    text-align: right;
+  bottom: 0px;
+  position: absolute;
+  right: 0px;
+  text-align: right;
 }
 
 .cpuPgTitle {
-    font-weight: bold;
-    margin-top: 15px;
+  font-weight: bold;
+  margin-top: 15px;
 }
 
 .cargoHold {
-    bottom: 0px;
-    left: 0px;
-    position: absolute;
+  bottom: 0px;
+  left: 0px;
+  position: absolute;
 }
 
 .cargoIcon {
-    display: inline-block;
+  display: inline-block;
 }
 .cargoText {
-    display: inline-block;
-    margin-top: 5px;
-    text-align: right;
+  display: inline-block;
+  margin-top: 5px;
+  text-align: right;
 }
 .cargoPostfix {
-    display: inline-block;
-    margin-left: 5px;
+  display: inline-block;
+  margin-left: 5px;
 }

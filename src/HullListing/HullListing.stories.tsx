@@ -1,19 +1,19 @@
-import type { Decorator, Meta, StoryObj } from '@storybook/react';
+import type { Decorator, Meta, StoryObj } from "@storybook/react";
 import React from "react";
 
-import { fullFit } from '../../.storybook/fits';
+import { fullFit } from "../../.storybook/fits";
 
-import { HullListing } from './';
-import { DogmaEngineProvider } from '../DogmaEngineProvider';
-import { EsiProvider } from '../EsiProvider';
-import { EveDataProvider } from '../EveDataProvider';
-import { LocalFitProvider } from '../LocalFitProvider';
-import { ShipSnapshotProvider } from '../ShipSnapshotProvider';
+import { HullListing } from "./";
+import { DogmaEngineProvider } from "../DogmaEngineProvider";
+import { EsiProvider } from "../EsiProvider";
+import { EveDataProvider } from "../EveDataProvider";
+import { LocalFitProvider } from "../LocalFitProvider";
+import { ShipSnapshotProvider } from "../ShipSnapshotProvider";
 
 const meta: Meta<typeof HullListing> = {
   component: HullListing,
-  tags: ['autodocs'],
-  title: 'Component/HullListing',
+  tags: ["autodocs"],
+  title: "Component/HullListing",
 };
 
 export default meta;
@@ -26,7 +26,7 @@ const withEsiProvider: Decorator<Record<string, never>> = (Story, context) => {
         <LocalFitProvider>
           <DogmaEngineProvider>
             <ShipSnapshotProvider {...context.parameters.snapshot}>
-              <div style={{height: "400px"}}>
+              <div style={{ height: "400px" }}>
                 <Story />
               </div>
             </ShipSnapshotProvider>
@@ -35,16 +35,15 @@ const withEsiProvider: Decorator<Record<string, never>> = (Story, context) => {
       </EsiProvider>
     </EveDataProvider>
   );
-}
+};
 
 export const Default: Story = {
-  args: {
-  },
+  args: {},
   decorators: [withEsiProvider],
   parameters: {
     snapshot: {
       fit: fullFit,
       skills: {},
-    }
+    },
   },
 };

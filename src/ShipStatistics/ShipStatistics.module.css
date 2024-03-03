@@ -1,154 +1,153 @@
 .panel {
-    background-color: #111111;
-    color: #c5c5c5;
-    font-size: 15px;
-    width: 350px;
+  background-color: #111111;
+  color: #c5c5c5;
+  font-size: 15px;
+  width: 350px;
 }
 .panel > div {
-    overflow-y: hidden;
-    transition: max-height 0.5s ease-in-out;
+  overflow-y: hidden;
+  transition: max-height 0.5s ease-in-out;
 }
 
 .header {
-    background-color: #1d1d1d;
-    display: flex;
-    height: 25px;
-    line-height: 25px;
-    justify-content: space-between;
+  background-color: #1d1d1d;
+  display: flex;
+  height: 25px;
+  line-height: 25px;
+  justify-content: space-between;
 }
 
 .header > div {
-    flex: 1;
-    margin: 0px 10px;
+  flex: 1;
+  margin: 0px 10px;
 }
 
 .collapsed {
-    max-height: 0px;
+  max-height: 0px;
 }
 .expanded {
-    max-height: 180px;
+  max-height: 180px;
 }
-
 
 .line {
-    display: flex;
-    height: 20px;
-    justify-content: space-between;
-    line-height: 20px;
-    margin: 10px 0px;
+  display: flex;
+  height: 20px;
+  justify-content: space-between;
+  line-height: 20px;
+  margin: 10px 0px;
 }
 .line > span {
-    flex: 1;
-    margin: 0px 5px;
+  flex: 1;
+  margin: 0px 5px;
 }
 
 .statistic {
-    display: flex;
+  display: flex;
 }
 .statistic > span:last-child {
-    line-height: 24px;
-    margin-left: 4px;
+  line-height: 24px;
+  margin-left: 4px;
 }
 
 .defense {
-    margin: 20px 0px;
+  margin: 20px 0px;
 }
 .defense:last-child {
-    margin-bottom: 10px;
+  margin-bottom: 10px;
 }
 
 .defenseShield {
-    position: relative;
-    top: -5px;
+  position: relative;
+  top: -5px;
 }
 .defenseShield > span:first-child {
-    line-height: 30px;
+  line-height: 30px;
 }
 .defenseShield > span:first-child > img {
-    padding-top: 4px;
+  padding-top: 4px;
 }
 .defenseShield > span:last-child {
-    line-height: 15px;
+  line-height: 15px;
 }
 
 .resistanceHeader {
-    display: inline-block;
-    margin-left: 5px;
-    width: 50px;
+  display: inline-block;
+  margin-left: 5px;
+  width: 50px;
 }
 
 .resistance {
-    background-color: #252124;
-    display: inline-block;
-    height: 20px;
-    margin-left: 5px;
-    position: relative;
-    width: 50px;
+  background-color: #252124;
+  display: inline-block;
+  height: 20px;
+  margin-left: 5px;
+  position: relative;
+  width: 50px;
 }
 .resistance > span {
-    display: inline-block;
-    left: 0px;
-    position: absolute;
-    text-align: center;
-    width: 100%;
-    z-index: 1;
+  display: inline-block;
+  left: 0px;
+  position: absolute;
+  text-align: center;
+  width: 100%;
+  z-index: 1;
 }
 .resistance > .resistanceProgress {
-    display: inline-block;
-    height: 100%;
-    left: 0px;
-    position: absolute;
-    z-index: 0;
+  display: inline-block;
+  height: 100%;
+  left: 0px;
+  position: absolute;
+  z-index: 0;
 }
 
 .resistance > .resistanceProgress[data-type="em"] {
-    background-color: #195e8c;
+  background-color: #195e8c;
 }
 .resistance > .resistanceProgress[data-type="thermal"] {
-    background-color: #8c1919;
+  background-color: #8c1919;
 }
 .resistance > .resistanceProgress[data-type="kinetic"] {
-    background-color: #727272;
+  background-color: #727272;
 }
 .resistance > .resistanceProgress[data-type="explosive"] {
-    background-color: #8c5e19;
+  background-color: #8c5e19;
 }
 
 .rechargeRate {
-    position: relative;
+  position: relative;
 }
 
 .rechargeRateDropdown {
-    font-weight: bold;
-    position: absolute;
-    top: -10px;
+  font-weight: bold;
+  position: absolute;
+  top: -10px;
 }
 
 .rechargeRateDropdownContent {
-    background-color: #111111;
-    line-height: 25px;
-    position: absolute;
-    top: 30px;
-    width: 150px;
-    z-index: 10;
+  background-color: #111111;
+  line-height: 25px;
+  position: absolute;
+  top: 30px;
+  width: 150px;
+  z-index: 10;
 }
 
 .rechargeRateDropdownContent > div {
-    cursor: pointer;
-    padding: 0px 5px;
+  cursor: pointer;
+  padding: 0px 5px;
 }
 
 .rechargeRateDropdownContentSelected {
-    background-color: #727272;
+  background-color: #727272;
 }
 
 .rechargeRateDropdownContent > div:hover {
-    background-color: #4e4e4e;
+  background-color: #4e4e4e;
 }
 
 .capacitorStable {
-    color: #8dc169;
+  color: #8dc169;
 }
 .capacitorUnstable {
-    color: #ff454b;
+  color: #ff454b;
 }

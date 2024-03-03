@@ -1,15 +1,15 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 
-import { fullFit } from '../../.storybook/fits';
+import { fullFit } from "../../.storybook/fits";
 
-import { EveDataProvider } from '../EveDataProvider';
-import { DogmaEngineContext, DogmaEngineProvider } from './';
+import { EveDataProvider } from "../EveDataProvider";
+import { DogmaEngineContext, DogmaEngineProvider } from "./";
 
 const meta: Meta<typeof DogmaEngineProvider> = {
   component: DogmaEngineProvider,
-  tags: ['autodocs'],
-  title: 'Provider/DogmaEngineProvider',
+  tags: ["autodocs"],
+  title: "Provider/DogmaEngineProvider",
 };
 
 export default meta;
@@ -18,9 +18,7 @@ type Story = StoryObj<typeof DogmaEngineProvider>;
 /** Convert an ES6 map to an Object, which JSON can stringify. */
 function MapToDict(_key: string, value: unknown) {
   if (value instanceof Map) {
-    return Array.from(value.entries()).reduce((obj, [key, item]) => (
-      Object.assign(obj, { [key]: item })
-    ), {});
+    return Array.from(value.entries()).reduce((obj, [key, item]) => Object.assign(obj, { [key]: item }), {});
   }
 
   return value;
@@ -34,18 +32,20 @@ const TestDogmaEngine = () => {
 
     return (
       <div>
-        DogmaEngine: loaded<br/>
+        DogmaEngine: loaded
+        <br />
         Stats: {JSON.stringify(stats, MapToDict)}
       </div>
-    )
+    );
   }
 
   return (
     <div>
-      DogmaEngine: loading<br/>
+      DogmaEngine: loading
+      <br />
     </div>
   );
-}
+};
 
 export const Default: Story = {
   render: () => (

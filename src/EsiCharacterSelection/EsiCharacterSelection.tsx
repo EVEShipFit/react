@@ -13,14 +13,22 @@ import styles from "./EsiCharacterSelection.module.css";
 export const EsiCharacterSelection = () => {
   const esi = React.useContext(EsiContext);
 
-  return <div className={styles.character}>
-    <select onChange={e => esi.changeCharacter(e.target.value)} value={esi.currentCharacter}>
-      {Object.entries(esi.characters).sort().map(([id, name]) => {
-        return <option key={id} value={id}>{name.name}</option>
-      })}
-    </select>
-    <button onClick={esi.login} title="Add another character">
-      +
-    </button>
-  </div>
+  return (
+    <div className={styles.character}>
+      <select onChange={(e) => esi.changeCharacter(e.target.value)} value={esi.currentCharacter}>
+        {Object.entries(esi.characters)
+          .sort()
+          .map(([id, name]) => {
+            return (
+              <option key={id} value={id}>
+                {name.name}
+              </option>
+            );
+          })}
+      </select>
+      <button onClick={esi.login} title="Add another character">
+        +
+      </button>
+    </div>
+  );
 };

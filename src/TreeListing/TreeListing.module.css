@@ -1,47 +1,47 @@
 .header {
-    display: flex;
-    height: var(--height);
-    line-height: var(--height);
-    padding: 2px 0;
-    user-select: none;
+  display: flex;
+  height: var(--height);
+  line-height: var(--height);
+  padding: 2px 0;
+  user-select: none;
 }
 .header > span {
-    margin-left: 4px;
+  margin-left: 4px;
 }
 .headerHover:hover {
-    background-color: #4f4f4f;
+  background-color: #4f4f4f;
 }
 
 .header1 {
-    background-color: #1d1d1d;
+  background-color: #1d1d1d;
 }
 
 .headerText {
-    flex: 1;
-    white-space: nowrap;
+  flex: 1;
+  white-space: nowrap;
 }
 
 .headerAction {
-    cursor: pointer;
-    margin-right: 4px;
-    opacity: 0.5;
+  cursor: pointer;
+  margin-right: 4px;
+  opacity: 0.5;
 }
 .headerAction:hover {
-    opacity: 1.0;
+  opacity: 1;
 }
 
 .content {
-    margin-left: 20px;
+  margin-left: 20px;
 }
 
 .leaf {
-    cursor: pointer;
-    position: relative;
+  cursor: pointer;
+  position: relative;
 }
 
 .leafIcon {
-    left: -16px;
-    margin-top: 2px;
-    pointer-events: none;
-    position: absolute;
+  left: -16px;
+  margin-top: 2px;
+  pointer-events: none;
+  position: absolute;
 }

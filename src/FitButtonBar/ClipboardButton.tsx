@@ -51,35 +51,42 @@ export const ClipboardButton = () => {
     setIsPopupOpen(false);
   }, [eftToEsiFit, shipSnapshot]);
 
-  return <>
-    <div className={styles.popupButton} onMouseOver={() => setIsPopupOpen(true)} onMouseOut={() => setIsPopupOpen(false)}>
-      <div className={styles.button}>
-        {copied ? "In Clipboard" : "Clipboard"}
-      </div>
-      <div className={clsx(styles.popup, {[styles.collapsed]: !isPopupOpen})}>
-        <div>
-          <div className={styles.button} onClick={() => setIsPasteOpen(true)}>
-            Import from Clipboard
-          </div>
-          <div className={clsx(styles.button, styles.buttonMax)} onClick={() => copyToClipboard()}>
-            Copy to Clipboard
+  return (
+    <>
+      <div
+        className={styles.popupButton}
+        onMouseOver={() => setIsPopupOpen(true)}
+        onMouseOut={() => setIsPopupOpen(false)}
+      >
+        <div className={styles.button}>{copied ? "In Clipboard" : "Clipboard"}</div>
+        <div className={clsx(styles.popup, { [styles.collapsed]: !isPopupOpen })}>
+          <div>
+            <div className={styles.button} onClick={() => setIsPasteOpen(true)}>
+              Import from Clipboard
+            </div>
+            <div className={clsx(styles.button, styles.buttonMax)} onClick={() => copyToClipboard()}>
+              Copy to Clipboard
+            </div>
           </div>
         </div>
       </div>
-    </div>
 
-    <ModalDialog visible={isPasteOpen} onClose={() => setIsPasteOpen(false)} className={styles.paste} title="Import from Clipboard">
-      <div>
+      <ModalDialog
+        visible={isPasteOpen}
+        onClose={() => setIsPasteOpen(false)}
+        className={styles.paste}
+        title="Import from Clipboard"
+      >
         <div>
-          Paste your fit here
+          <div>Paste your fit here</div>
+          <div>
+            <textarea autoFocus className={styles.pasteTextarea} ref={textAreaRef} />
+          </div>
+          <span className={clsx(styles.button, styles.buttonSmall)} onClick={() => importFromClipboard()}>
+            Import
+          </span>
         </div>
-        <div>
-          <textarea autoFocus className={styles.pasteTextarea} ref={textAreaRef} />
-        </div>
-        <span className={clsx(styles.button, styles.buttonSmall)} onClick={() => importFromClipboard()}>
-          Import
-        </span>
-      </div>
-    </ModalDialog>
-  </>
-}
+      </ModalDialog>
+    </>
+  );
+};

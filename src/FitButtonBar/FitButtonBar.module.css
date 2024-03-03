@@ -1,110 +1,108 @@
-
 .fitButtonBar {
-    width: 100%;
+  width: 100%;
 }
 
 .fitButtonBar > div {
-    height: 40px;
-    margin-right: 10px;
+  height: 40px;
+  margin-right: 10px;
 }
 
 .button {
-    background-color: #321d1d;
-    border: 1px solid #9f462f;
-    color: #c5c5c5;
-    cursor: pointer;
-    display: inline-block;
-    height: 40px;
-    line-height: 40px;
-    padding: 0 20px;
-    user-select: none;
-    white-space: nowrap;
+  background-color: #321d1d;
+  border: 1px solid #9f462f;
+  color: #c5c5c5;
+  cursor: pointer;
+  display: inline-block;
+  height: 40px;
+  line-height: 40px;
+  padding: 0 20px;
+  user-select: none;
+  white-space: nowrap;
 }
 .buttonSmall {
-    height: 20px;
-    line-height: 20px;
+  height: 20px;
+  line-height: 20px;
 }
 .buttonMax {
-    text-align: center;
-    width: calc(100% - 40px - 2px);
+  text-align: center;
+  width: calc(100% - 40px - 2px);
 }
 
 .button:hover {
-    background-color: #864735;
-    border-color: #c87d5e;
+  background-color: #864735;
+  border-color: #c87d5e;
 }
 
 .collapsed {
-    display: none;
+  display: none;
 }
 
 .popupButton {
-    display: inline-block;
-    position: relative;
+  display: inline-block;
+  position: relative;
 }
 
 .popup {
-    bottom: 40px;
-    left: 0px;
-    position: absolute;
-    z-index: 10;
+  bottom: 40px;
+  left: 0px;
+  position: absolute;
+  z-index: 10;
 }
 .popup:before {
-    background-color: #111111;
-    border-bottom: 1px solid #303030;
-    border-right: 1px solid #303030;
-    bottom: 5px;
-    content: "";
-    display: block;
-    height: 10px;
-    left: 30px;
-    position: absolute;
-    transform: rotate(45deg);
-    width: 10px;
+  background-color: #111111;
+  border-bottom: 1px solid #303030;
+  border-right: 1px solid #303030;
+  bottom: 5px;
+  content: "";
+  display: block;
+  height: 10px;
+  left: 30px;
+  position: absolute;
+  transform: rotate(45deg);
+  width: 10px;
 }
 
 .popup > div {
-    background-color: #111111;
-    border: 1px solid #303030;
-    margin-bottom: 10px;
-    padding: 10px;
+  background-color: #111111;
+  border: 1px solid #303030;
+  margin-bottom: 10px;
+  padding: 10px;
 }
 
 .popup > div > .button {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 .popup > div > .button:first-child {
-    margin-top: 0;
+  margin-top: 0;
 }
 
 .renameEdit {
-    margin-right: 10px;
+  margin-right: 10px;
 }
 
 .alreadyExists {
-    max-width: 50%;
+  max-width: 50%;
 }
 
 .alreadyExistsButtons {
-    margin-top: 10px;
+  margin-top: 10px;
 }
 .alreadyExistsButtons .button {
-    margin-right: 10px;
-    text-align: center;
-    width: calc(50% - 48px);
+  margin-right: 10px;
+  text-align: center;
+  width: calc(50% - 48px);
 }
 .alreadyExistsButtons .button:last-child {
-    margin-right: 0;
+  margin-right: 0;
 }
 
 .paste .button {
-    text-align: center;
-    width: calc(100% - 42px);
+  text-align: center;
+  width: calc(100% - 42px);
 }
 .pasteTextarea {
-    height: 60px;
-    margin-bottom: 10px;
-    margin-top: 4px;
-    width: 300px;
+  height: 60px;
+  margin-bottom: 10px;
+  margin-top: 4px;
+  width: 300px;
 }
-

@@ -76,8 +76,8 @@ export const EveDataProvider = (props: DogmaDataProps) => {
 
           newDogmaData.loaded = isLoaded(newDogmaData);
           return newDogmaData;
-        }
-      )});
+        });
+      });
     }
 
     fetchAndLoadDataFile("typeIDs", esf_pb2.esf.TypeIDs);
@@ -102,14 +102,12 @@ export const EveDataProvider = (props: DogmaDataProps) => {
       const newDogmaData = {
         ...prevDogmaData,
         attributeMapping: attributeMapping,
-      }
+      };
 
       newDogmaData.loaded = isLoaded(newDogmaData);
       return newDogmaData;
     });
   }, [dogmaData.dogmaAttributes]);
 
-  return <EveDataContext.Provider value={dogmaData}>
-    {props.children}
-  </EveDataContext.Provider>
+  return <EveDataContext.Provider value={dogmaData}>{props.children}</EveDataContext.Provider>;
 };
