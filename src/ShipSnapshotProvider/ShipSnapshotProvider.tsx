@@ -21,6 +21,7 @@ export interface ShipSnapshotItem {
   type_id: number;
   quantity: number;
   flag: number;
+  charge: ShipSnapshotItem | undefined;
   state: "Passive" | "Online" | "Active" | "Overload";
   max_state: "Passive" | "Online" | "Active" | "Overload";
   attributes: Map<number, ShipSnapshotItemAttribute>;
@@ -32,9 +33,12 @@ export interface EsiFit {
   description: string;
   ship_type_id: number;
   items: {
-    flag: number;
     type_id: number;
     quantity: number;
+    flag: number;
+    charge?: {
+      type_id: number;
+    };
     state?: string;
   }[];
 }
@@ -59,6 +63,8 @@ interface ShipSnapshot {
 
   addModule: (typeId: number, slot: ShipSnapshotSlotsType | "dronebay") => void;
   removeModule: (flag: number) => void;
+  addCharge: (chargeTypeId: number) => void;
+  removeCharge: (flag: number) => void;
   changeHull: (typeId: number) => void;
   changeFit: (fit: EsiFit) => void;
   setItemState: (flag: number, state: string) => void;
@@ -76,6 +82,8 @@ export const ShipSnapshotContext = React.createContext<ShipSnapshot>({
   },
   addModule: () => {},
   removeModule: () => {},
+  addCharge: () => {},
+  removeCharge: () => {},
   changeHull: () => {},
   changeFit: () => {},
   setItemState: () => {},
@@ -115,6 +123,8 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
     },
     addModule: () => {},
     removeModule: () => {},
+    addCharge: () => {},
+    removeCharge: () => {},
     changeHull: () => {},
     changeFit: () => {},
     setItemState: () => {},
@@ -203,6 +213,80 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
     });
   }, []);
 
+  const addCharge = React.useCallback(
+    (chargeTypeId: number) => {
+      const chargeSize =
+        eveData.typeDogma?.[chargeTypeId]?.dogmaAttributes.find(
+          (attr) => attr.attributeID === eveData.attributeMapping?.chargeSize,
+        )?.value ?? -1;
+      const groupID = eveData.typeIDs?.[chargeTypeId]?.groupID ?? -1;
+
+      setCurrentFit((oldFit: EsiFit | undefined) => {
+        if (oldFit === undefined) return undefined;
+
+        const newItems = [];
+
+        for (let item of oldFit.items) {
+          /* If the module has size restrictions, ensure the charge matches. */
+          const moduleChargeSize = eveData.typeDogma?.[item.type_id]?.dogmaAttributes.find(
+            (attr) => attr.attributeID === eveData.attributeMapping?.chargeSize,
+          )?.value;
+          if (moduleChargeSize !== undefined && moduleChargeSize !== chargeSize) {
+            newItems.push(item);
+          }
+
+          /* Check if the charge fits in this module; if so, assign it. */
+          for (const attr of eveData.typeDogma?.[item.type_id]?.dogmaAttributes ?? []) {
+            switch (attr.attributeID) {
+              case eveData.attributeMapping?.chargeGroup1:
+              case eveData.attributeMapping?.chargeGroup2:
+              case eveData.attributeMapping?.chargeGroup3:
+              case eveData.attributeMapping?.chargeGroup4:
+              case eveData.attributeMapping?.chargeGroup5:
+                if (attr.value === groupID) {
+                  item = {
+                    ...item,
+                    charge: {
+                      type_id: chargeTypeId,
+                    },
+                  };
+                }
+                break;
+            }
+          }
+
+          newItems.push(item);
+        }
+
+        return {
+          ...oldFit,
+          items: newItems,
+        };
+      });
+    },
+    [eveData],
+  );
+
+  const removeCharge = React.useCallback((flag: number) => {
+    setCurrentFit((oldFit: EsiFit | undefined) => {
+      if (oldFit === undefined) return undefined;
+
+      return {
+        ...oldFit,
+        items: oldFit.items.map((item) => {
+          if (item.flag === flag) {
+            return {
+              ...item,
+              charge: undefined,
+            };
+          }
+
+          return item;
+        }),
+      };
+    });
+  }, []);
+
   const changeHull = React.useCallback(
     (typeId: number) => {
       const hullName = eveData?.typeIDs?.[typeId].name;
@@ -222,12 +306,14 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
       ...oldSnapshot,
       addModule,
       removeModule,
+      addCharge,
+      removeCharge,
       changeHull,
       changeFit: setCurrentFit,
       setItemState,
       setName,
     }));
-  }, [addModule, removeModule, changeHull, setItemState, setName]);
+  }, [addModule, removeModule, addCharge, removeCharge, changeHull, setItemState, setName]);
 
   React.useEffect(() => {
     if (!dogmaEngine.loaded) return;
