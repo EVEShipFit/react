@@ -58,6 +58,11 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
           </g>
         </svg>
         <svg viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" style={{ display: "none" }}>
+          <g id="uncharge">
+            <path style={{ fill: "none", strokeWidth: 1 }} d="M 4 6 A 8 8 0 1 1 4 14" />
+            <path style={{ fill: "none", strokeWidth: 1 }} d="M 11 6 L 6 10 L 11 14" />
+            <path style={{ fill: "none", strokeWidth: 1 }} d="M 6 10 L 16 10" />
+          </g>
           <g id="unfit">
             <path style={{ fill: "none", strokeWidth: 1 }} d="M 4 6 A 8 8 0 1 1 4 14" />
             <path style={{ fill: "none", strokeWidth: 1 }} d="M 11 6 L 6 10 L 11 14" />
@@ -131,6 +136,16 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
     [shipSnapshot, esiItem],
   );
 
+  const unfitCharge = React.useCallback(
+    (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+      e.stopPropagation();
+      if (!shipSnapshot?.loaded || !esiItem) return;
+
+      shipSnapshot.removeCharge(esiItem.flag);
+    },
+    [shipSnapshot, esiItem],
+  );
+
   /* Not fittable and nothing fitted; no need to render the slot. */
   if (esiItem === undefined && !props.fittable) {
     return (
@@ -143,12 +158,21 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
   }
 
   if (esiItem !== undefined) {
-    item = (
-      <img
-        src={`https://images.evetech.net/types/${esiItem.type_id}/icon?size=64`}
-        title={eveData?.typeIDs?.[esiItem.type_id].name}
-      />
-    );
+    if (esiItem.charge !== undefined) {
+      item = (
+        <img
+          src={`https://images.evetech.net/types/${esiItem.charge.type_id}/icon?size=64`}
+          title={`${eveData?.typeIDs?.[esiItem.type_id].name}\n${eveData?.typeIDs?.[esiItem.charge.type_id].name}`}
+        />
+      );
+    } else {
+      item = (
+        <img
+          src={`https://images.evetech.net/types/${esiItem.type_id}/icon?size=64`}
+          title={eveData?.typeIDs?.[esiItem.type_id].name}
+        />
+      );
+    }
   }
 
   const state = esiItem?.state === "Passive" && esiItem?.max_state !== "Passive" ? "Offline" : esiItem?.state;
@@ -160,6 +184,11 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
         <div className={styles.slotImage}>{item}</div>
       </div>
       <div className={styles.slotOptions}>
+        {esiItem?.charge !== undefined && (
+          <svg viewBox="0 0 20 20" width={20} xmlns="http://www.w3.org/2000/svg" onClick={unfitCharge}>
+            <use href="#uncharge" />
+          </svg>
+        )}
         <svg viewBox="0 0 20 20" width={20} xmlns="http://www.w3.org/2000/svg" onClick={unfitModule}>
           <use href="#unfit" />
         </svg>

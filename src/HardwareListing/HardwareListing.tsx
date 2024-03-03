@@ -50,7 +50,14 @@ const ModuleGroup = (props: { level: number; group: ListingGroup; hideGroup?: bo
           .sort((a, b) => a.meta - b.meta || a.name.localeCompare(b.name))
           .map((item) => {
             if (item.slotType === "charge") {
-              return <TreeLeaf key={item.typeId} level={2} content={item.name} onClick={() => {}} />;
+              return (
+                <TreeLeaf
+                  key={item.typeId}
+                  level={2}
+                  content={item.name}
+                  onClick={() => shipSnapShot.addCharge(item.typeId)}
+                />
+              );
             } else {
               const slotType = item.slotType;
               return (
@@ -152,7 +159,9 @@ export const HardwareListing = () => {
 
     setModulesWithCharges(newModulesWithCharges);
 
-    /* Reset the filter, as the ship is changed. */
+    /* If the moduleWithCharge filter was set, validate if it is still valid. */
+    if (newModulesWithCharges.find((charge) => charge.typeId === filter.moduleWithCharge?.typeId) !== undefined) return;
+
     setFilter({
       ...filter,
       moduleWithCharge: undefined,

@@ -111,32 +111,50 @@ export const fullFit = {
       {
         "flag": 27,
         "quantity": 1,
-        "type_id": 25715
+        "type_id": 25715,
+        "charge": {
+          "type_id": 20308
+        }
       },
       {
         "flag": 28,
         "quantity": 1,
-        "type_id": 25715
+        "type_id": 25715,
+        "charge": {
+          "type_id": 20308
+        }
       },
       {
         "flag": 29,
         "quantity": 1,
-        "type_id": 25715
+        "type_id": 25715,
+        "charge": {
+          "type_id": 20308
+        }
       },
       {
         "flag": 30,
         "quantity": 1,
-        "type_id": 25715
+        "type_id": 25715,
+        "charge": {
+          "type_id": 20308
+        }
       },
       {
         "flag": 31,
         "quantity": 1,
-        "type_id": 25715
+        "type_id": 25715,
+        "charge": {
+          "type_id": 20308
+        }
       },
       {
         "flag": 32,
         "quantity": 1,
-        "type_id": 25715
+        "type_id": 25715,
+        "charge": {
+          "type_id": 20308
+        }
       },
       {
         "flag": 33,
