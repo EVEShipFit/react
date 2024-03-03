@@ -14,6 +14,9 @@ const config: StorybookConfig = {
   docs: {
     autodocs: "tag",
   },
+  core: {
+    disableTelemetry: true,
+  },
   webpackFinal: async (config: any) => {
     return {
       ...config,
