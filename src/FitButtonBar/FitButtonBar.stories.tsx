@@ -1,20 +1,20 @@
-import type { Decorator, Meta, StoryObj } from '@storybook/react';
+import type { Decorator, Meta, StoryObj } from "@storybook/react";
 import React from "react";
 
-import { fullFit } from '../../.storybook/fits';
+import { fullFit } from "../../.storybook/fits";
 
-import { DogmaEngineProvider } from '../DogmaEngineProvider';
-import { EveDataProvider } from '../EveDataProvider';
-import { LocalFitProvider } from '../LocalFitProvider';
-import { ModalDialogAnchor } from '../ModalDialog/ModalDialog';
-import { ShipSnapshotProvider } from '../ShipSnapshotProvider';
+import { DogmaEngineProvider } from "../DogmaEngineProvider";
+import { EveDataProvider } from "../EveDataProvider";
+import { LocalFitProvider } from "../LocalFitProvider";
+import { ModalDialogAnchor } from "../ModalDialog/ModalDialog";
+import { ShipSnapshotProvider } from "../ShipSnapshotProvider";
 
-import { FitButtonBar } from './';
+import { FitButtonBar } from "./";
 
 const meta: Meta<typeof FitButtonBar> = {
   component: FitButtonBar,
-  tags: ['autodocs'],
-  title: 'Component/FitButtonBar',
+  tags: ["autodocs"],
+  title: "Component/FitButtonBar",
 };
 
 export default meta;
@@ -26,7 +26,7 @@ const withEveDataProvider: Decorator<Record<string, never>> = (Story, context) =
       <DogmaEngineProvider>
         <LocalFitProvider>
           <ShipSnapshotProvider {...context.parameters.snapshot}>
-            <div style={{marginTop: "100px"}}>
+            <div style={{ marginTop: "100px" }}>
               <ModalDialogAnchor />
               <Story />
             </div>
@@ -35,7 +35,7 @@ const withEveDataProvider: Decorator<Record<string, never>> = (Story, context) =
       </DogmaEngineProvider>
     </EveDataProvider>
   );
-}
+};
 
 export const Default: Story = {
   decorators: [withEveDataProvider],
@@ -43,6 +43,6 @@ export const Default: Story = {
     snapshot: {
       fit: fullFit,
       skills: {},
-    }
+    },
   },
 };

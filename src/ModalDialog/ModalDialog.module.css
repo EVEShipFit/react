@@ -1,33 +1,33 @@
 .modalDialog {
-    bottom: 0px;
-    background-color: rgba(200, 200, 200, 0.3);
-    left: 0px;
-    margin: 0 auto;
-    position: absolute;
-    right: 0px;
-    text-align: center;
-    top: 0px;
-    z-index: 100;
+  bottom: 0px;
+  background-color: rgba(200, 200, 200, 0.3);
+  left: 0px;
+  margin: 0 auto;
+  position: absolute;
+  right: 0px;
+  text-align: center;
+  top: 0px;
+  z-index: 100;
 }
 .modalDialog:before {
-    content: "";
-    display: inline-block;
-    height: 100%;
-    vertical-align: middle;
+  content: "";
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
 }
 
 .content {
-    background-color: #111111;
-    border: 1px solid #303030;
-    border-radius: 7px;
-    color: #c5c5c5;
-    display: inline-block;
-    padding: 10px;
-    text-align: left;
-    vertical-align: middle;
+  background-color: #111111;
+  border: 1px solid #303030;
+  border-radius: 7px;
+  color: #c5c5c5;
+  display: inline-block;
+  padding: 10px;
+  text-align: left;
+  vertical-align: middle;
 }
 
 .header {
-    font-size: 24px;
-    margin-bottom: 10px;
+  font-size: 24px;
+  margin-bottom: 10px;
 }

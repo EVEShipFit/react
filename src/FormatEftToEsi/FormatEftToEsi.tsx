@@ -1,25 +1,15 @@
 import React from "react";
 
-import { EveDataContext } from '../EveDataProvider';
+import { EveDataContext } from "../EveDataProvider";
 import { EsiFit } from "../ShipSnapshotProvider";
 
 /** Mapping between slot types and ESI flags (for first slot in the type). */
 const esiFlagMapping: Record<string, number[]> = {
-  "lowslot": [
-    11, 12, 13, 14, 15, 16, 17, 18
-  ],
-  "medslot": [
-    19, 20, 21, 22, 23, 24, 25, 26
-  ],
-  "hislot": [
-    27, 28, 29, 30, 31, 32, 33, 34
-  ],
-  "rig": [
-    92, 93, 94
-  ],
-  "subsystem": [
-    125, 126, 127, 128
-  ],
+  lowslot: [11, 12, 13, 14, 15, 16, 17, 18],
+  medslot: [19, 20, 21, 22, 23, 24, 25, 26],
+  hislot: [27, 28, 29, 30, 31, 32, 33, 34],
+  rig: [92, 93, 94],
+  subsystem: [125, 126, 127, 128],
 };
 
 /** Mapping between dogma effect IDs and slot types. */
@@ -72,11 +62,11 @@ export function useFormatEftToEsi() {
     esiFit.name = lines[0].split(",")[1].slice(0, -1).trim();
 
     const slotIndex: Record<string, number> = {
-      "lowslot": 0,
-      "medslot": 0,
-      "hislot": 0,
-      "rig": 0,
-      "subsystem": 0,
+      lowslot: 0,
+      medslot: 0,
+      hislot: 0,
+      rig: 0,
+      subsystem: 0,
     };
 
     let lastSlotType = "";
@@ -110,13 +100,17 @@ export function useFormatEftToEsi() {
       /* Ignore items we don't care about. */
       if (!slotType) continue;
 
-      esiFit.items.push({"flag": esiFlagMapping[slotType][slotIndex[slotType]], "quantity": itemCount, "type_id": itemTypeId});
+      esiFit.items.push({
+        flag: esiFlagMapping[slotType][slotIndex[slotType]],
+        quantity: itemCount,
+        type_id: itemTypeId,
+      });
       slotIndex[slotType]++;
     }
 
     return esiFit;
   };
-};
+}
 
 export interface FormatEftToEsiProps {
   /** The EFT string. */
@@ -131,5 +125,5 @@ export interface FormatEftToEsiProps {
 export const FormatEftToEsi = (props: FormatEftToEsiProps) => {
   const esiFit = useFormatEftToEsi();
 
-  return <pre>{JSON.stringify(esiFit(props.eft), null, 2)}</pre>
+  return <pre>{JSON.stringify(esiFit(props.eft), null, 2)}</pre>;
 };

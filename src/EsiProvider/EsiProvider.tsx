@@ -68,54 +68,60 @@ export const EsiProvider = (props: EsiProps) => {
     accessTokens: {},
   });
 
-  const [characters, setCharacters] = useLocalStorage<Record<string, EsiCharacter>>('characters', {});
-  const [refreshTokens, setRefreshTokens] = useLocalStorage('refreshTokens', {});
-  const [currentCharacter, setCurrentCharacter] = useLocalStorage<string | undefined>('currentCharacter', undefined);
+  const [characters, setCharacters] = useLocalStorage<Record<string, EsiCharacter>>("characters", {});
+  const [refreshTokens, setRefreshTokens] = useLocalStorage("refreshTokens", {});
+  const [currentCharacter, setCurrentCharacter] = useLocalStorage<string | undefined>("currentCharacter", undefined);
 
-  const changeCharacter = React.useCallback((character: string) => {
-    setCurrentCharacter(character);
+  const changeCharacter = React.useCallback(
+    (character: string) => {
+      setCurrentCharacter(character);
 
-    setEsi((oldEsi: Esi) => {
-      return {
-        ...oldEsi,
-        currentCharacter: character,
-      };
-    });
-  }, [setCurrentCharacter]);
+      setEsi((oldEsi: Esi) => {
+        return {
+          ...oldEsi,
+          currentCharacter: character,
+        };
+      });
+    },
+    [setCurrentCharacter],
+  );
 
   const login = React.useCallback(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
     window.location.href = "https://esi.eveship.fit/";
   }, []);
 
-  const ensureAccessToken = React.useCallback(async (characterId: string): Promise<string | undefined> => {
-    if (esiPrivate.accessTokens[characterId]) {
-      return esiPrivate.accessTokens[characterId];
-    }
+  const ensureAccessToken = React.useCallback(
+    async (characterId: string): Promise<string | undefined> => {
+      if (esiPrivate.accessTokens[characterId]) {
+        return esiPrivate.accessTokens[characterId];
+      }
 
-    const { accessToken, refreshToken } = await getAccessToken(esiPrivate.refreshTokens[characterId]);
-    if (accessToken === undefined || refreshToken === undefined) {
-      console.log('Failed to get access token');
-      return undefined;
-    }
+      const { accessToken, refreshToken } = await getAccessToken(esiPrivate.refreshTokens[characterId]);
+      if (accessToken === undefined || refreshToken === undefined) {
+        console.log("Failed to get access token");
+        return undefined;
+      }
 
-    /* New access token; store for later use. */
-    setEsiPrivate((oldEsiPrivate: EsiPrivate) => {
-      return {
-        ...oldEsiPrivate,
-        refreshTokens: {
-          ...oldEsiPrivate.refreshTokens,
-          [characterId]: refreshToken,
-        },
-        accessToken: {
-          ...oldEsiPrivate.accessTokens,
-          [characterId]: accessToken,
-        },
-      };
-    });
+      /* New access token; store for later use. */
+      setEsiPrivate((oldEsiPrivate: EsiPrivate) => {
+        return {
+          ...oldEsiPrivate,
+          refreshTokens: {
+            ...oldEsiPrivate.refreshTokens,
+            [characterId]: refreshToken,
+          },
+          accessToken: {
+            ...oldEsiPrivate.accessTokens,
+            [characterId]: accessToken,
+          },
+        };
+      });
 
-    return accessToken;
-  }, [esiPrivate.accessTokens, esiPrivate.refreshTokens]);
+      return accessToken;
+    },
+    [esiPrivate.accessTokens, esiPrivate.refreshTokens],
+  );
 
   React.useEffect(() => {
     if (!eveData.loaded) return;
@@ -129,8 +135,8 @@ export const EsiProvider = (props: EsiProps) => {
       return;
     }
 
-    if (characterId === '.all-0' || characterId === '.all-5') {
-      const level = characterId === '.all-0' ? 0 : 5;
+    if (characterId === ".all-0" || characterId === ".all-5") {
+      const level = characterId === ".all-0" ? 0 : 5;
 
       const skills: Record<string, number> = {};
       for (const typeId in eveData.typeIDs) {
@@ -208,13 +214,13 @@ export const EsiProvider = (props: EsiProps) => {
   }, [esi.currentCharacter, eveData.loaded]);
 
   React.useEffect(() => {
-    if (typeof window === 'undefined') return;
+    if (typeof window === "undefined") return;
 
     async function loginCharacter(code: string) {
       let response;
       try {
-        response = await fetch('https://esi.eveship.fit/', {
-          method: 'POST',
+        response = await fetch("https://esi.eveship.fit/", {
+          method: "POST",
           body: JSON.stringify({
             code: code,
           }),
@@ -289,11 +295,11 @@ export const EsiProvider = (props: EsiProps) => {
 
     async function startup() {
       const charactersDefault = {
-        '.all-0': {
-          name: 'Default character - All Skills L0',
+        ".all-0": {
+          name: "Default character - All Skills L0",
         },
-        '.all-5': {
-          name: 'Default character - All Skills L5',
+        ".all-5": {
+          name: "Default character - All Skills L5",
         },
         ...characters,
       };
@@ -313,13 +319,13 @@ export const EsiProvider = (props: EsiProps) => {
 
       /* Check if this was a login request. */
       const urlParams = new URLSearchParams(window.location.search);
-      const code = urlParams.get('code');
+      const code = urlParams.get("code");
       if (code) {
         /* Remove the code from the URL. */
         window.history.replaceState(null, "", window.location.pathname + window.location.hash);
 
-        if (!await loginCharacter(code)) {
-          console.log('Failed to login character');
+        if (!(await loginCharacter(code))) {
+          console.log("Failed to login character");
         }
       }
     }
@@ -330,7 +336,5 @@ export const EsiProvider = (props: EsiProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return <EsiContext.Provider value={esi}>
-    {props.children}
-  </EsiContext.Provider>
+  return <EsiContext.Provider value={esi}>{props.children}</EsiContext.Provider>;
 };

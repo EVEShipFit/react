@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 
-import { EsiContext, EsiProvider } from './';
-import { EveDataProvider } from '../EveDataProvider';
+import { EsiContext, EsiProvider } from "./";
+import { EveDataProvider } from "../EveDataProvider";
 
 const meta: Meta<typeof EsiProvider> = {
   component: EsiProvider,
-  tags: ['autodocs'],
-  title: 'Provider/EsiProvider',
+  tags: ["autodocs"],
+  title: "Provider/EsiProvider",
 };
 
 export default meta;
@@ -19,22 +19,26 @@ const TestEsi = () => {
   if (!esi.loaded) {
     return (
       <div>
-        Esi: loading<br/>
+        Esi: loading
+        <br />
       </div>
     );
   }
 
   return (
     <div>
-      Esi: loaded<br/>
+      Esi: loaded
+      <br />
       <pre>{JSON.stringify(esi, null, 2)}</pre>
     </div>
   );
-}
+};
 
 export const Default: Story = {
   args: {
-    setSkills: (skills: Record<string, number>) => { console.log(skills); }
+    setSkills: (skills: Record<string, number>) => {
+      console.log(skills);
+    },
   },
   render: (args) => (
     <EveDataProvider>

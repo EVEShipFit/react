@@ -1,11 +1,11 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta, StoryObj } from "@storybook/react";
 
-import { Icon } from './';
+import { Icon } from "./";
 
 const meta: Meta<typeof Icon> = {
   component: Icon,
-  tags: ['autodocs'],
-  title: 'Component/Icon',
+  tags: ["autodocs"],
+  title: "Component/Icon",
 };
 
 export default meta;

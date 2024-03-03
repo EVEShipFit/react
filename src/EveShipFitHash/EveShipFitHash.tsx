@@ -3,16 +3,16 @@ import React from "react";
 import { EsiFit } from "../ShipSnapshotProvider";
 
 async function decompress(base64compressedBytes: string): Promise<string> {
-  const stream = new Blob([Uint8Array.from(atob(base64compressedBytes), c => c.charCodeAt(0))]).stream();
+  const stream = new Blob([Uint8Array.from(atob(base64compressedBytes), (c) => c.charCodeAt(0))]).stream();
   const decompressedStream = stream.pipeThrough(new DecompressionStream("gzip"));
   const reader = decompressedStream.getReader();
 
   let result = "";
   while (true) {
-      const {done, value} = await reader.read();
-      if (done) break;
+    const { done, value } = await reader.read();
+    if (done) break;
 
-      result += String.fromCharCode.apply(null, value);
+    result += String.fromCharCode.apply(null, value);
   }
 
   return result;
@@ -80,5 +80,5 @@ export const EveShipFitHash = (props: EveShipFitHashProps) => {
     getFit(props.fitHash);
   }, [props.fitHash]);
 
-  return <pre>{JSON.stringify(esiFit, null, 2)}</pre>
+  return <pre>{JSON.stringify(esiFit, null, 2)}</pre>;
 };

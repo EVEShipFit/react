@@ -1,7 +1,7 @@
 import React from "react";
 
-import { EveDataContext } from '../EveDataProvider';
-import { ShipSnapshotContext } from '../ShipSnapshotProvider';
+import { EveDataContext } from "../EveDataProvider";
+import { ShipSnapshotContext } from "../ShipSnapshotProvider";
 
 export interface ShipAttributeProps {
   /** Name of the attribute. */
@@ -60,7 +60,7 @@ export function useShipAttribute(props: ShipAttributeProps) {
       maximumFractionDigits: props.fixed,
     });
   }
-};
+}
 
 /**
  * Render a single attribute of a ship's snapshot.
@@ -68,5 +68,5 @@ export function useShipAttribute(props: ShipAttributeProps) {
 export const ShipAttribute = (props: ShipAttributeProps) => {
   const stringValue = useShipAttribute(props);
 
-  return <span>{stringValue}</span>
+  return <span>{stringValue}</span>;
 };

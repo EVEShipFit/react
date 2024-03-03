@@ -1,153 +1,156 @@
 .fit {
-    border-radius: 50%;
-    border: 1px solid black;
-    height: 100%;
-    position: relative;
-    width: 100%;
+  border-radius: 50%;
+  border: 1px solid black;
+  height: 100%;
+  position: relative;
+  width: 100%;
 }
 
 .ringOuter {
-    filter: drop-shadow(0 0 6px #000000);
-    position: absolute;
-    width: 100%;
-    z-index: 2;
+  filter: drop-shadow(0 0 6px #000000);
+  position: absolute;
+  width: 100%;
+  z-index: 2;
 }
 .ringInner {
-    position: absolute;
-    width: 100%;
-    z-index: 1;
+  position: absolute;
+  width: 100%;
+  z-index: 1;
 }
 
 .fitLink {
-    height: 100%;
-    left: 0;
-    position: absolute;
-    top: 0;
-    width: 100%;
-    z-index: 3;
+  height: 100%;
+  left: 0;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  z-index: 3;
 }
 
 .hull {
-    height: 100%;
-    position: absolute;
-    width: 100%;
+  height: 100%;
+  position: absolute;
+  width: 100%;
 }
 
 .hull > img {
-    border-radius: 50%;
-    height: calc(100% - 2 * 3%);
-    left: 3%;
-    opacity: 0.8;
-    position: relative;
-    top: 3%;
-    width: calc(100% - 2 * 3%);
+  border-radius: 50%;
+  height: calc(100% - 2 * 3%);
+  left: 3%;
+  opacity: 0.8;
+  position: relative;
+  top: 3%;
+  width: calc(100% - 2 * 3%);
 }
 
 .ringTop {
-    height: 100%;
-    position: absolute;
-    width: 100%;
+  height: 100%;
+  position: absolute;
+  width: 100%;
 }
 
 .ringTopItem {
-    height: 100%;
-    pointer-events: none;
-    position: absolute;
-    transform: rotate(var(--rotation));
-    width: 100%;
-    z-index: 4;
+  height: 100%;
+  pointer-events: none;
+  position: absolute;
+  transform: rotate(var(--rotation));
+  width: 100%;
+  z-index: 4;
 }
 
-.ringTopItem > div, .ringTopItem > svg {
-    --reverse-rotation: calc(-1 * var(--rotation));
+.ringTopItem > div,
+.ringTopItem > svg {
+  --reverse-rotation: calc(-1 * var(--rotation));
 
-    left: 50%;
-    pointer-events: all;
-    position: absolute;
-    top: 3.5%;
+  left: 50%;
+  pointer-events: all;
+  position: absolute;
+  top: 3.5%;
 }
 
 .radialMenu {
-    filter: drop-shadow(0 0 2px #ffffff);
-    position: absolute;
-    margin-top: 3.5%;
-    transform: rotate(var(--reverse-rotation));
-    width: 2.5%;
+  filter: drop-shadow(0 0 2px #ffffff);
+  position: absolute;
+  margin-top: 3.5%;
+  transform: rotate(var(--reverse-rotation));
+  width: 2.5%;
 }
 
 .slotOuter {
-    height: 18%;
-    margin-left: -2.5%;
-    position: absolute;
-    width: 7%;
+  height: 18%;
+  margin-left: -2.5%;
+  position: absolute;
+  width: 7%;
 }
 
 .slot {
-    height: 50%;
-    position: relative;
-    user-select: none;
-    width: 100%;
+  height: 50%;
+  position: relative;
+  user-select: none;
+  width: 100%;
 }
 
 .slot > svg {
-    height: 100%;
-    position: absolute;
-    width: 100%;
-    z-index: 4;
+  height: 100%;
+  position: absolute;
+  width: 100%;
+  z-index: 4;
 }
 
 .slotImage {
-    height: 100%;
-    position: absolute;
-    transform: rotate(var(--reverse-rotation));
-    width: 100%;
-    z-index: 5;
+  height: 100%;
+  position: absolute;
+  transform: rotate(var(--reverse-rotation));
+  width: 100%;
+  z-index: 5;
 }
 
 .slotImage > img {
-    border-top-left-radius: 50%;
-    margin-left: -10%;
-    margin-top: 5%;
-    width: 120%;
+  border-top-left-radius: 50%;
+  margin-left: -10%;
+  margin-top: 5%;
+  width: 120%;
 }
 
 .slot > svg {
-    fill: #999999;
-    stroke: #999999;
+  fill: #999999;
+  stroke: #999999;
 }
 .slot[data-state="Active"] > svg {
-    fill: #8ae04a;
-    stroke: #8ae04a;
+  fill: #8ae04a;
+  stroke: #8ae04a;
 }
 .slot[data-state="Overload"] > svg {
-    fill: #fd2d2d;
-    stroke: #fd2d2d;
+  fill: #fd2d2d;
+  stroke: #fd2d2d;
 }
-.slot[data-state="Offline"] > svg, .slot[data-state="Offline"] > .slotImage {
-    opacity: 0.3;
+.slot[data-state="Offline"] > svg,
+.slot[data-state="Offline"] > .slotImage {
+  opacity: 0.3;
 }
-.slot[data-state="Unavailable"] > svg, .slot[data-state="Unavailable"] > .slotImage {
-    opacity: 0.1;
+.slot[data-state="Unavailable"] > svg,
+.slot[data-state="Unavailable"] > .slotImage {
+  opacity: 0.1;
 }
 
 .slotOuter .slotOptions {
-    display: none;
+  display: none;
 }
-.slotOuter[data-hasitem=true]:hover .slotOptions {
-    display: block;
+.slotOuter[data-hasitem="true"]:hover .slotOptions {
+  display: block;
 }
 
 .slotOptions {
-    position: absolute;
-    text-align: center;
-    top: 50%;
-    width: 100%;
+  position: absolute;
+  text-align: center;
+  top: 50%;
+  width: 100%;
 }
 .slotOptions > svg {
-    cursor: pointer;
-    display: block;
-    filter: drop-shadow(0px 2px 1px #222222);
-    margin: 6px auto;
-    transform: rotate(var(--reverse-rotation));
-    stroke: #ffffff;
+  cursor: pointer;
+  display: block;
+  filter: drop-shadow(0px 2px 1px #222222);
+  margin: 6px auto;
+  transform: rotate(var(--reverse-rotation));
+  stroke: #ffffff;
 }

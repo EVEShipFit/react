@@ -11,10 +11,12 @@ import styles from "./FitButtonBar.module.css";
  * Bar with buttons to load/save fits.
  */
 export const FitButtonBar = () => {
-  return <div className={styles.fitButtonBar}>
-    <SaveButton />
-    <ClipboardButton />
-    <ShareButton />
-    <RenameButton />
-  </div>
+  return (
+    <div className={styles.fitButtonBar}>
+      <SaveButton />
+      <ClipboardButton />
+      <ShareButton />
+      <RenameButton />
+    </div>
+  );
 };

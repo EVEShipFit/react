@@ -2,21 +2,25 @@ import clsx from "clsx";
 import React from "react";
 
 import { EveDataContext } from "../EveDataProvider";
-import { ShipSnapshotContext, ShipSnapshotItemAttribute, ShipSnapshotItemAttributeEffect } from "../ShipSnapshotProvider";
+import {
+  ShipSnapshotContext,
+  ShipSnapshotItemAttribute,
+  ShipSnapshotItemAttributeEffect,
+} from "../ShipSnapshotProvider";
 
 import styles from "./CalculationDetail.module.css";
 import { Icon } from "../Icon";
 
 const EffectOperatorOrder: Record<string, string> = {
-  "PreAssign": "=",
-  "PreMul": "*",
-  "PreDiv": "/",
-  "ModAdd": "+",
-  "ModSub": "-",
-  "PostMul": "*",
-  "PostDiv": "/",
-  "PostPercent": "%",
-  "PostAssignment": "=",
+  PreAssign: "=",
+  PreMul: "*",
+  PreDiv: "/",
+  ModAdd: "+",
+  ModSub: "-",
+  PostMul: "*",
+  PostDiv: "/",
+  PostPercent: "%",
+  PostAssignment: "=",
 };
 
 const Effect = (props: { effect: ShipSnapshotItemAttributeEffect }) => {
@@ -40,14 +44,21 @@ const Effect = (props: { effect: ShipSnapshotItemAttributeEffect }) => {
     }
   }
 
-  return <div className={styles.effect}>
-    <span>{EffectOperatorOrder[props.effect.operator]}</span>
-    <span>{attribute?.value || eveAttribute?.defaultValue}{props.effect.penalty ? " (penalized)" : ""}</span>
-    <span>{sourceName} - {eveAttribute?.name}</span>
-  </div>;
-}
+  return (
+    <div className={styles.effect}>
+      <span>{EffectOperatorOrder[props.effect.operator]}</span>
+      <span>
+        {attribute?.value || eveAttribute?.defaultValue}
+        {props.effect.penalty ? " (penalized)" : ""}
+      </span>
+      <span>
+        {sourceName} - {eveAttribute?.name}
+      </span>
+    </div>
+  );
+};
 
-const CalculationDetailMeta = (props: { attributeId: number, attribute: ShipSnapshotItemAttribute }) => {
+const CalculationDetailMeta = (props: { attributeId: number; attribute: ShipSnapshotItemAttribute }) => {
   const [expanded, setExpanded] = React.useState(false);
   const eveData = React.useContext(EveDataContext);
 
@@ -63,39 +74,41 @@ const CalculationDetailMeta = (props: { attributeId: number, attribute: ShipSnap
     return aIndex - bIndex;
   });
 
-  return <div className={styles.line}>
-    <div className={styles.entry} onClick={() => setExpanded(!expanded)}>
-      <span>
-        <Icon name={expanded ? "menu-expand" : "menu-collapse"} />
-      </span>
-      <span>{eveAttribute?.name}</span>
-      <span>{props.attribute.value}</span>
-      <span>{props.attribute.effects.length}</span>
-    </div>
-    <div className={clsx(styles.effects, { [styles.collapsed]: !expanded })}>
-      <div className={styles.effect}>
-        <span>=</span>
-        <span>{props.attribute.base_value}</span>
-        <span>base value {props.attributeId < 0 && <>(list of effects might be incomplete)</>}</span>
+  return (
+    <div className={styles.line}>
+      <div className={styles.entry} onClick={() => setExpanded(!expanded)}>
+        <span>
+          <Icon name={expanded ? "menu-expand" : "menu-collapse"} />
+        </span>
+        <span>{eveAttribute?.name}</span>
+        <span>{props.attribute.value}</span>
+        <span>{props.attribute.effects.length}</span>
       </div>
-      {sortedEffects.map((effect) => {
-        index += 1;
-        return <Effect key={index} effect={effect} />
-      })}
+      <div className={clsx(styles.effects, { [styles.collapsed]: !expanded })}>
+        <div className={styles.effect}>
+          <span>=</span>
+          <span>{props.attribute.base_value}</span>
+          <span>base value {props.attributeId < 0 && <>(list of effects might be incomplete)</>}</span>
+        </div>
+        {sortedEffects.map((effect) => {
+          index += 1;
+          return <Effect key={index} effect={effect} />;
+        })}
+      </div>
     </div>
-  </div>
-}
+  );
+};
 
 /**
  * Show in detail for each attribute how the value came to be. This includes
  * the base value, all effects (and their source) and the final value.
  */
-export const CalculationDetail = (props: {source: "Ship" | { Item: number }}) => {
+export const CalculationDetail = (props: { source: "Ship" | { Item: number } }) => {
   const shipSnapshot = React.useContext(ShipSnapshotContext);
 
   let attributes;
   if (props.source === "Ship") {
-    attributes = [...shipSnapshot.hull?.attributes.entries() || []];
+    attributes = [...(shipSnapshot.hull?.attributes.entries() || [])];
   } else if (props.source.Item !== undefined) {
     const item = shipSnapshot.items?.[props.source.Item];
     if (item !== undefined) {
@@ -103,15 +116,17 @@ export const CalculationDetail = (props: {source: "Ship" | { Item: number }}) =>
     }
   }
 
-  return <div>
-    <div className={clsx(styles.entry, styles.header)}>
-      <span></span>
-      <span>Attribute</span>
-      <span>Value</span>
-      <span>Effects</span>
+  return (
+    <div>
+      <div className={clsx(styles.entry, styles.header)}>
+        <span></span>
+        <span>Attribute</span>
+        <span>Value</span>
+        <span>Effects</span>
+      </div>
+      {attributes?.map(([attributeId, attribute]) => {
+        return <CalculationDetailMeta key={attributeId} attributeId={attributeId} attribute={attribute} />;
+      })}
     </div>
-    {attributes?.map(([attributeId, attribute]) => {
-      return <CalculationDetailMeta key={attributeId} attributeId={attributeId} attribute={attribute} />
-    })}
-  </div>
+  );
 };

@@ -1,17 +1,24 @@
 import React from "react";
 
-import { DogmaAttribute, DogmaEffect, TypeDogmaAttribute, TypeDogmaEffect, TypeID, EveDataContext } from "../EveDataProvider";
+import {
+  DogmaAttribute,
+  DogmaEffect,
+  TypeDogmaAttribute,
+  TypeDogmaEffect,
+  TypeID,
+  EveDataContext,
+} from "../EveDataProvider";
 import type { init, calculate } from "@eveshipfit/dogma-engine";
 
 interface EsfDogmaEngine {
-  init: typeof init,
-  calculate: typeof calculate,
+  init: typeof init;
+  calculate: typeof calculate;
 }
 
 interface DogmaEngine {
-  loaded?: boolean,
-  loadedData?: boolean,
-  engine?: EsfDogmaEngine,
+  loaded?: boolean;
+  loadedData?: boolean;
+  engine?: EsfDogmaEngine;
 }
 
 export const DogmaEngineContext = React.createContext<DogmaEngine>({});
@@ -86,7 +93,7 @@ export const DogmaEngineProvider = (props: DogmaEngineProps) => {
       window.get_dogma_effects = undefined;
       window.get_dogma_effect = undefined;
       window.get_type_id = undefined;
-    }
+    };
   }, [eveData]);
 
   React.useEffect(() => {
@@ -103,7 +110,5 @@ export const DogmaEngineProvider = (props: DogmaEngineProps) => {
     });
   }, []);
 
-  return <DogmaEngineContext.Provider value={dogmaEngine}>
-    {props.children}
-  </DogmaEngineContext.Provider>
+  return <DogmaEngineContext.Provider value={dogmaEngine}>{props.children}</DogmaEngineContext.Provider>;
 };

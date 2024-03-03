@@ -9,10 +9,10 @@ async function compress(str: string): Promise<string> {
 
   let result = "";
   while (true) {
-      const {done, value} = await reader.read();
-      if (done) break;
+    const { done, value } = await reader.read();
+    if (done) break;
 
-      result += String.fromCharCode.apply(null, value);
+    result += String.fromCharCode.apply(null, value);
   }
 
   return btoa(result);
@@ -25,7 +25,7 @@ async function encodeEsiFit(esiFit: EsiFit): Promise<string> {
     result += `${item.flag},${item.type_id},${item.quantity}\n`;
   }
 
-  return "v1:" + await compress(result);
+  return "v1:" + (await compress(result));
 }
 
 /**
@@ -51,7 +51,7 @@ export function useEveShipFitLink() {
   }, [shipSnapshot?.loaded, shipSnapshot?.fit]);
 
   return fitLink;
-};
+}
 
 /**
  * useEveShipFitLink() converts the current fit into a link to https://eveship.fit.
@@ -61,5 +61,5 @@ export function useEveShipFitLink() {
 export const EveShipFitLink = () => {
   const eveShipFitLink = useEveShipFitLink();
 
-  return <pre>{eveShipFitLink}</pre>
+  return <pre>{eveShipFitLink}</pre>;
 };

@@ -1,18 +1,18 @@
-import type { Decorator, Meta, StoryObj } from '@storybook/react';
+import type { Decorator, Meta, StoryObj } from "@storybook/react";
 import React from "react";
 
-import { fullFit } from '../../.storybook/fits';
+import { fullFit } from "../../.storybook/fits";
 
-import { DogmaEngineProvider } from '../DogmaEngineProvider';
-import { EsiProvider } from '../EsiProvider';
-import { EveDataProvider  } from '../EveDataProvider';
-import { ShipSnapshotProvider } from '../ShipSnapshotProvider';
-import { ShipFitExtended } from './';
+import { DogmaEngineProvider } from "../DogmaEngineProvider";
+import { EsiProvider } from "../EsiProvider";
+import { EveDataProvider } from "../EveDataProvider";
+import { ShipSnapshotProvider } from "../ShipSnapshotProvider";
+import { ShipFitExtended } from "./";
 
 const meta: Meta<typeof ShipFitExtended> = {
   component: ShipFitExtended,
-  tags: ['autodocs'],
-  title: 'Component/ShipFitExtended',
+  tags: ["autodocs"],
+  title: "Component/ShipFitExtended",
 };
 
 export default meta;
@@ -34,7 +34,7 @@ const useShipSnapshotProvider: Decorator<Record<string, never>> = (Story, contex
       </EsiProvider>
     </EveDataProvider>
   );
-}
+};
 
 export const Default: Story = {
   args: {
@@ -44,6 +44,6 @@ export const Default: Story = {
   parameters: {
     snapshot: {
       fit: fullFit,
-    }
+    },
   },
 };

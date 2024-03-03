@@ -24,7 +24,7 @@ const iconMapping = {
   "hull-repair-rate": "texture/classes/fitting/statsicons/hullrepairrate.png",
   "inertia-modifier": "texture/classes/fitting/statsicons/inertiamodifier.png",
   "kinetic-resistance": "texture/classes/fitting/statsicons/kineticresistance.png",
-  "mass": "texture/classes/fitting/statsicons/mass.png",
+  mass: "texture/classes/fitting/statsicons/mass.png",
   "maximum-locked-targets": "texture/classes/fitting/statsicons/maximumlockedtargets.png",
   "menu-collapse": "texture/shared/triangleright.png",
   "menu-expand": "texture/shared/triangledown.png",
@@ -34,7 +34,7 @@ const iconMapping = {
   "shield-boost-rate": "texture/classes/fitting/statsicons/shieldboostrate.png",
   "shield-hp": "texture/classes/fitting/statsicons/shieldhp.png",
   "signature-radius": "texture/classes/fitting/statsicons/signatureradius.png",
-  "simulate": "texture/classes/fitting/iconsimulatorhover.png",
+  simulate: "texture/classes/fitting/iconsimulatorhover.png",
   "thermal-resistance": "texture/classes/fitting/statsicons/thermalresistance.png",
   "warp-speed": "texture/classes/fitting/statsicons/warpspeed.png",
 } as const;
@@ -58,5 +58,5 @@ export const Icon = (props: IconProps) => {
   if (icon === undefined) {
     return <span>Unknown icon: {props.name}</span>;
   }
-  return <img src={`${defaultDataUrl}ui/${icon}`} width={props.size} title={props.title} />
+  return <img src={`${defaultDataUrl}ui/${icon}`} width={props.size} title={props.title} />;
 };

@@ -1,10 +1,10 @@
 import React from "react";
 
-import { useShipAttribute } from '../ShipAttribute';
+import { useShipAttribute } from "../ShipAttribute";
 
 import styles from "./ShipStatistics.module.css";
 
-export const Resistance = (props: {name: string}) => {
+export const Resistance = (props: { name: string }) => {
   const stringValue = useShipAttribute({
     name: props.name,
     fixed: 0,
@@ -23,9 +23,10 @@ export const Resistance = (props: {name: string}) => {
     type = "explosive";
   }
 
-  return <span className={styles.resistance}>
-    <span className={styles.resistanceProgress} data-type={type} style={{width: `${stringValue}%`}}>
+  return (
+    <span className={styles.resistance}>
+      <span className={styles.resistanceProgress} data-type={type} style={{ width: `${stringValue}%` }}></span>
+      <span>{stringValue} %</span>
     </span>
-    <span>{stringValue} %</span>
-  </span>
-}
+  );
+};
