@@ -1,4 +1,4 @@
-const path = require("path")
+const path = require("path");
 
 module.exports = {
   env: {
@@ -16,16 +16,11 @@ module.exports = {
     "plugin:storybook/recommended",
     "prettier",
   ],
-  plugins: [
-    "@typescript-eslint",
-    "import",
-    "prettier",
-    "react",
-  ],
-  "settings": {
-    "react": {
-      "version": "detect"
-    }
+  plugins: ["@typescript-eslint", "import", "prettier", "react"],
+  settings: {
+    react: {
+      version: "detect",
+    },
   },
   rules: {
     "newline-per-chained-call": "off",
@@ -35,9 +30,15 @@ module.exports = {
   parserOptions: {
     project: "./tsconfig.json",
   },
-  ignorePatterns: [
-    "src/EveDataProvider/esf_pb2.js",
-    "src/EveDataProvider/protobuf.js",
+  ignorePatterns: ["src/EveDataProvider/esf_pb2.js", "src/EveDataProvider/protobuf.js"],
+  overrides: [
+    {
+      // The files listed below are part of the build process, so they will be using packages that are listed
+      // under devDependences and/or peerDependencies, so we need to be lenient with the import/no-extraneous-dependencies
+      files: [".storybook/**/*.ts", ".eslintrc.js", "rollup.config.mjs"],
+      rules: {
+        "import/no-extraneous-dependencies": ["error", { peerDependencies: true, devDependencies: true }],
+      },
+    },
   ],
-  overrides: [],
-}
+};

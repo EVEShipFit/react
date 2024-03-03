@@ -1,12 +1,9 @@
 import type { StorybookConfig } from "@storybook/react-webpack5";
+import type { Configuration } from "webpack";
 
 const config: StorybookConfig = {
   stories: ["../src/**/*.mdx", "../src/**/*.stories.@(js|jsx|mjs|ts|tsx)"],
-  addons: [
-    "@storybook/addon-links",
-    "@storybook/addon-essentials",
-    "@storybook/addon-interactions",
-  ],
+  addons: ["@storybook/addon-links", "@storybook/addon-essentials", "@storybook/addon-interactions"],
   framework: {
     name: "@storybook/react-webpack5",
     options: {},
@@ -17,13 +14,13 @@ const config: StorybookConfig = {
   core: {
     disableTelemetry: true,
   },
-  webpackFinal: async (config: any) => {
+  webpackFinal: async (webpackConfig: Configuration) => {
     return {
-      ...config,
+      ...webpackConfig,
       experiments: {
-        asyncWebAssembly: true
-      }
-    }
+        asyncWebAssembly: true,
+      },
+    };
   },
 };
 export default config;
