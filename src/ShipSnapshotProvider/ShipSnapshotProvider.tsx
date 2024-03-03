@@ -233,6 +233,7 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
           )?.value;
           if (moduleChargeSize !== undefined && moduleChargeSize !== chargeSize) {
             newItems.push(item);
+            continue;
           }
 
           /* Check if the charge fits in this module; if so, assign it. */
