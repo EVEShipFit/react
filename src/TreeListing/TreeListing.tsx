@@ -87,11 +87,11 @@ export const TreeLeaf = (props: {
  */
 export const TreeListing = (props: {
   level: number;
-  header: React.ReactNode;
+  header?: React.ReactNode;
   height?: number;
   getChildren: () => React.ReactNode;
 }) => {
-  const [expanded, setExpanded] = React.useState(false);
+  const [expanded, setExpanded] = React.useState(props.header === undefined);
 
   const stylesHeader = styles[`header${props.level}`];
   const stylesContent = styles[`content${props.level}`];
@@ -108,17 +108,19 @@ export const TreeListing = (props: {
   return (
     <div>
       <TreeContext.Provider value={{ size: height }}>
-        <div
-          style={style}
-          className={clsx(styles.header, styles.headerHover, stylesHeader)}
-          onClick={() => setExpanded((current) => !current)}
-        >
-          <span>
-            <Icon name={expanded ? "menu-expand" : "menu-collapse"} size={12} />
-          </span>
-          {props.header}
-        </div>
-        <div className={clsx(styles.content, stylesContent)}>{children}</div>
+        {props.header !== undefined && (
+          <div
+            style={style}
+            className={clsx(styles.header, styles.headerHover, stylesHeader)}
+            onClick={() => setExpanded((current) => !current)}
+          >
+            <span>
+              <Icon name={expanded ? "menu-expand" : "menu-collapse"} size={12} />
+            </span>
+            {props.header}
+          </div>
+        )}
+        <div className={clsx(stylesContent, { [styles.content]: props.header !== undefined })}>{children}</div>
       </TreeContext.Provider>
     </div>
   );

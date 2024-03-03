@@ -6,9 +6,8 @@
   position: relative;
   width: 100%;
 }
-
 .listingContent {
-  height: calc(100% - 42px - 32px - 5px);
+  height: calc(100% - 42px - 32px - 5px - 24px - 5px);
   overflow-y: auto;
   padding-right: 20px;
 }
@@ -29,7 +28,7 @@
 
 .filter {
   display: flex;
-  margin-bottom: 5px;
+  height: 37px;
 }
 .filter > span {
   border-radius: 5px;
@@ -54,4 +53,38 @@
 }
 .filter > span.disabled:hover {
   background-color: #111111;
+}
+
+.selectionHeader {
+  display: flex;
+  margin-bottom: 5px;
+}
+.selectionHeader > div {
+  background-color: #4f4f4f;
+  cursor: pointer;
+  flex: 1;
+  line-height: 24px;
+  text-align: center;
+}
+.selectionHeader > div:hover {
+  background-color: #6c6c6c;
+}
+.selectionHeader > div:first-child {
+  border-bottom-left-radius: 25px;
+  margin-right: 5px;
+}
+.selectionHeader > div:last-child {
+  border-bottom-right-radius: 25px;
+  margin-left: 5px;
+}
+.selectionHeader > div.selected {
+  background-color: #7a7a7a;
+}
+
+.collapsed {
+  display: none;
+}
+
+.moduleChargeIcon {
+  border-top-left-radius: 50%;
 }
