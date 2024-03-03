@@ -13,6 +13,8 @@
     "skipLibCheck": true,
     "sourceMap": true,
     "strict": true,
-    "target": "es2016",
-  }
+    "target": "es2016"
+  },
+  "include": ["src/**/*.ts", "src/**/*.tsx", "src/**/*.d.ts", ".storybook/*.ts"],
+  "exclude": ["node_modules"]
 }
