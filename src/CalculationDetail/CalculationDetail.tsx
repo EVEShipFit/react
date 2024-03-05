@@ -29,17 +29,42 @@ const Effect = (props: { effect: ShipSnapshotItemAttributeEffect }) => {
 
   const eveAttribute = eveData.dogmaAttributes?.[props.effect.source_attribute_id];
 
-  let sourceName;
-  let attribute;
+  let sourceName = "Unknown";
+  let attribute = undefined;
+
   if (props.effect.source === "Ship") {
     sourceName = "Ship";
     attribute = shipSnapshot.hull?.attributes.get(props.effect.source_attribute_id);
-  } else if (props.effect.source.Item !== undefined) {
-    const item = shipSnapshot.items?.[props.effect.source.Item];
+  } else if (props.effect.source === "Char") {
+    sourceName = "Char";
+    attribute = shipSnapshot.char?.attributes.get(props.effect.source_attribute_id);
+  } else if (props.effect.source === "Structure") {
+    sourceName = "Structure";
+    attribute = shipSnapshot.structure?.attributes.get(props.effect.source_attribute_id);
+  } else if (props.effect.source === "Target") {
+    sourceName = "Target";
+    attribute = shipSnapshot.target?.attributes.get(props.effect.source_attribute_id);
+  } else {
+    let item = undefined;
+    let sourceType = undefined;
+
+    /* Lookup the source of the effect. */
+    if (props.effect.source.Item !== undefined) {
+      item = shipSnapshot.items?.[props.effect.source.Item];
+      sourceType = "Item";
+    } else if (props.effect.source.Skill !== undefined) {
+      item = shipSnapshot.skills?.[props.effect.source.Skill];
+      sourceType = "Skill";
+    } else if (props.effect.source.Charge !== undefined) {
+      item = shipSnapshot.items?.[props.effect.source.Charge].charge;
+      sourceType = "Charge";
+    }
+
+    /* Find the attribute on the source. */
     if (item === undefined) {
-      sourceName = "Unknown";
+      sourceName = `Unknown ${sourceType}`;
     } else {
-      sourceName = eveData.typeIDs?.[item?.type_id]?.name;
+      sourceName = `${sourceType} - ` + eveData.typeIDs?.[item?.type_id]?.name ?? sourceName;
       attribute = item?.attributes.get(props.effect.source_attribute_id);
     }
   }
@@ -50,6 +75,7 @@ const Effect = (props: { effect: ShipSnapshotItemAttributeEffect }) => {
       <span>
         {attribute?.value || eveAttribute?.defaultValue}
         {props.effect.penalty ? " (penalized)" : ""}
+        {attribute?.value === undefined ? " (default)" : ""}
       </span>
       <span>
         {sourceName} - {eveAttribute?.name}
@@ -63,8 +89,6 @@ const CalculationDetailMeta = (props: { attributeId: number; attribute: ShipSnap
   const eveData = React.useContext(EveDataContext);
 
   const eveAttribute = eveData.dogmaAttributes?.[props.attributeId];
-  let index = 0;
-
   const sortedEffects = props.attribute.effects.sort((a, b) => {
     const aIndex = Object.keys(EffectOperatorOrder).indexOf(a.operator);
     const bIndex = Object.keys(EffectOperatorOrder).indexOf(b.operator);
@@ -74,6 +98,7 @@ const CalculationDetailMeta = (props: { attributeId: number; attribute: ShipSnap
     return aIndex - bIndex;
   });
 
+  let index = 0;
   return (
     <div className={styles.line}>
       <div className={styles.entry} onClick={() => setExpanded(!expanded)}>
@@ -88,7 +113,7 @@ const CalculationDetailMeta = (props: { attributeId: number; attribute: ShipSnap
         <div className={styles.effect}>
           <span>=</span>
           <span>{props.attribute.base_value}</span>
-          <span>base value {props.attributeId < 0 && <>(list of effects might be incomplete)</>}</span>
+          <span>Base value {props.attributeId < 0 && <>(list of effects might be incomplete)</>}</span>
         </div>
         {sortedEffects.map((effect) => {
           index += 1;
@@ -103,14 +128,28 @@ const CalculationDetailMeta = (props: { attributeId: number; attribute: ShipSnap
  * Show in detail for each attribute how the value came to be. This includes
  * the base value, all effects (and their source) and the final value.
  */
-export const CalculationDetail = (props: { source: "Ship" | { Item: number } }) => {
+export const CalculationDetail = (props: {
+  source: "Ship" | "Char" | "Structure" | "Target" | { Item?: number; Charge?: number };
+}) => {
   const shipSnapshot = React.useContext(ShipSnapshotContext);
 
-  let attributes;
+  let attributes: [number, ShipSnapshotItemAttribute][] = [];
+
   if (props.source === "Ship") {
     attributes = [...(shipSnapshot.hull?.attributes.entries() || [])];
+  } else if (props.source === "Char") {
+    attributes = [...(shipSnapshot.char?.attributes.entries() || [])];
+  } else if (props.source === "Structure") {
+    attributes = [...(shipSnapshot.structure?.attributes.entries() || [])];
+  } else if (props.source === "Target") {
+    attributes = [...(shipSnapshot.target?.attributes.entries() || [])];
   } else if (props.source.Item !== undefined) {
     const item = shipSnapshot.items?.[props.source.Item];
+    if (item !== undefined) {
+      attributes = [...item.attributes.entries()];
+    }
+  } else if (props.source.Charge !== undefined) {
+    const item = shipSnapshot.items?.[props.source.Charge].charge;
     if (item !== undefined) {
       attributes = [...item.attributes.entries()];
     }

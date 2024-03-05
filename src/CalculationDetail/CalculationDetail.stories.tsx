@@ -1,7 +1,7 @@
 import type { Decorator, Meta, StoryObj } from "@storybook/react";
 import React from "react";
 
-import { fullFit } from "../../.storybook/fits";
+import { fullFits } from "../../.storybook/fits";
 
 import { DogmaEngineProvider } from "../DogmaEngineProvider";
 import { EsiProvider } from "../EsiProvider";
@@ -18,7 +18,9 @@ const meta: Meta<typeof CalculationDetail> = {
 export default meta;
 type Story = StoryObj<typeof CalculationDetail>;
 
-const useShipSnapshotProvider: Decorator<{ source: "Ship" | { Item: number } }> = (Story, context) => {
+const useShipSnapshotProvider: Decorator<{
+  source: "Ship" | "Char" | "Structure" | "Target" | { Item?: number; Cargo?: number };
+}> = (Story, context) => {
   const [skills, setSkills] = React.useState<Record<string, number>>({});
 
   return (
@@ -41,7 +43,7 @@ export const Default: Story = {
   decorators: [useShipSnapshotProvider],
   parameters: {
     snapshot: {
-      fit: fullFit,
+      fit: fullFits[1],
     },
   },
 };
