@@ -6,7 +6,7 @@ import { EveDataContext } from "../EveDataProvider";
 export interface ShipSnapshotItemAttributeEffect {
   operator: string;
   penalty: boolean;
-  source: "Ship" | { Item: number };
+  source: "Ship" | "Char" | "Structure" | "Target" | { Item?: number; Charge?: number; Skill?: number };
   source_category: string;
   source_attribute_id: number;
 }
@@ -55,8 +55,14 @@ export type ShipSnapshotSlotsType = keyof ShipSnapshotSlots;
 
 interface ShipSnapshot {
   loaded?: boolean;
+
   hull?: ShipSnapshotItem;
   items?: ShipSnapshotItem[];
+  skills?: ShipSnapshotItem[];
+  char?: ShipSnapshotItem;
+  structure?: ShipSnapshotItem;
+  target?: ShipSnapshotItem;
+
   slots: ShipSnapshotSlots;
 
   fit?: EsiFit;
@@ -349,6 +355,10 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
         loaded: true,
         hull: snapshot.hull,
         items: snapshot.items,
+        skills: snapshot.skills,
+        char: snapshot.char,
+        structure: snapshot.structure,
+        target: snapshot.target,
         slots,
         fit: currentFit,
       };
