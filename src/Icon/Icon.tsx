@@ -7,6 +7,8 @@ const iconMapping = {
   "armor-hp": "texture/classes/fitting/statsicons/armorhp.png",
   "armor-repair-rate": "texture/classes/fitting/statsicons/armorrepairrate.png",
   "cargo-hold": "texture/windowicons/ships.png",
+  "damage-alpha": "texture/classes/fitting/statsicons/alphastrike.png",
+  "damage-dps": "texture/classes/fitting/statsicons/turretdps.png",
   "drone-bay": "texture/windowicons/dronebay.png",
   "em-resistance": "texture/classes/fitting/statsicons/emresistance.png",
   "explosive-resistance": "texture/classes/fitting/statsicons/explosiveresistance.png",

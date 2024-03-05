@@ -67,10 +67,32 @@ export const ShipStatistics = () => {
         </CategoryLine>
       </Category>
 
-      <Category headerLabel="Offense" headerContent={<span>? dps</span>}>
+      <Category
+        headerLabel="Offense"
+        headerContent={
+          <span>
+            <ShipAttribute name="damageWithoutReloadDps" fixed={1} /> dps
+          </span>
+        }
+      >
         <CategoryLine>
-          <span>? dps</span>
-          <span>? HP</span>
+          <span title="Damage Per Second" className={styles.statistic}>
+            <span>
+              <Icon name="damage-dps" size={24} />
+            </span>
+            <span>
+              <ShipAttribute name="damageWithoutReloadDps" fixed={1} /> dps (
+              <ShipAttribute name="damageWithReloadDps" fixed={1} /> dps)
+            </span>
+          </span>
+          <span title="Alpha Strike" className={styles.statistic}>
+            <span>
+              <Icon name="damage-alpha" size={24} />
+            </span>
+            <span>
+              <ShipAttribute name="damageAlphaHp" fixed={0} /> HP
+            </span>
+          </span>
         </CategoryLine>
       </Category>
 
