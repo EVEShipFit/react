@@ -1,1 +1,3 @@
-export const defaultDataUrl = "https://data.eveship.fit/v9.1.0-20240227/";
+import { ESF_DATA_VERSION } from "@eveshipfit/data";
+
+export const defaultDataUrl = `https://data.eveship.fit/v${ESF_DATA_VERSION}/`;
