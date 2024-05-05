@@ -1,7 +1,7 @@
 import type { Decorator, Meta, StoryObj } from "@storybook/react";
 import React from "react";
 
-import { fullFits } from "../../.storybook/fits";
+import { fullFit } from "../../.storybook/fits";
 
 import { DogmaEngineProvider } from "../DogmaEngineProvider";
 import { EsiProvider } from "../EsiProvider";
@@ -43,7 +43,7 @@ export const Default: Story = {
   decorators: [useShipSnapshotProvider],
   parameters: {
     snapshot: {
-      fit: fullFits[1],
+      fit: fullFit,
     },
   },
 };

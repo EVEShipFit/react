@@ -1,11 +1,11 @@
 import React from "react";
 
-import { useShipAttribute } from "../ShipAttribute";
+import { useAttribute } from "../ShipAttribute";
 
 import styles from "./ShipStatistics.module.css";
 
 export const Resistance = (props: { name: string }) => {
-  const stringValue = useShipAttribute({
+  const stringValue = useAttribute("Ship", {
     name: props.name,
     fixed: 0,
     isResistance: true,

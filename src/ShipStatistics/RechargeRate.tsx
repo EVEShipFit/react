@@ -1,13 +1,13 @@
 import React from "react";
 
-import { useShipAttribute } from "../ShipAttribute";
+import { useAttribute } from "../ShipAttribute";
 
 import styles from "./ShipStatistics.module.css";
 import clsx from "clsx";
 import { IconName, Icon } from "../Icon";
 
 export const RechargeRateItem = (props: { name: string; icon: IconName }) => {
-  const stringValue = useShipAttribute({
+  const stringValue = useAttribute("Ship", {
     name: props.name,
     fixed: 1,
   });

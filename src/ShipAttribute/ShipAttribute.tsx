@@ -3,7 +3,7 @@ import React from "react";
 import { EveDataContext } from "../EveDataProvider";
 import { ShipSnapshotContext } from "../ShipSnapshotProvider";
 
-export interface ShipAttributeProps {
+export interface AttributeProps {
   /** Name of the attribute. */
   name: string;
   /** How many decimals to render. */
@@ -17,13 +17,18 @@ export interface ShipAttributeProps {
 /**
  * Return the value of a ship's attribute.
  */
-export function useShipAttribute(props: ShipAttributeProps) {
+export function useAttribute(type: "Ship" | "Char", props: AttributeProps) {
   const eveData = React.useContext(EveDataContext);
   const shipSnapshot = React.useContext(ShipSnapshotContext);
 
   if (shipSnapshot?.loaded) {
     const attributeId = eveData.attributeMapping?.[props.name] || 0;
-    let value = shipSnapshot.hull?.attributes.get(attributeId)?.value;
+    let value;
+    if (type === "Ship") {
+      value = shipSnapshot.hull?.attributes.get(attributeId)?.value;
+    } else {
+      value = shipSnapshot.char?.attributes.get(attributeId)?.value;
+    }
     let highIsGood = eveData.dogmaAttributes?.[attributeId]?.highIsGood;
 
     if (value == undefined) {
@@ -63,10 +68,19 @@ export function useShipAttribute(props: ShipAttributeProps) {
 }
 
 /**
- * Render a single attribute of a ship's snapshot.
+ * Render a single ship attribute of a ship's snapshot.
  */
-export const ShipAttribute = (props: ShipAttributeProps) => {
-  const stringValue = useShipAttribute(props);
+export const ShipAttribute = (props: AttributeProps) => {
+  const stringValue = useAttribute("Ship", props);
+
+  return <span>{stringValue}</span>;
+};
+
+/**
+ * Render a single character attribute of a ship's snapshot.
+ */
+export const CharAttribute = (props: AttributeProps) => {
+  const stringValue = useAttribute("Char", props);
 
   return <span>{stringValue}</span>;
 };

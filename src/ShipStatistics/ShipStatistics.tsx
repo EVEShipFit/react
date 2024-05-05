@@ -11,6 +11,7 @@ import { Resistance } from "./Resistance";
 
 import styles from "./ShipStatistics.module.css";
 import { Icon } from "../Icon";
+import { CharAttribute } from "../ShipAttribute/ShipAttribute";
 
 /**
  * Render ship statistics similar to how it is done in-game.
@@ -261,6 +262,49 @@ export const ShipStatistics = () => {
             <span>
               <ShipAttribute name="alignTime" fixed={2} />s
             </span>
+          </span>
+        </CategoryLine>
+      </Category>
+
+      <Category
+        headerLabel="Drones"
+        headerContent={
+          <span>
+            <ShipAttribute name="droneDamageDps" fixed={1} /> dps
+          </span>
+        }
+      >
+        <CategoryLine>
+          <span title="Drone Bandwidth" className={styles.statistic}>
+            <span>
+              <Icon name="mass" size={24} />
+            </span>
+            <span>
+              <ShipAttribute name="droneBandwidthUsedTotal" fixed={0} />/
+              <ShipAttribute name="droneBandwidth" fixed={0} /> Mbit/sec
+            </span>
+          </span>
+          <span title="Drone Control Range" className={styles.statistic}>
+            <span>
+              <Icon name="inertia-modifier" size={24} />
+            </span>
+            <span>
+              <CharAttribute name="droneControlDistance" fixed={2} divideBy={1000} /> km
+            </span>
+          </span>
+        </CategoryLine>
+        <CategoryLine>
+          <span className={styles.statistic}>
+            <span>
+              <div style={{ width: 24 }}></div>
+            </span>
+            <span>
+              <ShipAttribute name="droneActive" fixed={0} /> Active
+            </span>
+          </span>
+          <span className={styles.statistic}>
+            <span></span>
+            <span></span>
           </span>
         </CategoryLine>
       </Category>
