@@ -2,6 +2,7 @@ import React from "react";
 
 import { DogmaEngineContext } from "../DogmaEngineProvider";
 import { EveDataContext } from "../EveDataProvider";
+import { EsiContext } from "../EsiProvider";
 
 export interface ShipSnapshotItemAttributeEffect {
   operator: string;
@@ -109,8 +110,11 @@ export interface ShipSnapshotProps {
   children: React.ReactNode;
   /** A ship fit in ESI representation. */
   fit: EsiFit;
-  /** A list of skills to apply to the fit: {skill_id: skill_level}. */
-  skills: Record<string, number>;
+  /**
+   * A list of skills to apply to the fit: {skill_id: skill_level}.
+   * If undefined, falls back to skills from EsiProvider
+   **/
+  skills?: Record<string, number>;
 }
 
 /**
@@ -138,6 +142,13 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
   });
   const [currentFit, setCurrentFit] = React.useState<EsiFit | undefined>(undefined);
   const dogmaEngine = React.useContext(DogmaEngineContext);
+
+  const esiData = React.useContext(EsiContext);
+  const skills = React.useMemo(() => {
+    if (props.skills !== undefined) return props.skills;
+    if (esiData?.currentSkills !== undefined) return esiData.currentSkills;
+    return undefined;
+  }, [props.skills, esiData]);
 
   const setItemState = React.useCallback((flag: number, state: string) => {
     setCurrentFit((oldFit: EsiFit | undefined) => {
@@ -323,10 +334,11 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
   }, [addModule, removeModule, addCharge, removeCharge, changeHull, setItemState, setName]);
 
   React.useEffect(() => {
+    console.log(dogmaEngine.loaded, eveData.loaded, currentFit, skills);
     if (!dogmaEngine.loaded) return;
-    if (currentFit === undefined || props.skills === undefined) return;
+    if (currentFit === undefined || skills === undefined) return;
 
-    const snapshot = dogmaEngine.engine?.calculate(currentFit, props.skills);
+    const snapshot = dogmaEngine.engine?.calculate(currentFit, skills);
 
     const slots = {
       hislot: 0,
@@ -363,7 +375,7 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
         fit: currentFit,
       };
     });
-  }, [eveData, dogmaEngine, currentFit, props.skills]);
+  }, [eveData, dogmaEngine, currentFit, skills]);
 
   React.useEffect(() => {
     setCurrentFit(props.fit);

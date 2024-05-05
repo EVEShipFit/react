@@ -21,6 +21,7 @@ export interface Esi {
   loaded?: boolean;
   characters: Record<string, EsiCharacter>;
   currentCharacter?: string;
+  currentSkills?: Record<string, number>;
 
   changeCharacter: (character: string) => void;
   login: () => void;
@@ -48,7 +49,7 @@ export const EsiContext = React.createContext<Esi>({
 
 export interface EsiProps {
   /** Callback to call when skills are changed. */
-  setSkills: (skills: Record<string, number>) => void;
+  setSkills?: (skills: Record<string, number>) => void;
   /** Children that can use this provider. */
   children: React.ReactNode;
 }
@@ -149,9 +150,13 @@ export const EsiProvider = (props: EsiProps) => {
     const characterId = esi.currentCharacter;
     if (characterId === undefined) return;
     /* Skills already fetched? We won't do it again till the user reloads. */
-    const currentSkills = esi.characters[characterId]?.skills;
-    if (currentSkills !== undefined) {
-      props.setSkills(currentSkills);
+    const existingSkills = esi.characters[characterId]?.skills;
+    if (existingSkills !== undefined) {
+      setEsi((oldEsi: Esi) => ({
+        ...oldEsi,
+        currentSkills: existingSkills,
+      }));
+      props.setSkills?.(existingSkills);
       return;
     }
 
@@ -164,21 +169,20 @@ export const EsiProvider = (props: EsiProps) => {
         skills[typeId] = level;
       }
 
-      setEsi((oldEsi: Esi) => {
-        return {
-          ...oldEsi,
-          characters: {
-            ...oldEsi.characters,
-            [characterId]: {
-              ...oldEsi.characters[characterId],
-              skills,
-              charFittings: [],
-            },
+      setEsi((oldEsi: Esi) => ({
+        ...oldEsi,
+        characters: {
+          ...oldEsi.characters,
+          [characterId]: {
+            ...oldEsi.characters[characterId],
+            skills,
+            charFittings: [],
           },
-        };
-      });
+        },
+        currentSkills: skills,
+      }));
 
-      props.setSkills(skills);
+      props.setSkills?.(skills);
       return;
     }
 
@@ -195,20 +199,19 @@ export const EsiProvider = (props: EsiProps) => {
           skills[typeId] = 0;
         }
 
-        setEsi((oldEsi: Esi) => {
-          return {
-            ...oldEsi,
-            characters: {
-              ...oldEsi.characters,
-              [characterId]: {
-                ...oldEsi.characters[characterId],
-                skills,
-              },
+        setEsi((oldEsi: Esi) => ({
+          ...oldEsi,
+          characters: {
+            ...oldEsi.characters,
+            [characterId]: {
+              ...oldEsi.characters[characterId],
+              skills,
             },
-          };
-        });
+          },
+          currentSkills: skills,
+        }));
 
-        props.setSkills(skills);
+        props.setSkills?.(skills);
       });
 
       getCharFittings(characterId, accessToken).then((charFittings) => {
