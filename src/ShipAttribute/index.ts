@@ -1,1 +1,1 @@
-export { useShipAttribute, ShipAttribute } from "./ShipAttribute";
+export { useAttribute, CharAttribute, ShipAttribute } from "./ShipAttribute";

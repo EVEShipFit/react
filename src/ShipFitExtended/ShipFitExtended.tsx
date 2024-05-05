@@ -31,7 +31,9 @@ const DroneBay = () => {
         <Icon name="drone-bay" size={32} />
       </div>
       <div className={styles.cargoText}>
-        <div>0</div>
+        <div>
+          <ShipAttribute name="droneCapacityUsed" fixed={1} />
+        </div>
         <div>
           / <ShipAttribute name="droneCapacity" fixed={1} />
         </div>
