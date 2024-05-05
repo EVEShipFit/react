@@ -13,6 +13,8 @@ import styles from "./EsiCharacterSelection.module.css";
 export const EsiCharacterSelection = () => {
   const esi = React.useContext(EsiContext);
 
+  const isExpired = esi.currentCharacter && esi.characters[esi.currentCharacter].expired;
+
   return (
     <div className={styles.character}>
       <select onChange={(e) => esi.changeCharacter(e.target.value)} value={esi.currentCharacter}>
@@ -21,14 +23,21 @@ export const EsiCharacterSelection = () => {
           .map(([id, name]) => {
             return (
               <option key={id} value={id}>
-                {name.name}
+                {name.name} {name.expired ? "(access expired)" : ""}
               </option>
             );
           })}
       </select>
-      <button onClick={esi.login} title="Add another character">
-        +
-      </button>
+      {isExpired && (
+        <button onClick={esi.refresh} title="Refresh access">
+          R
+        </button>
+      )}
+      {!isExpired && (
+        <button onClick={esi.login} title="Add another character">
+          +
+        </button>
+      )}
     </div>
   );
 };

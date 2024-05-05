@@ -12,6 +12,7 @@ import { useLocalStorage } from "../Helpers/LocalStorage";
 
 export interface EsiCharacter {
   name: string;
+  expired: boolean;
   skills?: Record<string, number>;
   charFittings?: EsiFit[];
 }
@@ -23,6 +24,7 @@ export interface Esi {
 
   changeCharacter: (character: string) => void;
   login: () => void;
+  refresh: () => void;
 }
 
 interface EsiPrivate {
@@ -41,6 +43,7 @@ export const EsiContext = React.createContext<Esi>({
   characters: {},
   changeCharacter: () => {},
   login: () => {},
+  refresh: () => {},
 });
 
 export interface EsiProps {
@@ -61,6 +64,7 @@ export const EsiProvider = (props: EsiProps) => {
     characters: {},
     changeCharacter: () => {},
     login: () => {},
+    refresh: () => {},
   });
   const [esiPrivate, setEsiPrivate] = React.useState<EsiPrivate>({
     loaded: undefined,
@@ -90,6 +94,10 @@ export const EsiProvider = (props: EsiProps) => {
     if (typeof window === "undefined") return;
     window.location.href = "https://esi.eveship.fit/";
   }, []);
+  const refresh = React.useCallback(() => {
+    if (typeof window === "undefined") return;
+    window.location.href = "https://esi.eveship.fit/";
+  }, []);
 
   const ensureAccessToken = React.useCallback(
     async (characterId: string): Promise<string | undefined> => {
@@ -99,7 +107,19 @@ export const EsiProvider = (props: EsiProps) => {
 
       const { accessToken, refreshToken } = await getAccessToken(esiPrivate.refreshTokens[characterId]);
       if (accessToken === undefined || refreshToken === undefined) {
-        console.log("Failed to get access token");
+        setEsi((oldEsi: Esi) => {
+          return {
+            ...oldEsi,
+            characters: {
+              ...oldEsi.characters,
+              [characterId]: {
+                ...oldEsi.characters[characterId],
+                expired: true,
+              },
+            },
+          };
+        });
+
         return undefined;
       }
 
@@ -252,6 +272,7 @@ export const EsiProvider = (props: EsiProps) => {
           ...oldCharacters,
           [characterId]: {
             name: name,
+            expired: false,
           },
         };
       });
@@ -271,6 +292,7 @@ export const EsiProvider = (props: EsiProps) => {
             ...oldEsi.characters,
             [characterId]: {
               name: name,
+              expired: false,
             },
           },
           currentCharacter: characterId,
@@ -297,9 +319,11 @@ export const EsiProvider = (props: EsiProps) => {
       const charactersDefault = {
         ".all-0": {
           name: "Default character - All Skills L0",
+          expired: false,
         },
         ".all-5": {
           name: "Default character - All Skills L5",
+          expired: false,
         },
         ...characters,
       };
@@ -310,6 +334,7 @@ export const EsiProvider = (props: EsiProps) => {
         currentCharacter,
         changeCharacter,
         login,
+        refresh,
       });
       setEsiPrivate({
         loaded: true,
