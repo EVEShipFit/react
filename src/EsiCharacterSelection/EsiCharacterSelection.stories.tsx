@@ -17,7 +17,7 @@ type Story = StoryObj<typeof EsiCharacterSelection>;
 const withEsiProvider: Decorator<Record<string, never>> = (Story) => {
   return (
     <EveDataProvider>
-      <EsiProvider setSkills={console.log}>
+      <EsiProvider>
         <Story />
       </EsiProvider>
     </EveDataProvider>

@@ -41,8 +41,7 @@ export const Default: Story = {
   decorators: [withEveDataProvider],
   parameters: {
     snapshot: {
-      fit: fullFit,
-      skills: {},
+      initialFit: fullFit,
     },
   },
 };

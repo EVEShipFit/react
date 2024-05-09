@@ -11,7 +11,7 @@ export interface ShipFitProps {
 export const Hull = () => {
   const shipSnapshot = React.useContext(ShipSnapshotContext);
 
-  const hull = shipSnapshot?.fit?.ship_type_id;
+  const hull = shipSnapshot?.currentFit?.ship_type_id;
   if (hull === undefined) {
     return <></>;
   }

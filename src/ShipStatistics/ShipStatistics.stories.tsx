@@ -19,17 +19,15 @@ export default meta;
 type Story = StoryObj<typeof ShipStatistics>;
 
 const useShipSnapshotProvider: Decorator<Record<string, never>> = (Story, context) => {
-  const [skills, setSkills] = React.useState<Record<string, number>>({});
-
   return (
     <EveDataProvider>
-      <EsiProvider setSkills={setSkills}>
-        <DogmaEngineProvider>
-          <ShipSnapshotProvider {...context.parameters.snapshot} skills={skills}>
+      <DogmaEngineProvider>
+        <ShipSnapshotProvider {...context.parameters.snapshot}>
+          <EsiProvider>
             <Story />
-          </ShipSnapshotProvider>
-        </DogmaEngineProvider>
-      </EsiProvider>
+          </EsiProvider>
+        </ShipSnapshotProvider>
+      </DogmaEngineProvider>
     </EveDataProvider>
   );
 };
@@ -38,7 +36,7 @@ export const Default: Story = {
   decorators: [useShipSnapshotProvider],
   parameters: {
     snapshot: {
-      fit: fullFit,
+      initialFit: fullFit,
     },
   },
 };

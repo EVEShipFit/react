@@ -19,19 +19,17 @@ export default meta;
 type Story = StoryObj<typeof DroneBay>;
 
 const useShipSnapshotProvider: Decorator<Record<string, never>> = (Story, context) => {
-  const [skills, setSkills] = React.useState<Record<string, number>>({});
-
   return (
     <EveDataProvider>
-      <EsiProvider setSkills={setSkills}>
-        <DogmaEngineProvider>
-          <ShipSnapshotProvider {...context.parameters.snapshot} skills={skills}>
+      <DogmaEngineProvider>
+        <ShipSnapshotProvider {...context.parameters.snapshot}>
+          <EsiProvider>
             <div style={{ width: context.args.width, height: context.args.width }}>
               <Story />
             </div>
-          </ShipSnapshotProvider>
-        </DogmaEngineProvider>
-      </EsiProvider>
+          </EsiProvider>
+        </ShipSnapshotProvider>
+      </DogmaEngineProvider>
     </EveDataProvider>
   );
 };
