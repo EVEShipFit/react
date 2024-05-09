@@ -47,3 +47,20 @@
   display: inline-block;
   margin-left: 5px;
 }
+
+.droneBay {
+  cursor: pointer;
+  position: relative;
+  z-index: 100;
+}
+.droneBayOverlay {
+  display: none;
+  position: absolute;
+  bottom: 40px;
+  left: 10px;
+  width: 350px;
+  z-index: 101;
+}
+.droneBayVisible {
+  display: block;
+}

@@ -1,0 +1,74 @@
+.droneBay {
+  background-color: #111111;
+  border: 1px solid #333333;
+  color: #c5c5c5;
+  font-size: 15px;
+  padding: 5px;
+  position: relative;
+}
+
+.droneBayEntry {
+  display: flex;
+  height: 64px;
+  padding: 4px;
+}
+.droneBayEntry:hover {
+  background-color: #321d1d;
+}
+
+.droneBayEntry > div {
+  margin-right: 8px;
+}
+
+.droneBayEntry .middle {
+  flex-grow: 1;
+}
+
+.droneBayEntry .amount {
+  line-height: 64px;
+  text-align: center;
+  width: 30px;
+}
+
+.droneBayEntry .name {
+  line-height: 32px;
+}
+
+.droneBayEntry .selected {
+  color: #909090;
+}
+
+.droneBayEntry .close {
+  color: #909090;
+  cursor: pointer;
+  line-height: 64px;
+}
+
+.droneBayEntrySelected {
+  background-color: #321d1d;
+  border: 1px solid #52281c;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 10px;
+  height: 16px;
+  line-height: 16px;
+  margin-left: 2px;
+  text-align: center;
+  width: 16px;
+}
+
+.open {
+  background-color: #7a3925;
+  border: 1px solid #a54b32;
+}
+
+.droneBayEntrySelected:hover {
+  background-color: #d05c3b;
+  border: 1px solid #ee6d47;
+}
+
+.active {
+  background-color: #7a3925;
+  border: 1px solid #a54b32;
+  color: white;
+}
