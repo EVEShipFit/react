@@ -64,7 +64,7 @@ const Effect = (props: { effect: ShipSnapshotItemAttributeEffect }) => {
     if (item === undefined) {
       sourceName = `Unknown ${sourceType}`;
     } else {
-      sourceName = `${sourceType} - ` + eveData.typeIDs?.[item?.type_id]?.name ?? sourceName;
+      sourceName = `${sourceType} - ` + (eveData.typeIDs?.[item?.type_id]?.name ?? sourceName);
       attribute = item?.attributes.get(props.effect.source_attribute_id);
     }
   }
