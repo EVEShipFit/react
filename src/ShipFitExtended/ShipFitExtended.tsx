@@ -6,8 +6,10 @@ import { ShipAttribute } from "../ShipAttribute";
 import { ShipSnapshotContext } from "../ShipSnapshotProvider";
 
 import styles from "./ShipFitExtended.module.css";
+import clsx from "clsx";
+import { DroneBay } from "../DroneBay";
 
-const CargoHold = () => {
+const ShipCargoHold = () => {
   return (
     <div>
       <div className={styles.cargoIcon}>
@@ -24,22 +26,29 @@ const CargoHold = () => {
   );
 };
 
-const DroneBay = () => {
+const ShipDroneBay = () => {
+  const [isOpen, setIsOpen] = React.useState(false);
+
   return (
-    <div>
-      <div className={styles.cargoIcon}>
-        <Icon name="drone-bay" size={32} />
-      </div>
-      <div className={styles.cargoText}>
-        <div>
-          <ShipAttribute name="droneCapacityUsed" fixed={1} />
+    <>
+      <div onClick={() => setIsOpen(!isOpen)} className={styles.droneBay}>
+        <div className={styles.cargoIcon}>
+          <Icon name="drone-bay" size={32} />
         </div>
-        <div>
-          / <ShipAttribute name="droneCapacity" fixed={1} />
+        <div className={styles.cargoText}>
+          <div>
+            <ShipAttribute name="droneCapacityUsed" fixed={1} />
+          </div>
+          <div>
+            / <ShipAttribute name="droneCapacity" fixed={1} />
+          </div>
         </div>
+        <div className={styles.cargoPostfix}>m3</div>
       </div>
-      <div className={styles.cargoPostfix}>m3</div>
-    </div>
+      <div className={clsx(styles.droneBayOverlay, { [styles.droneBayVisible]: isOpen })}>
+        <DroneBay />
+      </div>
+    </>
   );
 };
 
@@ -80,8 +89,8 @@ export const ShipFitExtended = () => {
       </div>
 
       <div className={styles.cargoHold}>
-        <CargoHold />
-        <DroneBay />
+        <ShipCargoHold />
+        <ShipDroneBay />
       </div>
 
       <div className={styles.cpuPg}>

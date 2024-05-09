@@ -137,7 +137,7 @@ export const fullFits = [
       { flag: 32, quantity: 1, type_id: 30836 },
       { flag: 33, quantity: 1, type_id: 11578 },
       { flag: 34, quantity: 1, type_id: 28756, charge: { type_id: 30488 } },
-      { flag: 87, quantity: 5, type_id: 2456 },
+      { flag: 87, quantity: 8, type_id: 2456 },
       { flag: 92, quantity: 1, type_id: 31748 },
       { flag: 93, quantity: 1, type_id: 31760 },
       { flag: 94, quantity: 1, type_id: 31588 },

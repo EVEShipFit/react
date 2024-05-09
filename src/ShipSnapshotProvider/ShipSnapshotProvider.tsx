@@ -71,6 +71,8 @@ interface ShipSnapshot {
   removeModule: (flag: number) => void;
   addCharge: (chargeTypeId: number) => void;
   removeCharge: (flag: number) => void;
+  toggleDrones: (typeId: number, active: number) => void;
+  removeDrones: (typeId: number) => void;
   changeHull: (typeId: number) => void;
   changeFit: (fit: EsiFit) => void;
   setItemState: (flag: number, state: string) => void;
@@ -90,6 +92,8 @@ export const ShipSnapshotContext = React.createContext<ShipSnapshot>({
   removeModule: () => {},
   addCharge: () => {},
   removeCharge: () => {},
+  toggleDrones: () => {},
+  removeDrones: () => {},
   changeHull: () => {},
   changeFit: () => {},
   setItemState: () => {},
@@ -131,6 +135,8 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
     removeModule: () => {},
     addCharge: () => {},
     removeCharge: () => {},
+    toggleDrones: () => {},
+    removeDrones: () => {},
     changeHull: () => {},
     changeFit: () => {},
     setItemState: () => {},
@@ -294,6 +300,68 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
     });
   }, []);
 
+  const toggleDrones = React.useCallback((typeId: number, active: number) => {
+    setCurrentFit((oldFit: EsiFit | undefined) => {
+      if (oldFit === undefined) return undefined;
+
+      /* Find the amount of drones in the current fit. */
+      const count = oldFit.items
+        .filter((item) => item.flag === 87 && item.type_id === typeId)
+        .reduce((acc, item) => acc + item.quantity, 0);
+      if (count === 0) return oldFit;
+
+      /* If we request the same amount of active than we had, assume we want to deactive the current. */
+      const currentActive = oldFit.items
+        .filter((item) => item.flag === 87 && item.type_id === typeId && item.state === "Active")
+        .reduce((acc, item) => acc + item.quantity, 0);
+      if (currentActive === active) {
+        active = active - 1;
+      }
+
+      /* Ensure we never have more active than available. */
+      active = Math.min(count, active);
+
+      /* Remove all drones of this type. */
+      const newItems = oldFit.items.filter((item) => item.flag !== 87 || item.type_id !== typeId);
+
+      /* Add the active drones. */
+      if (active > 0) {
+        newItems.push({
+          flag: 87,
+          type_id: typeId,
+          quantity: active,
+          state: "Active",
+        });
+      }
+
+      /* Add the passive drones. */
+      if (active < count) {
+        newItems.push({
+          flag: 87,
+          type_id: typeId,
+          quantity: count - active,
+          state: "Passive",
+        });
+      }
+
+      return {
+        ...oldFit,
+        items: newItems,
+      };
+    });
+  }, []);
+
+  const removeDrones = React.useCallback((typeId: number) => {
+    setCurrentFit((oldFit: EsiFit | undefined) => {
+      if (oldFit === undefined) return undefined;
+
+      return {
+        ...oldFit,
+        items: oldFit.items.filter((item) => item.flag !== 87 || item.type_id !== typeId),
+      };
+    });
+  }, []);
+
   const changeHull = React.useCallback(
     (typeId: number) => {
       const hullName = eveData?.typeIDs?.[typeId].name;
@@ -315,12 +383,14 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
       removeModule,
       addCharge,
       removeCharge,
+      toggleDrones,
+      removeDrones,
       changeHull,
       changeFit: setCurrentFit,
       setItemState,
       setName,
     }));
-  }, [addModule, removeModule, addCharge, removeCharge, changeHull, setItemState, setName]);
+  }, [addModule, removeModule, addCharge, removeCharge, toggleDrones, removeDrones, changeHull, setItemState, setName]);
 
   React.useEffect(() => {
     if (!dogmaEngine.loaded) return;
