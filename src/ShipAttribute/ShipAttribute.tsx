@@ -12,6 +12,8 @@ export interface AttributeProps {
   isResistance?: boolean;
   /** With what value, if any, to divide the attribute value. */
   divideBy?: number;
+  /** Whether to forcefully round down. */
+  roundDown?: boolean;
 }
 
 /**
@@ -29,7 +31,6 @@ export function useAttribute(type: "Ship" | "Char", props: AttributeProps) {
     } else {
       value = shipSnapshot.char?.attributes.get(attributeId)?.value;
     }
-    let highIsGood = eveData.dogmaAttributes?.[attributeId]?.highIsGood;
 
     if (value == undefined) {
       return "?";
@@ -37,7 +38,6 @@ export function useAttribute(type: "Ship" | "Char", props: AttributeProps) {
 
     if (props.isResistance) {
       value = 100 - value * 100;
-      highIsGood = !highIsGood;
     }
 
     if (props.divideBy) {
@@ -46,12 +46,13 @@ export function useAttribute(type: "Ship" | "Char", props: AttributeProps) {
 
     const k = Math.pow(10, props.fixed);
     if (k > 0) {
-      if (highIsGood) {
+      if (props.isResistance) {
         value -= 1 / k / 10;
         value = Math.ceil(value * k) / k;
-      } else {
-        value += 1 / k / 10;
+      } else if (props.roundDown) {
         value = Math.floor(value * k) / k;
+      } else {
+        value = Math.round(value * k) / k;
       }
     }
 
