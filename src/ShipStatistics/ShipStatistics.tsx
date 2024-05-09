@@ -101,7 +101,7 @@ export const ShipStatistics = () => {
         headerLabel="Defense"
         headerContent={
           <span>
-            <ShipAttribute name="ehp" fixed={0} /> ehp
+            <ShipAttribute name="ehp" fixed={0} roundDown /> ehp
           </span>
         }
       >
@@ -128,9 +128,9 @@ export const ShipStatistics = () => {
               <Icon name="shield-hp" size={24} />
             </span>
             <span>
-              <ShipAttribute name="shieldCapacity" fixed={0} /> hp
+              <ShipAttribute name="shieldCapacity" fixed={0} roundDown /> hp
               <br />
-              <ShipAttribute name="shieldRechargeRate" fixed={0} divideBy={1000} /> s<br />
+              <ShipAttribute name="shieldRechargeRate" fixed={0} divideBy={1000} roundDown /> s<br />
             </span>
           </span>
           <span style={{ flex: 2 }}>
@@ -146,7 +146,7 @@ export const ShipStatistics = () => {
               <Icon name="armor-hp" size={24} />
             </span>
             <span>
-              <ShipAttribute name="armorHP" fixed={0} /> hp
+              <ShipAttribute name="armorHP" fixed={0} roundDown /> hp
             </span>
           </span>
           <span style={{ flex: 2 }}>
@@ -162,7 +162,7 @@ export const ShipStatistics = () => {
               <Icon name="hull-hp" size={24} />
             </span>
             <span>
-              <ShipAttribute name="hp" fixed={0} /> hp
+              <ShipAttribute name="hp" fixed={0} roundDown /> hp
             </span>
           </span>
           <span style={{ flex: 2 }}>
