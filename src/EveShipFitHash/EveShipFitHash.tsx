@@ -18,9 +18,7 @@ async function decompress(base64compressedBytes: string): Promise<string> {
   return result;
 }
 
-async function decodeEsiFit(fitVersion: string, fitCompressed: string): Promise<EsiFit | undefined> {
-  if (fitVersion != "v1") return undefined;
-
+async function decodeEsiFitV1(fitCompressed: string): Promise<EsiFit | undefined> {
   const fitEncoded = await decompress(fitCompressed);
 
   const fitLines = fitEncoded.trim().split("\n");
@@ -32,6 +30,39 @@ async function decodeEsiFit(fitVersion: string, fitCompressed: string): Promise<
       flag: parseInt(item[0]),
       type_id: parseInt(item[1]),
       quantity: parseInt(item[2]),
+    };
+  });
+
+  return {
+    ship_type_id: parseInt(fitHeader[0]),
+    name: fitHeader[1],
+    description: fitHeader[2],
+    items: fitItems,
+  };
+}
+
+async function decodeEsiFitV2(fitCompressed: string): Promise<EsiFit | undefined> {
+  const fitEncoded = await decompress(fitCompressed);
+
+  const fitLines = fitEncoded.trim().split("\n");
+  const fitHeader = fitLines[0].split(",");
+
+  const fitItems = fitLines.slice(1).map((line) => {
+    const item = line.split(",");
+
+    let charge = undefined;
+    if (item[3]) {
+      charge = {
+        type_id: parseInt(item[3]),
+      };
+    }
+
+    return {
+      flag: parseInt(item[0]),
+      type_id: parseInt(item[1]),
+      quantity: parseInt(item[2]),
+      charge,
+      state: item[4] || undefined,
     };
   });
 
@@ -55,7 +86,13 @@ export async function eveShipFitHash(fitHash: string): Promise<EsiFit | undefine
 
   if (fitPrefix !== "fit") return undefined;
 
-  const esiFit = await decodeEsiFit(fitVersion, fitEncoded);
+  let esiFit = undefined;
+  switch (fitVersion) {
+    case "v1":
+      esiFit = await decodeEsiFitV1(fitEncoded);
+    case "v2":
+      esiFit = await decodeEsiFitV2(fitEncoded);
+  }
   return esiFit;
 }
 

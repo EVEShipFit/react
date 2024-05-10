@@ -22,10 +22,10 @@ async function encodeEsiFit(esiFit: EsiFit): Promise<string> {
   let result = `${esiFit.ship_type_id},${esiFit.name},${esiFit.description}\n`;
 
   for (const item of esiFit.items) {
-    result += `${item.flag},${item.type_id},${item.quantity}\n`;
+    result += `${item.flag},${item.type_id},${item.quantity},${item.charge?.type_id ?? ""},${item.state ?? ""}\n`;
   }
 
-  return "v1:" + (await compress(result));
+  return "v2:" + (await compress(result));
 }
 
 /**
