@@ -41,7 +41,7 @@ export const Default: Story = {
   decorators: [useShipSnapshotProvider],
   parameters: {
     snapshot: {
-      fit: fullFit,
+      initialFit: fullFit,
     },
   },
 };
