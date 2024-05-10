@@ -86,14 +86,6 @@ export const DogmaEngineProvider = (props: DogmaEngineProps) => {
     window.get_type_id = (type_id: number): TypeID | undefined => {
       return eveData.typeIDs?.[type_id];
     };
-
-    return () => {
-      window.get_dogma_attributes = undefined;
-      window.get_dogma_attribute = undefined;
-      window.get_dogma_effects = undefined;
-      window.get_dogma_effect = undefined;
-      window.get_type_id = undefined;
-    };
   }, [eveData]);
 
   React.useEffect(() => {
