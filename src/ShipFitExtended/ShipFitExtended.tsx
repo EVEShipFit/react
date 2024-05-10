@@ -8,6 +8,7 @@ import { ShipSnapshotContext } from "../ShipSnapshotProvider";
 import styles from "./ShipFitExtended.module.css";
 import clsx from "clsx";
 import { DroneBay } from "../DroneBay";
+import { EveDataContext } from "../EveDataProvider";
 
 const ShipCargoHold = () => {
   return (
@@ -27,7 +28,12 @@ const ShipCargoHold = () => {
 };
 
 const ShipDroneBay = () => {
+  const eveData = React.useContext(EveDataContext);
+  const shipSnapshot = React.useContext(ShipSnapshotContext);
+
   const [isOpen, setIsOpen] = React.useState(false);
+
+  const isStructure = eveData.typeIDs?.[shipSnapshot?.hull?.type_id ?? 0]?.categoryID === 65;
 
   return (
     <>
@@ -40,7 +46,8 @@ const ShipDroneBay = () => {
             <ShipAttribute name="droneCapacityUsed" fixed={1} />
           </div>
           <div>
-            / <ShipAttribute name="droneCapacity" fixed={1} />
+            / {isStructure && <>0.0</>}
+            {!isStructure && <ShipAttribute name="droneCapacity" fixed={1} />}
           </div>
         </div>
         <div className={styles.cargoPostfix}>m3</div>
