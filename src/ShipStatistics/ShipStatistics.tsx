@@ -27,7 +27,7 @@ export const ShipStatistics = () => {
     const attributeId = eveData.attributeMapping?.capacitorDepletesIn || 0;
     const capacitorDepletesIn = shipSnapshot.hull?.attributes.get(attributeId)?.value;
 
-    if (capacitorDepletesIn !== undefined && capacitorDepletesIn > 0) {
+    if (capacitorDepletesIn !== undefined && capacitorDepletesIn >= 0) {
       const hours = Math.floor(capacitorDepletesIn / 3600);
       const minutes = Math.floor((capacitorDepletesIn % 3600) / 60);
       const seconds = Math.floor(capacitorDepletesIn % 60);
