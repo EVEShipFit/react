@@ -119,10 +119,13 @@ export async function eveShipFitHash(fitHash: string): Promise<EsiFit | undefine
   switch (fitVersion) {
     case "v1":
       esiFit = await decodeEsiFitV1(fitEncoded);
+      break;
     case "v2":
       esiFit = await decodeEsiFitV2(fitEncoded);
+      break;
     case "killmail":
       esiFit = await fetchKillMail(fitEncoded);
+      break;
   }
   return esiFit;
 }
