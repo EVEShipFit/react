@@ -21,6 +21,7 @@ export const ShipStatistics = () => {
   const shipSnapshot = React.useContext(ShipSnapshotContext);
 
   let capacitorState = "Stable";
+  const isStructure = eveData.typeIDs?.[shipSnapshot?.hull?.type_id ?? 0]?.categoryID === 65;
 
   if (shipSnapshot?.loaded) {
     const attributeId = eveData.attributeMapping?.capacitorDepletesIn || 0;
@@ -220,94 +221,98 @@ export const ShipStatistics = () => {
         </CategoryLine>
       </Category>
 
-      <Category
-        headerLabel="Navigation"
-        headerContent={
-          <span>
-            <ShipAttribute name="maxVelocity" fixed={1} /> m/s
-          </span>
-        }
-      >
-        <CategoryLine>
-          <span title="Mass" className={styles.statistic}>
+      {!isStructure && (
+        <Category
+          headerLabel="Navigation"
+          headerContent={
             <span>
-              <Icon name="mass" size={24} />
+              <ShipAttribute name="maxVelocity" fixed={1} /> m/s
             </span>
-            <span>
-              <ShipAttribute name="mass" fixed={2} divideBy={1000} /> t
+          }
+        >
+          <CategoryLine>
+            <span title="Mass" className={styles.statistic}>
+              <span>
+                <Icon name="mass" size={24} />
+              </span>
+              <span>
+                <ShipAttribute name="mass" fixed={2} divideBy={1000} /> t
+              </span>
             </span>
-          </span>
-          <span title="Inertia Modifier" className={styles.statistic}>
-            <span>
-              <Icon name="inertia-modifier" size={24} />
+            <span title="Inertia Modifier" className={styles.statistic}>
+              <span>
+                <Icon name="inertia-modifier" size={24} />
+              </span>
+              <span>
+                <ShipAttribute name="agility" fixed={4} />x
+              </span>
             </span>
-            <span>
-              <ShipAttribute name="agility" fixed={4} />x
+          </CategoryLine>
+          <CategoryLine>
+            <span title="Ship Warp Speed" className={styles.statistic}>
+              <span>
+                <Icon name="warp-speed" size={24} />
+              </span>
+              <span>
+                <ShipAttribute name="warpSpeedMultiplier" fixed={2} /> AU/s
+              </span>
             </span>
-          </span>
-        </CategoryLine>
-        <CategoryLine>
-          <span title="Ship Warp Speed" className={styles.statistic}>
-            <span>
-              <Icon name="warp-speed" size={24} />
+            <span title="Align Time" className={styles.statistic}>
+              <span>
+                <Icon name="align-time" size={24} />
+              </span>
+              <span>
+                <ShipAttribute name="alignTime" fixed={2} />s
+              </span>
             </span>
-            <span>
-              <ShipAttribute name="warpSpeedMultiplier" fixed={2} /> AU/s
-            </span>
-          </span>
-          <span title="Align Time" className={styles.statistic}>
-            <span>
-              <Icon name="align-time" size={24} />
-            </span>
-            <span>
-              <ShipAttribute name="alignTime" fixed={2} />s
-            </span>
-          </span>
-        </CategoryLine>
-      </Category>
+          </CategoryLine>
+        </Category>
+      )}
 
-      <Category
-        headerLabel="Drones"
-        headerContent={
-          <span>
-            <ShipAttribute name="droneDamageDps" fixed={1} /> dps
-          </span>
-        }
-      >
-        <CategoryLine>
-          <span title="Drone Bandwidth" className={styles.statistic}>
+      {!isStructure && (
+        <Category
+          headerLabel="Drones"
+          headerContent={
             <span>
-              <Icon name="mass" size={24} />
+              <ShipAttribute name="droneDamageDps" fixed={1} /> dps
             </span>
-            <span>
-              <ShipAttribute name="droneBandwidthUsedTotal" fixed={0} />/
-              <ShipAttribute name="droneBandwidth" fixed={0} /> Mbit/sec
+          }
+        >
+          <CategoryLine>
+            <span title="Drone Bandwidth" className={styles.statistic}>
+              <span>
+                <Icon name="mass" size={24} />
+              </span>
+              <span>
+                <ShipAttribute name="droneBandwidthUsedTotal" fixed={0} />/
+                <ShipAttribute name="droneBandwidth" fixed={0} /> Mbit/sec
+              </span>
             </span>
-          </span>
-          <span title="Drone Control Range" className={styles.statistic}>
-            <span>
-              <Icon name="inertia-modifier" size={24} />
+            <span title="Drone Control Range" className={styles.statistic}>
+              <span>
+                <Icon name="inertia-modifier" size={24} />
+              </span>
+              <span>
+                <CharAttribute name="droneControlDistance" fixed={2} divideBy={1000} /> km
+              </span>
             </span>
-            <span>
-              <CharAttribute name="droneControlDistance" fixed={2} divideBy={1000} /> km
+          </CategoryLine>
+          <CategoryLine>
+            <span className={styles.statistic}>
+              <span>
+                <div style={{ width: 24 }}></div>
+              </span>
+              <span>
+                <ShipAttribute name="droneActive" fixed={0} /> Active
+              </span>
             </span>
-          </span>
-        </CategoryLine>
-        <CategoryLine>
-          <span className={styles.statistic}>
-            <span>
-              <div style={{ width: 24 }}></div>
+            <span className={styles.statistic}>
+              <span></span>
+              <span></span>
             </span>
-            <span>
-              <ShipAttribute name="droneActive" fixed={0} /> Active
-            </span>
-          </span>
-          <span className={styles.statistic}>
-            <span></span>
-            <span></span>
-          </span>
-        </CategoryLine>
-      </Category>
+          </CategoryLine>
+        </Category>
+      )}
     </div>
   );
 };
