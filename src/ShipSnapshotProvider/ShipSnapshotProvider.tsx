@@ -392,11 +392,42 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
     }));
   }, [addModule, removeModule, addCharge, removeCharge, toggleDrones, removeDrones, changeHull, setItemState, setName]);
 
+  const fixupCharge = React.useCallback(
+    (fit: EsiFit) => {
+      /* When importing fits, it can be that the ammo is on the same slot as the module, instead as charge. Fix that. */
+      const newItems = fit.items.map((item) => {
+        /* Ignore cargobay. */
+        if (item.flag === 5) return item;
+        /* Looks for items that are charges. */
+        if (eveData.typeIDs?.[item.type_id]?.categoryID !== 8) return item;
+
+        /* Find the module on the same slot. */
+        const module = fit.items.find(
+          (itemModule) => itemModule.flag === item.flag && itemModule.type_id !== item.type_id,
+        );
+        if (module === undefined) return undefined;
+
+        /* Assign the charge to the module. */
+        module.charge = {
+          type_id: item.type_id,
+        };
+        return undefined;
+      });
+
+      return {
+        ...fit,
+        items: newItems.filter((item) => item !== undefined),
+      };
+    },
+    [eveData],
+  );
+
   React.useEffect(() => {
     if (!dogmaEngine.loaded) return;
     if (currentFit === undefined || props.skills === undefined) return;
 
-    const snapshot = dogmaEngine.engine?.calculate(currentFit, props.skills);
+    const fit = fixupCharge(currentFit);
+    const snapshot = dogmaEngine.engine?.calculate(fit, props.skills);
 
     const slots = {
       hislot: 0,
@@ -433,7 +464,7 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
         fit: currentFit,
       };
     });
-  }, [eveData, dogmaEngine, currentFit, props.skills]);
+  }, [eveData, dogmaEngine, currentFit, fixupCharge, props.skills]);
 
   React.useEffect(() => {
     setCurrentFit(props.fit);
