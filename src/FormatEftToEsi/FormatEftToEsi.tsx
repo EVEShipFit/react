@@ -20,6 +20,9 @@ const effectIdMapping: Record<number, string> = {
   2663: "rig",
   3772: "subsystem",
 };
+const attributeIdMapping: Record<number, string> = {
+  1272: "droneBay",
+};
 
 /**
  * Convert an EFT string to an ESI JSON object.
@@ -67,6 +70,7 @@ export function useFormatEftToEsi() {
       hislot: 0,
       rig: 0,
       subsystem: 0,
+      droneBay: 0,
     };
 
     let lastSlotType = "";
@@ -74,20 +78,31 @@ export function useFormatEftToEsi() {
       const line = lines[i];
       if (line.trim() === "") continue;
 
-      if (line.startsWith("[Empty ")) {
+      /* Format is either of these:
+       * - [Empty ...]
+       * - <module>
+       * - <module> [<mutation-index>]
+       * - <module>, <charge>
+       * - <item> x<quantity>
+       * - [<mutation-index>] <module> followed with indented lines with mutated information.
+       */
+
+      if (line.startsWith("[") || line.startsWith("  ")) {
         if (lastSlotType != "") {
           slotIndex[lastSlotType]++;
         }
         continue;
       }
 
-      const itemType = line.split(",")[0].split(" x")[0].trim();
+      const itemType = line.split(",")[0].split(" x")[0].split("[")[0].trim();
       const itemCount = parseInt(line.split(",")[0].split(" x")[1]?.trim() ?? "1");
       const itemTypeId = lookupTypeByName(itemType);
       if (itemTypeId === undefined) throw new Error(`Unknown item '${itemType}'.`);
 
       const effects = eveData.typeDogma?.[itemTypeId]?.dogmaEffects;
-      if (effects === undefined) throw new Error(`No dogma defined for item '${itemType}'.`);
+      if (effects === undefined) throw new Error(`No dogma effects defined for item '${itemType}'.`);
+      const attributes = eveData.typeDogma?.[itemTypeId]?.dogmaAttributes;
+      if (attributes === undefined) throw new Error(`No dogma attributes defined for item '${itemType}'.`);
 
       /* Find what type of slot this item goes into. */
       let slotType = "";
@@ -95,13 +110,21 @@ export function useFormatEftToEsi() {
         slotType = effectIdMapping[effects[effectId].effectID];
         if (slotType) break;
       }
+      if (!slotType) {
+        for (const attributeId in attributes) {
+          slotType = attributeIdMapping[attributes[attributeId].attributeID];
+          if (slotType) break;
+        }
+      }
       lastSlotType = slotType;
 
       /* Ignore items we don't care about. */
       if (!slotType) continue;
 
+      const flag = slotType === "droneBay" ? 87 : esiFlagMapping[slotType][slotIndex[slotType]];
+
       esiFit.items.push({
-        flag: esiFlagMapping[slotType][slotIndex[slotType]],
+        flag,
         quantity: itemCount,
         type_id: itemTypeId,
       });
