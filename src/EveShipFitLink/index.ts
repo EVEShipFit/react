@@ -1,1 +1,1 @@
-export { useEveShipFitLink } from "./EveShipFitLink";
+export { useEveShipFitLink, useEveShipFitLinkHash } from "./EveShipFitLink";

@@ -29,26 +29,48 @@ async function encodeEsiFit(esiFit: EsiFit): Promise<string> {
 }
 
 /**
- * Returns a link to https://eveship.fit that contains the current fit.
+ * Returns an encoded hash with the current fit.
  */
-export function useEveShipFitLink() {
-  const [fitLink, setFitLink] = React.useState("");
+export function useEveShipFitLinkHash() {
+  const [fitHash, setFitHash] = React.useState("");
   const shipSnapshot = React.useContext(ShipSnapshotContext);
 
   React.useEffect(() => {
     if (!shipSnapshot?.loaded) return;
 
-    async function doCreateLink() {
+    async function doCreateHash() {
       if (!shipSnapshot?.currentFit) {
+        setFitHash("");
+        return;
+      }
+
+      const newFitHash = await encodeEsiFit(shipSnapshot.currentFit);
+      setFitHash(`#fit:${newFitHash}`);
+    }
+    doCreateHash();
+  }, [shipSnapshot?.loaded, shipSnapshot?.currentFit]);
+
+  return fitHash;
+}
+
+/**
+ * Returns a link to https://eveship.fit that contains the current fit.
+ */
+export function useEveShipFitLink() {
+  const fitHash = useEveShipFitLinkHash();
+  const [fitLink, setFitLink] = React.useState("");
+
+  React.useEffect(() => {
+    async function doCreateLink() {
+      if (fitHash === "") {
         setFitLink("");
         return;
       }
 
-      const fitHash = await encodeEsiFit(shipSnapshot.currentFit);
-      setFitLink(`https://eveship.fit/#fit:${fitHash}`);
+      setFitLink(`https://eveship.fit/${fitHash}`);
     }
     doCreateLink();
-  }, [shipSnapshot?.loaded, shipSnapshot?.currentFit]);
+  }, [fitHash]);
 
   return fitLink;
 }
@@ -59,7 +81,14 @@ export function useEveShipFitLink() {
  * Note: do not use this React component itself, but the useEveShipFitLink() React hook instead.
  */
 export const EveShipFitLink = () => {
+  const eveShipFitLinkHash = useEveShipFitLinkHash();
   const eveShipFitLink = useEveShipFitLink();
 
-  return <pre>{eveShipFitLink}</pre>;
+  return (
+    <pre>
+      Hash: {eveShipFitLinkHash}
+      <br />
+      Link: {eveShipFitLink}
+    </pre>
+  );
 };
