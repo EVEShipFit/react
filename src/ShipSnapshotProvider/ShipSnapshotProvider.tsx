@@ -423,7 +423,7 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
   );
 
   React.useEffect(() => {
-    if (!dogmaEngine.loaded) return;
+    if (!dogmaEngine.loaded || !eveData.loaded) return;
     if (currentFit === undefined || props.skills === undefined) return;
 
     const fit = fixupCharge(currentFit);
