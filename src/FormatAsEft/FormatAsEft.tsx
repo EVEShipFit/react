@@ -65,6 +65,12 @@ export function useFormatAsEft() {
           if (module.quantity > 1) {
             eft += ` x${module.quantity}`;
           }
+          if (module.charge !== undefined) {
+            const chargeType = eveData.typeIDs?.[module.charge.type_id];
+            if (chargeType !== undefined) {
+              eft += `, ${chargeType.name}`;
+            }
+          }
           eft += "\n";
         }
       }

@@ -99,6 +99,9 @@ export function useFormatEftToEsi() {
       const itemTypeId = lookupTypeByName(itemType);
       if (itemTypeId === undefined) throw new Error(`Unknown item '${itemType}'.`);
 
+      const chargeType = (line.split(",")[1] ?? "").trim();
+      const chargeTypeId = lookupTypeByName(chargeType);
+
       const effects = eveData.typeDogma?.[itemTypeId]?.dogmaEffects;
       if (effects === undefined) throw new Error(`No dogma effects defined for item '${itemType}'.`);
       const attributes = eveData.typeDogma?.[itemTypeId]?.dogmaAttributes;
@@ -122,11 +125,18 @@ export function useFormatEftToEsi() {
       if (!slotType) continue;
 
       const flag = slotType === "droneBay" ? 87 : esiFlagMapping[slotType][slotIndex[slotType]];
+      let charge = undefined;
+      if (chargeTypeId !== undefined) {
+        charge = {
+          type_id: chargeTypeId,
+        };
+      }
 
       esiFit.items.push({
         flag,
         quantity: itemCount,
         type_id: itemTypeId,
+        charge,
       });
       slotIndex[slotType]++;
     }
