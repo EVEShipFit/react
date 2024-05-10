@@ -74,6 +74,35 @@ async function decodeEsiFitV2(fitCompressed: string): Promise<EsiFit | undefined
   };
 }
 
+async function fetchKillMail(killMailHash: string): Promise<EsiFit | undefined> {
+  /* The hash is in the format "id/hash". */
+  const [killmailId, killmailHash] = killMailHash.split("/", 2);
+
+  /* Fetch the killmail from ESI. */
+  const response = await fetch(`https://esi.evetech.net/v1/killmails/${killmailId}/${killmailHash}/`);
+  if (response.status !== 200) return undefined;
+
+  const killMail = await response.json();
+
+  /* Convert the killmail to a fit; be mindful that ammo and a module can be on the same slot. */
+  const fitItems = killMail.victim.items.map(
+    (item: { flag: number; item_type_id: number; quantity_destroyed?: number; quantity_dropped?: number }) => {
+      return {
+        flag: item.flag,
+        type_id: item.item_type_id,
+        quantity: (item.quantity_dropped ?? 0) + (item.quantity_destroyed ?? 0),
+      };
+    },
+  );
+
+  return {
+    ship_type_id: killMail.victim.ship_type_id,
+    name: `Killmail ${killmailId}`,
+    description: "",
+    items: fitItems,
+  };
+}
+
 /**
  * Convert a hash from window.location.hash to an ESI fit.
  */
@@ -92,6 +121,8 @@ export async function eveShipFitHash(fitHash: string): Promise<EsiFit | undefine
       esiFit = await decodeEsiFitV1(fitEncoded);
     case "v2":
       esiFit = await decodeEsiFitV2(fitEncoded);
+    case "killmail":
+      esiFit = await fetchKillMail(fitEncoded);
   }
   return esiFit;
 }
