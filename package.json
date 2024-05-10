@@ -64,7 +64,7 @@
   },
   "peerDependencies": {
     "@eveshipfit/data": "^9",
-    "@eveshipfit/dogma-engine": "^3",
+    "@eveshipfit/dogma-engine": "^4",
     "react": "^18",
     "react-dom": "^18"
   },
