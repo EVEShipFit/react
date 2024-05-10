@@ -106,3 +106,8 @@
   margin-top: 4px;
   width: 300px;
 }
+
+.importError {
+  margin: 5px;
+  color: #864735;
+}

@@ -17,6 +17,7 @@ export const ClipboardButton = () => {
 
   const [isPopupOpen, setIsPopupOpen] = React.useState(false);
   const [isPasteOpen, setIsPasteOpen] = React.useState(false);
+  const [error, setError] = React.useState<string | undefined>(undefined);
   const textAreaRef = React.useRef<HTMLTextAreaElement>(null);
 
   const copyToClipboard = React.useCallback(() => {
@@ -29,6 +30,8 @@ export const ClipboardButton = () => {
   }, [copy, toEft]);
 
   const importFromClipboard = React.useCallback(() => {
+    setError(undefined);
+
     if (!shipSnapshot.loaded) return;
 
     const textArea = textAreaRef.current;
@@ -41,15 +44,28 @@ export const ClipboardButton = () => {
     if (fitString.startsWith("{")) {
       fit = JSON.parse(fitString);
     } else {
-      fit = eftToEsiFit(fitString);
+      try {
+        fit = eftToEsiFit(fitString);
+      } catch (e: unknown) {
+        const message = (e as Error).message;
+        setError(`Importing EFT fit failed: ${message}`);
+        return;
+      }
     }
-    if (fit === undefined) return;
+    if (fit === undefined) {
+      setError("Unknown fit format");
+      return;
+    }
 
     shipSnapshot.changeFit(fit);
 
     setIsPasteOpen(false);
     setIsPopupOpen(false);
   }, [eftToEsiFit, shipSnapshot]);
+
+  React.useEffect(() => {
+    if (isPasteOpen) setError(undefined);
+  }, [isPasteOpen]);
 
   return (
     <>
@@ -85,6 +101,7 @@ export const ClipboardButton = () => {
           <span className={clsx(styles.button, styles.buttonSmall)} onClick={() => importFromClipboard()}>
             Import
           </span>
+          {error && <div className={styles.importError}>{error}</div>}
         </div>
       </ModalDialog>
     </>
