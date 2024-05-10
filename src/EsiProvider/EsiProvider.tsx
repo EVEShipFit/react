@@ -1,7 +1,7 @@
 import { jwtDecode } from "jwt-decode";
 import React from "react";
 
-import { EsiFit } from "../ShipSnapshotProvider";
+import { EsiFit, ShipSnapshotContext } from "../ShipSnapshotProvider";
 
 import { getAccessToken } from "./EsiAccessToken";
 import { getSkills } from "./EsiSkills";
@@ -47,8 +47,6 @@ export const EsiContext = React.createContext<Esi>({
 });
 
 export interface EsiProps {
-  /** Callback to call when skills are changed. */
-  setSkills: (skills: Record<string, number>) => void;
   /** Children that can use this provider. */
   children: React.ReactNode;
 }
@@ -58,6 +56,7 @@ export interface EsiProps {
  */
 export const EsiProvider = (props: EsiProps) => {
   const eveData = React.useContext(EveDataContext);
+  const snapshot = React.useContext(ShipSnapshotContext);
 
   const [esi, setEsi] = React.useState<Esi>({
     loaded: undefined,
@@ -151,7 +150,7 @@ export const EsiProvider = (props: EsiProps) => {
     /* Skills already fetched? We won't do it again till the user reloads. */
     const currentSkills = esi.characters[characterId]?.skills;
     if (currentSkills !== undefined) {
-      props.setSkills(currentSkills);
+      snapshot.changeSkills(currentSkills);
       return;
     }
 
@@ -178,7 +177,7 @@ export const EsiProvider = (props: EsiProps) => {
         };
       });
 
-      props.setSkills(skills);
+      snapshot.changeSkills(skills);
       return;
     }
 
@@ -208,7 +207,7 @@ export const EsiProvider = (props: EsiProps) => {
           };
         });
 
-        props.setSkills(skills);
+        snapshot.changeSkills(skills);
       });
 
       getCharFittings(characterId, accessToken).then((charFittings) => {

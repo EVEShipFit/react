@@ -65,7 +65,8 @@ interface ShipSnapshot {
 
   slots: ShipSnapshotSlots;
 
-  fit?: EsiFit;
+  currentFit?: EsiFit;
+  currentSkills?: Record<string, number>;
 
   addModule: (typeId: number, slot: ShipSnapshotSlotsType | "dronebay") => void;
   removeModule: (flag: number) => void;
@@ -77,6 +78,7 @@ interface ShipSnapshot {
   changeFit: (fit: EsiFit) => void;
   setItemState: (flag: number, state: string) => void;
   setName: (name: string) => void;
+  changeSkills: (skills: Record<string, number>) => void;
 }
 
 export const ShipSnapshotContext = React.createContext<ShipSnapshot>({
@@ -98,6 +100,7 @@ export const ShipSnapshotContext = React.createContext<ShipSnapshot>({
   changeFit: () => {},
   setItemState: () => {},
   setName: () => {},
+  changeSkills: () => {},
 });
 
 const slotStart: Record<ShipSnapshotSlotsType, number> = {
@@ -111,10 +114,10 @@ const slotStart: Record<ShipSnapshotSlotsType, number> = {
 export interface ShipSnapshotProps {
   /** Children that can use this provider. */
   children: React.ReactNode;
-  /** A ship fit in ESI representation. */
-  fit: EsiFit;
-  /** A list of skills to apply to the fit: {skill_id: skill_level}. */
-  skills: Record<string, number>;
+  /** The initial fit to use. */
+  initialFit: EsiFit;
+  /** The initial skills to use. */
+  initialSkills?: Record<string, number>;
 }
 
 /**
@@ -122,6 +125,10 @@ export interface ShipSnapshotProps {
  */
 export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
   const eveData = React.useContext(EveDataContext);
+  const dogmaEngine = React.useContext(DogmaEngineContext);
+
+  const [currentFit, setCurrentFit] = React.useState<EsiFit>(props.initialFit);
+  const [currentSkills, setCurrentSkills] = React.useState<Record<string, number>>(props.initialSkills ?? {});
   const [shipSnapshot, setShipSnapshot] = React.useState<ShipSnapshot>({
     loaded: undefined,
     slots: {
@@ -138,17 +145,14 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
     toggleDrones: () => {},
     removeDrones: () => {},
     changeHull: () => {},
-    changeFit: () => {},
     setItemState: () => {},
     setName: () => {},
+    changeFit: setCurrentFit,
+    changeSkills: setCurrentSkills,
   });
-  const [currentFit, setCurrentFit] = React.useState<EsiFit | undefined>(undefined);
-  const dogmaEngine = React.useContext(DogmaEngineContext);
 
   const setItemState = React.useCallback((flag: number, state: string) => {
-    setCurrentFit((oldFit: EsiFit | undefined) => {
-      if (oldFit === undefined) return undefined;
-
+    setCurrentFit((oldFit: EsiFit) => {
       return {
         ...oldFit,
         items: oldFit?.items?.map((item) => {
@@ -166,9 +170,7 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
   }, []);
 
   const setName = React.useCallback((name: string) => {
-    setCurrentFit((oldFit: EsiFit | undefined) => {
-      if (oldFit === undefined) return undefined;
-
+    setCurrentFit((oldFit: EsiFit) => {
       return {
         ...oldFit,
         name: name,
@@ -178,9 +180,7 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
 
   const addModule = React.useCallback(
     (typeId: number, slot: ShipSnapshotSlotsType | "dronebay") => {
-      setCurrentFit((oldFit: EsiFit | undefined) => {
-        if (oldFit === undefined) return undefined;
-
+      setCurrentFit((oldFit: EsiFit) => {
         let flag = 0;
 
         /* Find the first free slot for that slot-type. */
@@ -215,9 +215,7 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
   );
 
   const removeModule = React.useCallback((flag: number) => {
-    setCurrentFit((oldFit: EsiFit | undefined) => {
-      if (oldFit === undefined) return undefined;
-
+    setCurrentFit((oldFit: EsiFit) => {
       return {
         ...oldFit,
         items: oldFit.items.filter((item) => item.flag !== flag),
@@ -233,9 +231,7 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
         )?.value ?? -1;
       const groupID = eveData.typeIDs?.[chargeTypeId]?.groupID ?? -1;
 
-      setCurrentFit((oldFit: EsiFit | undefined) => {
-        if (oldFit === undefined) return undefined;
-
+      setCurrentFit((oldFit: EsiFit) => {
         const newItems = [];
 
         for (let item of oldFit.items) {
@@ -281,9 +277,7 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
   );
 
   const removeCharge = React.useCallback((flag: number) => {
-    setCurrentFit((oldFit: EsiFit | undefined) => {
-      if (oldFit === undefined) return undefined;
-
+    setCurrentFit((oldFit: EsiFit) => {
       return {
         ...oldFit,
         items: oldFit.items.map((item) => {
@@ -301,9 +295,7 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
   }, []);
 
   const toggleDrones = React.useCallback((typeId: number, active: number) => {
-    setCurrentFit((oldFit: EsiFit | undefined) => {
-      if (oldFit === undefined) return undefined;
-
+    setCurrentFit((oldFit: EsiFit) => {
       /* Find the amount of drones in the current fit. */
       const count = oldFit.items
         .filter((item) => item.flag === 87 && item.type_id === typeId)
@@ -352,9 +344,7 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
   }, []);
 
   const removeDrones = React.useCallback((typeId: number) => {
-    setCurrentFit((oldFit: EsiFit | undefined) => {
-      if (oldFit === undefined) return undefined;
-
+    setCurrentFit((oldFit: EsiFit) => {
       return {
         ...oldFit,
         items: oldFit.items.filter((item) => item.flag !== 87 || item.type_id !== typeId),
@@ -386,7 +376,6 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
       toggleDrones,
       removeDrones,
       changeHull,
-      changeFit: setCurrentFit,
       setItemState,
       setName,
     }));
@@ -424,10 +413,10 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
 
   React.useEffect(() => {
     if (!dogmaEngine.loaded || !eveData.loaded) return;
-    if (currentFit === undefined || props.skills === undefined) return;
+    if (currentFit === undefined || currentSkills === undefined) return;
 
     const fit = fixupCharge(currentFit);
-    const snapshot = dogmaEngine.engine?.calculate(fit, props.skills);
+    const snapshot = dogmaEngine.engine?.calculate(fit, currentSkills);
 
     const slots = {
       hislot: 0,
@@ -461,14 +450,11 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
         structure: snapshot.structure,
         target: snapshot.target,
         slots,
-        fit: currentFit,
+        currentFit: currentFit,
+        currentSkills: currentSkills,
       };
     });
-  }, [eveData, dogmaEngine, currentFit, fixupCharge, props.skills]);
-
-  React.useEffect(() => {
-    setCurrentFit(props.fit);
-  }, [props.fit]);
+  }, [eveData, dogmaEngine, currentFit, fixupCharge, currentSkills]);
 
   return <ShipSnapshotContext.Provider value={shipSnapshot}>{props.children}</ShipSnapshotContext.Provider>;
 };

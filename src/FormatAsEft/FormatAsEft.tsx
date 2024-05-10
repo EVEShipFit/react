@@ -30,14 +30,14 @@ export function useFormatAsEft() {
 
   return (): string | undefined => {
     if (!eveData?.loaded) return undefined;
-    if (!shipSnapshot?.loaded || shipSnapshot.fit == undefined) return undefined;
+    if (!shipSnapshot?.loaded || shipSnapshot.currentFit == undefined) return undefined;
 
     let eft = "";
 
-    const shipType = eveData.typeIDs?.[shipSnapshot.fit.ship_type_id];
+    const shipType = eveData.typeIDs?.[shipSnapshot.currentFit.ship_type_id];
     if (!shipType) return undefined;
 
-    eft += `[${shipType.name}, ${shipSnapshot.fit.name}]\n`;
+    eft += `[${shipType.name}, ${shipSnapshot.currentFit.name}]\n`;
 
     for (const slotType of Object.keys(esiFlagMapping) as ShipSnapshotSlotsType[]) {
       let index = 1;
@@ -46,7 +46,7 @@ export function useFormatAsEft() {
         if (index > shipSnapshot.slots[slotType]) break;
         index += 1;
 
-        const module = shipSnapshot.fit.items.find((item) => item.flag === flag);
+        const module = shipSnapshot.currentFit.items.find((item) => item.flag === flag);
         if (module === undefined) {
           eft += "[Empty " + slotToEft[slotType] + "]\n";
           continue;

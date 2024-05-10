@@ -17,13 +17,13 @@ export const SaveButton = () => {
   const saveBrowser = React.useCallback(
     (force?: boolean) => {
       if (!localFit.loaded) return;
-      if (!shipSnapshot.loaded || !shipSnapshot?.fit) return;
+      if (!shipSnapshot.loaded || !shipSnapshot?.currentFit) return;
 
       setIsPopupOpen(false);
 
       if (!force) {
         for (const fit of localFit.fittings) {
-          if (fit.name === shipSnapshot.fit.name) {
+          if (fit.name === shipSnapshot.currentFit.name) {
             setIsAlreadyExistsOpen(true);
             return;
           }
@@ -32,7 +32,7 @@ export const SaveButton = () => {
 
       setIsAlreadyExistsOpen(false);
 
-      localFit.addFit(shipSnapshot.fit);
+      localFit.addFit(shipSnapshot.currentFit);
     },
     [localFit, shipSnapshot],
   );
@@ -61,7 +61,7 @@ export const SaveButton = () => {
         title="Update Fitting?"
       >
         <div>
-          <div>You have a fitting with the name {shipSnapshot?.fit?.name}, do you want to update it?</div>
+          <div>You have a fitting with the name {shipSnapshot?.currentFit?.name}, do you want to update it?</div>
           <div className={styles.alreadyExistsButtons}>
             <span className={clsx(styles.button, styles.buttonSmall)} onClick={() => saveBrowser(true)}>
               Yes

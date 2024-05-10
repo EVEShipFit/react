@@ -22,8 +22,7 @@ export const Default: Story = {
   },
   parameters: {
     snapshot: {
-      fit: fullFit,
-      skills: {},
+      initialFit: fullFit,
     },
   },
 };

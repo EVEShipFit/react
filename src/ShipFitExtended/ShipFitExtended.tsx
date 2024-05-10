@@ -74,7 +74,7 @@ const FitName = () => {
   return (
     <>
       <div className={styles.fitNameTitle}>Name</div>
-      <div className={styles.fitNameContent}>{shipSnapshot?.fit?.name}</div>
+      <div className={styles.fitNameContent}>{shipSnapshot?.currentFit?.name}</div>
     </>
   );
 };

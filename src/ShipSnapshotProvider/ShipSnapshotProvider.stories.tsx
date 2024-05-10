@@ -49,8 +49,7 @@ const TestShipSnapshot = () => {
 
 export const Default: Story = {
   args: {
-    fit: fullFit,
-    skills: {},
+    initialFit: fullFit,
   },
   render: (args) => (
     <EveDataProvider>

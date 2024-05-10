@@ -22,17 +22,17 @@ type Story = StoryObj<typeof HullListing>;
 const withEsiProvider: Decorator<Record<string, never>> = (Story, context) => {
   return (
     <EveDataProvider>
-      <EsiProvider setSkills={console.log}>
-        <LocalFitProvider>
-          <DogmaEngineProvider>
-            <ShipSnapshotProvider {...context.parameters.snapshot}>
+      <DogmaEngineProvider>
+        <ShipSnapshotProvider {...context.parameters.snapshot}>
+          <LocalFitProvider>
+            <EsiProvider>
               <div style={{ height: "400px" }}>
                 <Story />
               </div>
-            </ShipSnapshotProvider>
-          </DogmaEngineProvider>
-        </LocalFitProvider>
-      </EsiProvider>
+            </EsiProvider>
+          </LocalFitProvider>
+        </ShipSnapshotProvider>
+      </DogmaEngineProvider>
     </EveDataProvider>
   );
 };
@@ -42,8 +42,7 @@ export const Default: Story = {
   decorators: [withEsiProvider],
   parameters: {
     snapshot: {
-      fit: fullFit,
-      skills: {},
+      initialFit: fullFit,
     },
   },
 };

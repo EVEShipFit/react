@@ -21,17 +21,15 @@ type Story = StoryObj<typeof CalculationDetail>;
 const useShipSnapshotProvider: Decorator<{
   source: "Ship" | "Char" | "Structure" | "Target" | { Item?: number; Cargo?: number };
 }> = (Story, context) => {
-  const [skills, setSkills] = React.useState<Record<string, number>>({});
-
   return (
     <EveDataProvider>
-      <EsiProvider setSkills={setSkills}>
-        <DogmaEngineProvider>
-          <ShipSnapshotProvider {...context.parameters.snapshot} skills={skills}>
+      <DogmaEngineProvider>
+        <ShipSnapshotProvider {...context.parameters.snapshot}>
+          <EsiProvider>
             <Story {...context.args} />
-          </ShipSnapshotProvider>
-        </DogmaEngineProvider>
-      </EsiProvider>
+          </EsiProvider>
+        </ShipSnapshotProvider>
+      </DogmaEngineProvider>
     </EveDataProvider>
   );
 };
@@ -43,7 +41,7 @@ export const Default: Story = {
   decorators: [useShipSnapshotProvider],
   parameters: {
     snapshot: {
-      fit: fullFit,
+      initialFit: fullFit,
     },
   },
 };

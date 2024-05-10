@@ -39,16 +39,16 @@ export function useEveShipFitLink() {
     if (!shipSnapshot?.loaded) return;
 
     async function doCreateLink() {
-      if (!shipSnapshot?.fit) {
+      if (!shipSnapshot?.currentFit) {
         setFitLink("");
         return;
       }
 
-      const fitHash = await encodeEsiFit(shipSnapshot.fit);
+      const fitHash = await encodeEsiFit(shipSnapshot.currentFit);
       setFitLink(`https://eveship.fit/#fit:${fitHash}`);
     }
     doCreateLink();
-  }, [shipSnapshot?.loaded, shipSnapshot?.fit]);
+  }, [shipSnapshot?.loaded, shipSnapshot?.currentFit]);
 
   return fitLink;
 }

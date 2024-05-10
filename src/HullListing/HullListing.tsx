@@ -222,7 +222,7 @@ export const HullListing = () => {
       if (hull.marketGroupID === undefined) continue;
       if (!hull.published) continue;
 
-      if (filter.currentHull && shipSnapShot.fit?.ship_type_id !== parseInt(typeId)) continue;
+      if (filter.currentHull && shipSnapShot.currentFit?.ship_type_id !== parseInt(typeId)) continue;
 
       const fits: ListingFit[] = [];
       if (anyFilter) {
@@ -231,7 +231,7 @@ export const HullListing = () => {
         if (filter.esiCharacter && Object.keys(esiCharacterFits).includes(typeId))
           fits.push(...esiCharacterFits[typeId]);
         if (fits.length == 0) {
-          if (!filter.currentHull || shipSnapShot.fit?.ship_type_id !== parseInt(typeId)) continue;
+          if (!filter.currentHull || shipSnapShot.currentFit?.ship_type_id !== parseInt(typeId)) continue;
         }
       } else {
         if (Object.keys(localCharacterFits).includes(typeId)) fits.push(...localCharacterFits[typeId]);
@@ -257,7 +257,7 @@ export const HullListing = () => {
     }
 
     setHullGroups(newHullGroups);
-  }, [eveData, search, filter, localCharacterFits, esiCharacterFits, shipSnapShot.fit?.ship_type_id]);
+  }, [eveData, search, filter, localCharacterFits, esiCharacterFits, shipSnapShot.currentFit?.ship_type_id]);
 
   return (
     <div className={styles.listing}>

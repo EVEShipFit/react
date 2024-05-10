@@ -18,7 +18,7 @@ export const RenameButton = () => {
   }, [rename, shipSnapshot]);
 
   const openRename = React.useCallback(() => {
-    setRename(shipSnapshot?.fit?.name ?? "");
+    setRename(shipSnapshot?.currentFit?.name ?? "");
     setIsRenameOpen(true);
   }, [shipSnapshot]);
 
