@@ -382,31 +382,44 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
   }, [addModule, removeModule, addCharge, removeCharge, toggleDrones, removeDrones, changeHull, setItemState, setName]);
 
   const fixupCharge = React.useCallback(
-    (fit: EsiFit) => {
+    (fit: EsiFit): boolean => {
+      let changed = false;
+
       /* When importing fits, it can be that the ammo is on the same slot as the module, instead as charge. Fix that. */
-      const newItems = fit.items.map((item) => {
-        /* Ignore cargobay. */
-        if (item.flag === 5) return item;
-        /* Looks for items that are charges. */
-        if (eveData.typeIDs?.[item.type_id]?.categoryID !== 8) return item;
+      const newItems = fit.items
+        .map((item) => {
+          /* Ignore cargobay. */
+          if (item.flag === 5) return item;
+          /* Looks for items that are charges. */
+          if (eveData.typeIDs?.[item.type_id]?.categoryID !== 8) return item;
 
-        /* Find the module on the same slot. */
-        const module = fit.items.find(
-          (itemModule) => itemModule.flag === item.flag && itemModule.type_id !== item.type_id,
-        );
-        if (module === undefined) return undefined;
+          /* Find the module on the same slot. */
+          const module = fit.items.find(
+            (itemModule) => itemModule.flag === item.flag && itemModule.type_id !== item.type_id,
+          );
 
-        /* Assign the charge to the module. */
-        module.charge = {
-          type_id: item.type_id,
-        };
-        return undefined;
-      });
+          if (module !== undefined) {
+            /* Assign the charge to the module. */
+            module.charge = {
+              type_id: item.type_id,
+            };
+          }
 
-      return {
+          /* Remove the charge from the slot. */
+          changed = true;
+          return undefined;
+        })
+        .filter((item): item is EsiFit["items"][number] => item !== undefined);
+
+      if (!changed) return false;
+
+      const newFit = {
         ...fit,
-        items: newItems.filter((item) => item !== undefined),
+        items: newItems,
       };
+      setCurrentFit(newFit);
+
+      return true;
     },
     [eveData],
   );
@@ -415,8 +428,12 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
     if (!dogmaEngine.loaded || !eveData.loaded) return;
     if (currentFit === undefined || currentSkills === undefined) return;
 
-    const fit = fixupCharge(currentFit);
-    const snapshot = dogmaEngine.engine?.calculate(fit, currentSkills);
+    /* We can't fix fits on import, as eveData is not available. So we postpone
+     * it till we calculate the snapshot. If it changes the fit in any way, we
+     * drop out till the change is propagated. */
+    if (fixupCharge(currentFit)) return;
+
+    const snapshot = dogmaEngine.engine?.calculate(currentFit, currentSkills);
 
     const slots = {
       hislot: 0,
@@ -450,8 +467,8 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
         structure: snapshot.structure,
         target: snapshot.target,
         slots,
-        currentFit: currentFit,
-        currentSkills: currentSkills,
+        currentFit,
+        currentSkills,
       };
     });
   }, [eveData, dogmaEngine, currentFit, fixupCharge, currentSkills]);
