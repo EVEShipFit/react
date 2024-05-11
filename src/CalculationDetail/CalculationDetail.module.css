@@ -53,3 +53,7 @@
 .line:nth-child(odd) {
   background-color: #f2f2f2;
 }
+
+.notApplied {
+  background-color: #ffcccc;
+}
