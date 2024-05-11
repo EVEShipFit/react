@@ -115,7 +115,7 @@ export interface ShipSnapshotProps {
   /** Children that can use this provider. */
   children: React.ReactNode;
   /** The initial fit to use. */
-  initialFit: EsiFit;
+  initialFit?: EsiFit;
   /** The initial skills to use. */
   initialSkills?: Record<string, number>;
 }
@@ -127,7 +127,7 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
   const eveData = React.useContext(EveDataContext);
   const dogmaEngine = React.useContext(DogmaEngineContext);
 
-  const [currentFit, setCurrentFit] = React.useState<EsiFit>(props.initialFit);
+  const [currentFit, setCurrentFit] = React.useState<EsiFit | undefined>(props.initialFit);
   const [currentSkills, setCurrentSkills] = React.useState<Record<string, number>>(props.initialSkills ?? {});
   const [shipSnapshot, setShipSnapshot] = React.useState<ShipSnapshot>({
     loaded: undefined,
@@ -152,7 +152,9 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
   });
 
   const setItemState = React.useCallback((flag: number, state: string) => {
-    setCurrentFit((oldFit: EsiFit) => {
+    setCurrentFit((oldFit: EsiFit | undefined) => {
+      if (oldFit === undefined) return undefined;
+
       return {
         ...oldFit,
         items: oldFit?.items?.map((item) => {
@@ -170,7 +172,9 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
   }, []);
 
   const setName = React.useCallback((name: string) => {
-    setCurrentFit((oldFit: EsiFit) => {
+    setCurrentFit((oldFit: EsiFit | undefined) => {
+      if (oldFit === undefined) return undefined;
+
       return {
         ...oldFit,
         name: name,
@@ -180,7 +184,9 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
 
   const addModule = React.useCallback(
     (typeId: number, slot: ShipSnapshotSlotsType | "dronebay") => {
-      setCurrentFit((oldFit: EsiFit) => {
+      setCurrentFit((oldFit: EsiFit | undefined) => {
+        if (oldFit === undefined) return undefined;
+
         let flag = 0;
 
         /* Find the first free slot for that slot-type. */
@@ -215,7 +221,9 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
   );
 
   const removeModule = React.useCallback((flag: number) => {
-    setCurrentFit((oldFit: EsiFit) => {
+    setCurrentFit((oldFit: EsiFit | undefined) => {
+      if (oldFit === undefined) return undefined;
+
       return {
         ...oldFit,
         items: oldFit.items.filter((item) => item.flag !== flag),
@@ -231,7 +239,9 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
         )?.value ?? -1;
       const groupID = eveData.typeIDs?.[chargeTypeId]?.groupID ?? -1;
 
-      setCurrentFit((oldFit: EsiFit) => {
+      setCurrentFit((oldFit: EsiFit | undefined) => {
+        if (oldFit === undefined) return undefined;
+
         const newItems = [];
 
         for (let item of oldFit.items) {
@@ -277,7 +287,9 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
   );
 
   const removeCharge = React.useCallback((flag: number) => {
-    setCurrentFit((oldFit: EsiFit) => {
+    setCurrentFit((oldFit: EsiFit | undefined) => {
+      if (oldFit === undefined) return undefined;
+
       return {
         ...oldFit,
         items: oldFit.items.map((item) => {
@@ -295,7 +307,9 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
   }, []);
 
   const toggleDrones = React.useCallback((typeId: number, active: number) => {
-    setCurrentFit((oldFit: EsiFit) => {
+    setCurrentFit((oldFit: EsiFit | undefined) => {
+      if (oldFit === undefined) return undefined;
+
       /* Find the amount of drones in the current fit. */
       const count = oldFit.items
         .filter((item) => item.flag === 87 && item.type_id === typeId)
@@ -344,7 +358,9 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
   }, []);
 
   const removeDrones = React.useCallback((typeId: number) => {
-    setCurrentFit((oldFit: EsiFit) => {
+    setCurrentFit((oldFit: EsiFit | undefined) => {
+      if (oldFit === undefined) return undefined;
+
       return {
         ...oldFit,
         items: oldFit.items.filter((item) => item.flag !== 87 || item.type_id !== typeId),
