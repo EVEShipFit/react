@@ -32,8 +32,6 @@ export const ClipboardButton = () => {
   const importFromClipboard = React.useCallback(() => {
     setError(undefined);
 
-    if (!shipSnapshot.loaded) return;
-
     const textArea = textAreaRef.current;
     if (textArea === null) return;
 
