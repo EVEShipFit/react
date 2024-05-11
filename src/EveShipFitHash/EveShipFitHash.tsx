@@ -1,6 +1,7 @@
 import React from "react";
 
 import { EsiFit } from "../ShipSnapshotProvider";
+import { EveDataContext } from "../EveDataProvider";
 
 async function decompress(base64compressedBytes: string): Promise<string> {
   const stream = new Blob([Uint8Array.from(atob(base64compressedBytes), (c) => c.charCodeAt(0))]).stream();
@@ -74,60 +75,94 @@ async function decodeEsiFitV2(fitCompressed: string): Promise<EsiFit | undefined
   };
 }
 
-async function fetchKillMail(killMailHash: string): Promise<EsiFit | undefined> {
-  /* The hash is in the format "id/hash". */
-  const [killmailId, killmailHash] = killMailHash.split("/", 2);
+function useFetchKillMail() {
+  const eveData = React.useContext(EveDataContext);
 
-  /* Fetch the killmail from ESI. */
-  const response = await fetch(`https://esi.evetech.net/v1/killmails/${killmailId}/${killmailHash}/`);
-  if (response.status !== 200) return undefined;
+  return async (killMailHash: string): Promise<EsiFit | undefined> => {
+    /* The hash is in the format "id/hash". */
+    const [killmailId, killmailHash] = killMailHash.split("/", 2);
 
-  const killMail = await response.json();
+    /* Fetch the killmail from ESI. */
+    const response = await fetch(`https://esi.evetech.net/v1/killmails/${killmailId}/${killmailHash}/`);
+    if (response.status !== 200) return undefined;
 
-  /* Convert the killmail to a fit; be mindful that ammo and a module can be on the same slot. */
-  const fitItems = killMail.victim.items.map(
-    (item: { flag: number; item_type_id: number; quantity_destroyed?: number; quantity_dropped?: number }) => {
-      return {
-        flag: item.flag,
-        type_id: item.item_type_id,
-        quantity: (item.quantity_dropped ?? 0) + (item.quantity_destroyed ?? 0),
-      };
-    },
-  );
+    const killMail = await response.json();
 
-  return {
-    ship_type_id: killMail.victim.ship_type_id,
-    name: `Killmail ${killmailId}`,
-    description: "",
-    items: fitItems,
+    /* Convert the killmail to a fit; be mindful that ammo and a module can be on the same slot. */
+    let fitItems: EsiFit["items"] = killMail.victim.items.map(
+      (item: { flag: number; item_type_id: number; quantity_destroyed?: number; quantity_dropped?: number }) => {
+        return {
+          flag: item.flag,
+          type_id: item.item_type_id,
+          quantity: (item.quantity_dropped ?? 0) + (item.quantity_destroyed ?? 0),
+        };
+      },
+    );
+
+    fitItems = fitItems
+      .map((item) => {
+        /* When importing fits, it can be that the ammo is on the same slot as the module, instead as charge. Fix that. */
+
+        /* Ignore cargobay. */
+        if (item.flag === 5) return item;
+        /* Looks for items that are charges. */
+        if (eveData.typeIDs?.[item.type_id]?.categoryID !== 8) return item;
+
+        /* Find the module on the same slot. */
+        const module = fitItems.find(
+          (itemModule) => itemModule.flag === item.flag && itemModule.type_id !== item.type_id,
+        );
+
+        if (module !== undefined) {
+          /* Assign the charge to the module. */
+          module.charge = {
+            type_id: item.type_id,
+          };
+        }
+
+        /* Remove the charge from the slot. */
+        return undefined;
+      })
+      .filter((item): item is EsiFit["items"][number] => item !== undefined);
+
+    return {
+      ship_type_id: killMail.victim.ship_type_id,
+      name: `Killmail ${killmailId}`,
+      description: "",
+      items: fitItems,
+    };
   };
 }
 
 /**
  * Convert a hash from window.location.hash to an ESI fit.
  */
-export async function eveShipFitHash(fitHash: string): Promise<EsiFit | undefined> {
-  if (!fitHash) return undefined;
+export function useEveShipFitHash() {
+  const fetchKillMail = useFetchKillMail();
 
-  const fitPrefix = fitHash.split(":")[0];
-  const fitVersion = fitHash.split(":")[1];
-  const fitEncoded = fitHash.split(":")[2];
+  return async (fitHash: string): Promise<EsiFit | undefined> => {
+    if (!fitHash) return undefined;
 
-  if (fitPrefix !== "fit") return undefined;
+    const fitPrefix = fitHash.split(":")[0];
+    const fitVersion = fitHash.split(":")[1];
+    const fitEncoded = fitHash.split(":")[2];
 
-  let esiFit = undefined;
-  switch (fitVersion) {
-    case "v1":
-      esiFit = await decodeEsiFitV1(fitEncoded);
-      break;
-    case "v2":
-      esiFit = await decodeEsiFitV2(fitEncoded);
-      break;
-    case "killmail":
-      esiFit = await fetchKillMail(fitEncoded);
-      break;
-  }
-  return esiFit;
+    if (fitPrefix !== "fit") return undefined;
+
+    let esiFit = undefined;
+    switch (fitVersion) {
+      case "v1":
+        esiFit = await decodeEsiFitV1(fitEncoded);
+        break;
+      case "v2":
+        esiFit = await decodeEsiFitV2(fitEncoded);
+        break;
+      case "killmail":
+        esiFit = await fetchKillMail(fitEncoded);
+        break;
+    }
+    return esiFit;
+  };
 }
 
 export interface EveShipFitHashProps {
@@ -141,6 +176,7 @@ export interface EveShipFitHashProps {
  * Note: do not use this React component itself, but the eveShipFitHash() function instead.
  */
 export const EveShipFitHash = (props: EveShipFitHashProps) => {
+  const eveShipFitHash = useEveShipFitHash();
   const [esiFit, setEsiFit] = React.useState<EsiFit | undefined>(undefined);
 
   React.useEffect(() => {
@@ -149,7 +185,7 @@ export const EveShipFitHash = (props: EveShipFitHashProps) => {
     }
 
     getFit(props.fitHash);
-  }, [props.fitHash]);
+  }, [props.fitHash, eveShipFitHash]);
 
   return <pre>{JSON.stringify(esiFit, null, 2)}</pre>;
 };
