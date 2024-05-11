@@ -50,7 +50,7 @@ const Hull = (props: { typeId: number; entry: ListingHull }) => {
       let index = 0;
       return (
         <>
-          {props.entry.fits
+          {Object.values(props.entry.fits)
             .sort((a, b) => a.fit.name.localeCompare(b.fit.name))
             .map((fit) => {
               index += 1;

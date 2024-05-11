@@ -89,7 +89,7 @@ const CalculationDetailMeta = (props: { attributeId: number; attribute: ShipSnap
   const eveData = React.useContext(EveDataContext);
 
   const eveAttribute = eveData.dogmaAttributes?.[props.attributeId];
-  const sortedEffects = props.attribute.effects.sort((a, b) => {
+  const sortedEffects = Object.values(props.attribute.effects).sort((a, b) => {
     const aIndex = Object.keys(EffectOperatorOrder).indexOf(a.operator);
     const bIndex = Object.keys(EffectOperatorOrder).indexOf(b.operator);
     if (aIndex === -1 || bIndex === -1) {

@@ -46,7 +46,7 @@ const ModuleGroup = (props: { level: number; group: ListingGroup; hideGroup?: bo
   const getChildren = React.useCallback(() => {
     return (
       <>
-        {props.group.items
+        {Object.values(props.group.items)
           .sort((a, b) => a.meta - b.meta || a.name.localeCompare(b.name))
           .map((item) => {
             if (item.slotType === "charge") {
@@ -386,7 +386,7 @@ export const HardwareListing = () => {
         </span>
       </div>
       <div className={clsx(styles.filter, { [styles.collapsed]: selection !== "charges" })}>
-        {modulesWithCharges
+        {Object.values(modulesWithCharges)
           .sort((a, b) => a.name.localeCompare(b.name))
           .map((chargeGroup) => {
             return (
