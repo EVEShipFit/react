@@ -23,6 +23,29 @@ const EffectOperatorOrder: Record<string, string> = {
   PostAssignment: "=",
 };
 
+function stateToInteger(state: string): number {
+  switch (state) {
+    case "Passive":
+      return 0;
+    case "Online":
+      return 1;
+    case "Active":
+      return 2;
+    case "Overload":
+      return 3;
+    case "Target":
+      return 4;
+    case "Area":
+      return 5;
+    case "Dungeon":
+      return 6;
+    case "System":
+      return 7;
+    default:
+      return 8;
+  }
+}
+
 const Effect = (props: { effect: ShipSnapshotItemAttributeEffect }) => {
   const eveData = React.useContext(EveDataContext);
   const shipSnapshot = React.useContext(ShipSnapshotContext);
@@ -31,54 +54,72 @@ const Effect = (props: { effect: ShipSnapshotItemAttributeEffect }) => {
 
   let sourceName = "Unknown";
   let attribute = undefined;
+  let applied = true;
 
-  if (props.effect.source === "Ship") {
-    sourceName = "Ship";
-    attribute = shipSnapshot.hull?.attributes.get(props.effect.source_attribute_id);
-  } else if (props.effect.source === "Char") {
-    sourceName = "Char";
-    attribute = shipSnapshot.char?.attributes.get(props.effect.source_attribute_id);
-  } else if (props.effect.source === "Structure") {
-    sourceName = "Structure";
-    attribute = shipSnapshot.structure?.attributes.get(props.effect.source_attribute_id);
-  } else if (props.effect.source === "Target") {
-    sourceName = "Target";
-    attribute = shipSnapshot.target?.attributes.get(props.effect.source_attribute_id);
-  } else {
-    let item = undefined;
-    let sourceType = undefined;
+  switch (props.effect.source) {
+    case "Ship":
+      sourceName = "Ship";
+      attribute = shipSnapshot.hull?.attributes.get(props.effect.source_attribute_id);
+      break;
 
-    /* Lookup the source of the effect. */
-    if (props.effect.source.Item !== undefined) {
-      item = shipSnapshot.items?.[props.effect.source.Item];
-      sourceType = "Item";
-    } else if (props.effect.source.Skill !== undefined) {
-      item = shipSnapshot.skills?.[props.effect.source.Skill];
-      sourceType = "Skill";
-    } else if (props.effect.source.Charge !== undefined) {
-      item = shipSnapshot.items?.[props.effect.source.Charge].charge;
-      sourceType = "Charge";
-    }
+    case "Char":
+      sourceName = "Character";
+      attribute = shipSnapshot.char?.attributes.get(props.effect.source_attribute_id);
+      break;
 
-    /* Find the attribute on the source. */
-    if (item === undefined) {
-      sourceName = `Unknown ${sourceType}`;
-    } else {
-      sourceName = `${sourceType} - ` + (eveData.typeIDs?.[item?.type_id]?.name ?? sourceName);
-      attribute = item?.attributes.get(props.effect.source_attribute_id);
-    }
+    case "Structure":
+      sourceName = "Structure";
+      attribute = shipSnapshot.structure?.attributes.get(props.effect.source_attribute_id);
+      break;
+
+    case "Target":
+      sourceName = "Target";
+      attribute = shipSnapshot.target?.attributes.get(props.effect.source_attribute_id);
+      break;
+
+    default:
+      let item = undefined;
+      let sourceType = undefined;
+
+      /* Lookup the source of the effect. */
+      if (props.effect.source.Item !== undefined) {
+        item = shipSnapshot.items?.[props.effect.source.Item];
+        sourceType = "Item";
+      } else if (props.effect.source.Skill !== undefined) {
+        item = shipSnapshot.skills?.[props.effect.source.Skill];
+        sourceType = "Skill";
+      } else if (props.effect.source.Charge !== undefined) {
+        item = shipSnapshot.items?.[props.effect.source.Charge].charge;
+        sourceType = "Charge";
+      }
+
+      /* Find the attribute on the source. */
+      if (item === undefined) {
+        sourceName = `Unknown ${sourceType}`;
+      } else {
+        sourceName = `${sourceType}: ` + (eveData.typeIDs?.[item?.type_id]?.name ?? sourceName);
+        attribute = item?.attributes.get(props.effect.source_attribute_id);
+
+        const itemState = stateToInteger(item.state);
+        const sourceState = stateToInteger(props.effect.source_category);
+        if (itemState < sourceState) {
+          applied = false;
+        }
+      }
+      break;
   }
 
   return (
-    <div className={styles.effect}>
+    <div className={clsx(styles.effect, { [styles.notApplied]: !applied })}>
       <span>{EffectOperatorOrder[props.effect.operator]}</span>
       <span>
-        {attribute?.value || eveAttribute?.defaultValue}
+        {attribute?.value ?? eveAttribute?.defaultValue}
         {props.effect.penalty ? " (penalized)" : ""}
         {attribute?.value === undefined ? " (default)" : ""}
       </span>
       <span>
         {sourceName} - {eveAttribute?.name}
+        {!applied && " (not applied)"}
       </span>
     </div>
   );
