@@ -2,6 +2,7 @@ import React from "react";
 
 import { EsiFit } from "../ShipSnapshotProvider";
 import { EveDataContext } from "../EveDataProvider";
+import { useFormatEftToEsi } from "../FormatEftToEsi";
 
 async function decompress(base64compressedBytes: string): Promise<string> {
   const stream = new Blob([Uint8Array.from(atob(base64compressedBytes), (c) => c.charCodeAt(0))]).stream();
@@ -134,11 +135,21 @@ function useFetchKillMail() {
   };
 }
 
+function useDecodeEft() {
+  const formatEftToEsi = useFormatEftToEsi();
+
+  return async (eftCompressed: string): Promise<EsiFit | undefined> => {
+    const eft = await decompress(eftCompressed);
+    return formatEftToEsi(eft);
+  };
+}
+
 /**
  * Convert a hash from window.location.hash to an ESI fit.
  */
 export function useEveShipFitHash() {
   const fetchKillMail = useFetchKillMail();
+  const decodeEft = useDecodeEft();
 
   return async (fitHash: string): Promise<EsiFit | undefined> => {
     if (!fitHash) return undefined;
@@ -159,6 +170,9 @@ export function useEveShipFitHash() {
         break;
       case "killmail":
         esiFit = await fetchKillMail(fitEncoded);
+        break;
+      case "eft":
+        esiFit = await decodeEft(fitEncoded);
         break;
     }
     return esiFit;
