@@ -1,1 +1,1 @@
-export { eveShipFitHash } from "./EveShipFitHash";
+export { useEveShipFitHash } from "./EveShipFitHash";

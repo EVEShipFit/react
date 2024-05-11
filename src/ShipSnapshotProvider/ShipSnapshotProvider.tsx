@@ -397,57 +397,9 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
     }));
   }, [addModule, removeModule, addCharge, removeCharge, toggleDrones, removeDrones, changeHull, setItemState, setName]);
 
-  const fixupCharge = React.useCallback(
-    (fit: EsiFit): boolean => {
-      let changed = false;
-
-      /* When importing fits, it can be that the ammo is on the same slot as the module, instead as charge. Fix that. */
-      const newItems = fit.items
-        .map((item) => {
-          /* Ignore cargobay. */
-          if (item.flag === 5) return item;
-          /* Looks for items that are charges. */
-          if (eveData.typeIDs?.[item.type_id]?.categoryID !== 8) return item;
-
-          /* Find the module on the same slot. */
-          const module = fit.items.find(
-            (itemModule) => itemModule.flag === item.flag && itemModule.type_id !== item.type_id,
-          );
-
-          if (module !== undefined) {
-            /* Assign the charge to the module. */
-            module.charge = {
-              type_id: item.type_id,
-            };
-          }
-
-          /* Remove the charge from the slot. */
-          changed = true;
-          return undefined;
-        })
-        .filter((item): item is EsiFit["items"][number] => item !== undefined);
-
-      if (!changed) return false;
-
-      const newFit = {
-        ...fit,
-        items: newItems,
-      };
-      setCurrentFit(newFit);
-
-      return true;
-    },
-    [eveData],
-  );
-
   React.useEffect(() => {
     if (!dogmaEngine.loaded || !eveData.loaded) return;
     if (currentFit === undefined || currentSkills === undefined) return;
-
-    /* We can't fix fits on import, as eveData is not available. So we postpone
-     * it till we calculate the snapshot. If it changes the fit in any way, we
-     * drop out till the change is propagated. */
-    if (fixupCharge(currentFit)) return;
 
     const snapshot = dogmaEngine.engine?.calculate(currentFit, currentSkills);
 
@@ -487,7 +439,7 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
         currentSkills,
       };
     });
-  }, [eveData, dogmaEngine, currentFit, fixupCharge, currentSkills]);
+  }, [eveData, dogmaEngine, currentFit, currentSkills]);
 
   return <ShipSnapshotContext.Provider value={shipSnapshot}>{props.children}</ShipSnapshotContext.Provider>;
 };
