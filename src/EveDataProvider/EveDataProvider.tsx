@@ -16,6 +16,7 @@ interface DogmaData {
   typeDogma?: Record<string, TypeDogma>;
   dogmaEffects?: Record<string, DogmaEffect>;
   dogmaAttributes?: Record<string, DogmaAttribute>;
+  effectMapping?: Record<string, number>;
   attributeMapping?: Record<string, number>;
 }
 
@@ -44,6 +45,7 @@ function isLoaded(dogmaData: DogmaData): boolean | undefined {
   if (dogmaData.typeDogma === undefined) return undefined;
   if (dogmaData.dogmaEffects === undefined) return undefined;
   if (dogmaData.dogmaAttributes === undefined) return undefined;
+  if (dogmaData.effectMapping === undefined) return undefined;
   if (dogmaData.attributeMapping === undefined) return undefined;
 
   return true;
@@ -89,25 +91,31 @@ export const EveDataProvider = (props: DogmaDataProps) => {
   }, [dataUrl]);
 
   React.useEffect(() => {
-    if (!dogmaData.dogmaAttributes) return;
+    if (!dogmaData.dogmaAttributes || !dogmaData.dogmaEffects) return;
 
-    /* Create a reverse mapping to quickly lookup attribute name to attribute ID. */
+    /* Create a reverse mapping to quickly lookup attribute/effect name to attribute/effect ID. */
     const attributeMapping: Record<string, number> = {};
     for (const id in dogmaData.dogmaAttributes) {
       const name = dogmaData.dogmaAttributes[id].name;
       attributeMapping[name] = parseInt(id);
+    }
+    const effectMapping: Record<string, number> = {};
+    for (const id in dogmaData.dogmaEffects) {
+      const name = dogmaData.dogmaEffects[id].name;
+      effectMapping[name] = parseInt(id);
     }
 
     setDogmaData((prevDogmaData: DogmaData) => {
       const newDogmaData = {
         ...prevDogmaData,
         attributeMapping: attributeMapping,
+        effectMapping: effectMapping,
       };
 
       newDogmaData.loaded = isLoaded(newDogmaData);
       return newDogmaData;
     });
-  }, [dogmaData.dogmaAttributes]);
+  }, [dogmaData.dogmaAttributes, dogmaData.dogmaEffects]);
 
   return <EveDataContext.Provider value={dogmaData}>{props.children}</EveDataContext.Provider>;
 };

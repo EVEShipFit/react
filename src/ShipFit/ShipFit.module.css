@@ -68,6 +68,29 @@
   top: 3.5%;
 }
 
+.turretLauncherIcon {
+  height: 2.5%;
+  margin-top: -2%;
+  position: relative;
+  transform: rotate(var(--reverse-rotation));
+  width: 2.5%;
+}
+.turretLauncherIcon > img {
+  height: 100%;
+  position: absolute;
+  width: 100%;
+}
+.turretLauncherItem {
+  border-radius: 50%;
+  border: 1px solid #9d9d9d;
+  height: 1.1%;
+  margin-top: -2%;
+  width: 1.1%;
+}
+.turretLauncherItemUsed {
+  background-color: #707070;
+}
+
 .radialMenu {
   filter: drop-shadow(0 0 2px #ffffff);
   position: absolute;

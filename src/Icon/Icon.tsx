@@ -22,6 +22,8 @@ const iconMapping = {
   "fitting-lowslot": "texture/classes/fitting/filtericonlowslot.png",
   "fitting-medslot": "texture/classes/fitting/filtericonmediumslot.png",
   "fitting-rig-subsystem": "texture/classes/fitting/filtericonrigslot.png",
+  "hardpoint-launcher": "texture/classes/fitting/iconlauncherhardpoint.png",
+  "hardpoint-turret": "texture/classes/fitting/iconturrethardpoint.png",
   "hull-hp": "texture/classes/fitting/statsicons/structurehp.png",
   "hull-repair-rate": "texture/classes/fitting/statsicons/hullrepairrate.png",
   "inertia-modifier": "texture/classes/fitting/statsicons/inertiamodifier.png",
