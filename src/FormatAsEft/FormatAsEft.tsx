@@ -4,7 +4,7 @@ import { EveDataContext } from "../EveDataProvider";
 import { ShipSnapshotContext, ShipSnapshotSlotsType } from "../ShipSnapshotProvider";
 
 /** Mapping between slot types and ESI flags (for first slot in the type). */
-const esiFlagMapping: Record<ShipSnapshotSlotsType | "droneBay", number[]> = {
+const esiFlagMapping: Record<ShipSnapshotSlotsType, number[]> = {
   lowslot: [11, 12, 13, 14, 15, 16, 17, 18],
   medslot: [19, 20, 21, 22, 23, 24, 25, 26],
   hislot: [27, 28, 29, 30, 31, 32, 33, 34],
@@ -14,7 +14,7 @@ const esiFlagMapping: Record<ShipSnapshotSlotsType | "droneBay", number[]> = {
 };
 
 /** Mapping between slot-type and the EFT string name. */
-const slotToEft: Record<ShipSnapshotSlotsType | "droneBay", string> = {
+const slotToEft: Record<ShipSnapshotSlotsType, string> = {
   lowslot: "Low Slot",
   medslot: "Mid Slot",
   hislot: "High Slot",

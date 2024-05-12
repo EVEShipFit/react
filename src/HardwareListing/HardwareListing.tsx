@@ -20,7 +20,7 @@ interface ListingItem {
   name: string;
   meta: number;
   typeId: number;
-  slotType: ShipSnapshotSlotsType | "dronebay" | "charge";
+  slotType: ShipSnapshotSlotsType | "charge";
 }
 
 interface ListingGroup {
@@ -202,7 +202,7 @@ export const HardwareListing = () => {
       if (module.marketGroupID === undefined) continue;
       if (!module.published) continue;
 
-      let slotType: ShipSnapshotSlotsType | "dronebay" | "charge" | undefined;
+      let slotType: ShipSnapshotSlotsType | "charge" | undefined;
       if (module.categoryID !== 8) {
         slotType = eveData.typeDogma?.[typeId]?.dogmaEffects
           .map((effect) => {
@@ -221,7 +221,7 @@ export const HardwareListing = () => {
           })
           .filter((slot) => slot !== undefined)[0];
         if (module.categoryID === 18) {
-          slotType = "dronebay";
+          slotType = "droneBay";
         }
 
         if (slotType === undefined) continue;
