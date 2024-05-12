@@ -70,6 +70,8 @@ interface ShipSnapshot {
   currentFit?: EsiFit;
   currentSkills?: Record<string, number>;
 
+  moveModule: (fromFlag: number, toFlag: number) => void;
+  setModule: (typeId: number, flag: number) => void;
   addModule: (typeId: number, slot: ShipSnapshotSlotsType) => void;
   removeModule: (flag: number) => void;
   addCharge: (chargeTypeId: number) => void;
@@ -94,6 +96,8 @@ export const ShipSnapshotContext = React.createContext<ShipSnapshot>({
     launcher: 0,
     turret: 0,
   },
+  moveModule: () => {},
+  setModule: () => {},
   addModule: () => {},
   removeModule: () => {},
   addCharge: () => {},
@@ -145,6 +149,8 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
       launcher: 0,
       turret: 0,
     },
+    moveModule: () => {},
+    setModule: () => {},
     addModule: () => {},
     removeModule: () => {},
     addCharge: () => {},
@@ -185,6 +191,47 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
       return {
         ...oldFit,
         name: name,
+      };
+    });
+  }, []);
+
+  const moveModule = React.useCallback((fromFlag: number, toFlag: number) => {
+    setCurrentFit((oldFit: EsiFit | undefined) => {
+      if (oldFit === undefined) return undefined;
+
+      const newItems = [...oldFit.items];
+
+      const fromItemIndex = newItems.findIndex((item) => item.flag === fromFlag);
+      const fromItem = newItems[fromItemIndex];
+
+      const toItemIndex = newItems.findIndex((item) => item.flag === toFlag);
+      const toItem = newItems[toItemIndex];
+
+      fromItem.flag = toFlag;
+
+      if (toItem !== undefined) {
+        /* Target slot is non-empty, swap items */
+        toItem.flag = fromFlag;
+      }
+
+      return {
+        ...oldFit,
+        items: newItems,
+      };
+    });
+  }, []);
+
+  const setModule = React.useCallback((typeId: number, flag: number) => {
+    setCurrentFit((oldFit: EsiFit | undefined) => {
+      if (oldFit === undefined) return undefined;
+
+      const newItems = oldFit.items
+        .filter((item) => item.flag !== flag)
+        .concat({ flag: flag, type_id: typeId, quantity: 1 });
+
+      return {
+        ...oldFit,
+        items: newItems,
       };
     });
   }, []);
@@ -392,6 +439,8 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
   React.useEffect(() => {
     setShipSnapshot((oldSnapshot) => ({
       ...oldSnapshot,
+      moveModule,
+      setModule,
       addModule,
       removeModule,
       addCharge,
@@ -402,7 +451,19 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
       setItemState,
       setName,
     }));
-  }, [addModule, removeModule, addCharge, removeCharge, toggleDrones, removeDrones, changeHull, setItemState, setName]);
+  }, [
+    moveModule,
+    setModule,
+    addModule,
+    removeModule,
+    addCharge,
+    removeCharge,
+    toggleDrones,
+    removeDrones,
+    changeHull,
+    setItemState,
+    setName,
+  ]);
 
   React.useEffect(() => {
     if (!dogmaEngine.loaded || !eveData.loaded) return;

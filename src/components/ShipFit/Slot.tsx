@@ -25,7 +25,8 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
   const eveData = React.useContext(EveDataContext);
   const shipSnapshot = React.useContext(ShipSnapshotContext);
 
-  const esiFlag = esiFlagMapping[props.type][props.index - 1];
+  const esiFlagType = props.type;
+  const esiFlag = esiFlagMapping[esiFlagType][props.index - 1];
 
   const esiItem = shipSnapshot?.items?.find((item) => item.flag == esiFlag);
   const active = esiItem?.max_state !== "Passive" && esiItem?.max_state !== "Online";
@@ -148,6 +149,54 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
     [shipSnapshot, esiItem],
   );
 
+  const onDragStart = React.useCallback(
+    (e: React.DragEvent<HTMLDivElement>) => {
+      if (!esiItem) return;
+
+      e.dataTransfer.setData("application/type_id", esiItem.type_id.toString());
+      e.dataTransfer.setData("application/slot_id", esiFlag.toString());
+      e.dataTransfer.setData("application/slot_type", esiFlagType);
+    },
+    [esiItem, esiFlag, esiFlagType],
+  );
+
+  const onDragOver = React.useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  }, []);
+
+  const onDragEnd = React.useCallback(
+    (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+
+      const parseNumber = (maybeNumber: string): number | undefined => {
+        const num = parseInt(maybeNumber);
+        return Number.isInteger(num) ? num : undefined;
+      };
+
+      const draggedTypeId: number | undefined = parseNumber(e.dataTransfer.getData("application/type_id"));
+      const draggedSlotId: number | undefined = parseNumber(e.dataTransfer.getData("application/slot_id"));
+      const draggedSlotType: string = e.dataTransfer.getData("application/slot_type");
+
+      if (!draggedTypeId) {
+        return;
+      }
+
+      // TODO: Move validation into ShipSnapshotProvider
+      const isValidSlotGroup = draggedSlotType === esiFlagType;
+      if (!isValidSlotGroup) {
+        return;
+      }
+
+      const isDraggedFromAnotherSlot = draggedSlotId !== undefined;
+      if (isDraggedFromAnotherSlot) {
+        shipSnapshot.moveModule(draggedSlotId, esiFlag);
+      } else {
+        shipSnapshot.setModule(draggedTypeId, esiFlag);
+      }
+    },
+    [shipSnapshot, esiItem, esiFlag, esiFlagType],
+  );
+
   /* Not fittable and nothing fitted; no need to render the slot. */
   if (esiItem === undefined && !props.fittable) {
     return (
@@ -165,6 +214,8 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
         <img
           src={`https://images.evetech.net/types/${esiItem.charge.type_id}/icon?size=64`}
           title={`${eveData?.typeIDs?.[esiItem.type_id].name}\n${eveData?.typeIDs?.[esiItem.charge.type_id].name}`}
+          draggable={true}
+          onDragStart={onDragStart}
         />
       );
     } else {
@@ -172,6 +223,8 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
         <img
           src={`https://images.evetech.net/types/${esiItem.type_id}/icon?size=64`}
           title={eveData?.typeIDs?.[esiItem.type_id].name}
+          draggable={true}
+          onDragStart={onDragStart}
         />
       );
     }
@@ -206,7 +259,7 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
 
   return (
     <div className={styles.slotOuter} data-hasitem={esiItem !== undefined}>
-      <div className={styles.slot} onClick={cycleState} data-state={state}>
+      <div className={styles.slot} onClick={cycleState} data-state={state} onDrop={onDragEnd} onDragOver={onDragOver}>
         {svg}
         <div className={imageStyle}>{item}</div>
       </div>
