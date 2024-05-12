@@ -12,13 +12,14 @@ import { RingInner } from "./RingInner";
 import { RingOuter } from "./RingOuter";
 import { RingTop, RingTopItem } from "./RingTop";
 import { Slot } from "./Slot";
+import { Usage } from "./Usage";
 
 import styles from "./ShipFit.module.css";
 
 /**
  * Render a ship fit similar to how it is done in-game.
  */
-export const ShipFit = (props: { withTurrentLauncherSlots?: boolean }) => {
+export const ShipFit = (props: { withStats?: boolean }) => {
   const eveData = React.useContext(EveDataContext);
   const shipSnapshot = React.useContext(ShipSnapshotContext);
   const slots = shipSnapshot.slots;
@@ -45,7 +46,7 @@ export const ShipFit = (props: { withTurrentLauncherSlots?: boolean }) => {
       <FitLink />
 
       <RingTop>
-        {props.withTurrentLauncherSlots && (
+        {props.withStats && (
           <>
             <RingTopItem rotation={-45}>
               <div className={styles.turretLauncherIcon}>
@@ -86,6 +87,22 @@ export const ShipFit = (props: { withTurrentLauncherSlots?: boolean }) => {
                 </RingTopItem>
               );
             })}
+
+            <RingTopItem rotation={-47}>
+              <div className={styles.usage}>
+                <Usage type="rig" angle={-30} intervals={30} markers={2} color="#3d4547" />
+              </div>
+            </RingTopItem>
+            <RingTopItem rotation={134.5}>
+              <div className={styles.usage}>
+                <Usage type="cpu" angle={-44} intervals={40} markers={5} color="#2a504f" />
+              </div>
+            </RingTopItem>
+            <RingTopItem rotation={135}>
+              <div className={styles.usage}>
+                <Usage type="pg" angle={44} intervals={40} markers={5} color="#541208" />
+              </div>
+            </RingTopItem>
           </>
         )}
 

@@ -91,6 +91,13 @@
   background-color: #707070;
 }
 
+.ringTopItem > .usage {
+  height: 100%;
+  width: 100%;
+  left: 0;
+  top: 0;
+}
+
 .radialMenu {
   filter: drop-shadow(0 0 2px #ffffff);
   position: absolute;

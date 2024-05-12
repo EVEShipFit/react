@@ -89,7 +89,7 @@ const FitName = () => {
 export const ShipFitExtended = () => {
   return (
     <div className={styles.fit}>
-      <ShipFit withTurrentLauncherSlots />
+      <ShipFit withStats />
 
       <div className={styles.fitName}>
         <FitName />
