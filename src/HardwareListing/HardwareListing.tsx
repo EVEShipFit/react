@@ -207,15 +207,15 @@ export const HardwareListing = () => {
         slotType = eveData.typeDogma?.[typeId]?.dogmaEffects
           .map((effect) => {
             switch (effect.effectID) {
-              case 11:
+              case eveData.effectMapping?.loPower:
                 return "lowslot";
-              case 13:
+              case eveData.effectMapping?.medPower:
                 return "medslot";
-              case 12:
+              case eveData.effectMapping?.hiPower:
                 return "hislot";
-              case 2663:
+              case eveData.effectMapping?.rigSlot:
                 return "rig";
-              case 3772:
+              case eveData.effectMapping?.subSystem:
                 return "subsystem";
             }
           })

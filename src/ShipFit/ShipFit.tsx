@@ -1,23 +1,40 @@
 import React from "react";
+import clsx from "clsx";
 
+import { EveDataContext } from "../EveDataProvider";
 import { ShipSnapshotContext } from "../ShipSnapshotProvider";
 
 import { FitLink } from "./FitLink";
 import { Hull } from "./Hull";
-import { Slot } from "./Slot";
+import { Icon } from "../Icon";
 import { RadialMenu } from "./RadialMenu";
-import { RingOuter } from "./RingOuter";
 import { RingInner } from "./RingInner";
+import { RingOuter } from "./RingOuter";
 import { RingTop, RingTopItem } from "./RingTop";
+import { Slot } from "./Slot";
 
 import styles from "./ShipFit.module.css";
 
 /**
  * Render a ship fit similar to how it is done in-game.
  */
-export const ShipFit = () => {
+export const ShipFit = (props: { withTurrentLauncherSlots?: boolean }) => {
+  const eveData = React.useContext(EveDataContext);
   const shipSnapshot = React.useContext(ShipSnapshotContext);
   const slots = shipSnapshot.slots;
+
+  let launcherSlotsUsed =
+    shipSnapshot.items?.filter((item) =>
+      eveData?.typeDogma?.[item.type_id].dogmaEffects.find(
+        (effect) => effect.effectID === eveData.effectMapping?.launcherFitted,
+      ),
+    ).length ?? 0;
+  let turretSlotsUsed =
+    shipSnapshot.items?.filter((item) =>
+      eveData?.typeDogma?.[item.type_id].dogmaEffects.find(
+        (effect) => effect.effectID === eveData.effectMapping?.turretFitted,
+      ),
+    ).length ?? 0;
 
   return (
     <div className={styles.fit}>
@@ -28,6 +45,50 @@ export const ShipFit = () => {
       <FitLink />
 
       <RingTop>
+        {props.withTurrentLauncherSlots && (
+          <>
+            <RingTopItem rotation={-45}>
+              <div className={styles.turretLauncherIcon}>
+                <Icon name="hardpoint-turret" size={16} />
+              </div>
+            </RingTopItem>
+            {Array.from({ length: slots?.turret }, (_, i) => {
+              turretSlotsUsed--;
+              return (
+                <RingTopItem key={i} rotation={-40 + i * 3}>
+                  <div
+                    className={clsx(styles.turretLauncherItem, {
+                      [styles.turretLauncherItemUsed]: turretSlotsUsed >= 0,
+                    })}
+                  >
+                    &nbsp;
+                  </div>
+                </RingTopItem>
+              );
+            })}
+
+            <RingTopItem rotation={43}>
+              <div className={styles.turretLauncherIcon}>
+                <Icon name="hardpoint-launcher" size={16} />
+              </div>
+            </RingTopItem>
+            {Array.from({ length: slots?.launcher }, (_, i) => {
+              launcherSlotsUsed--;
+              return (
+                <RingTopItem key={i} rotation={39 - i * 3}>
+                  <div
+                    className={clsx(styles.turretLauncherItem, {
+                      [styles.turretLauncherItemUsed]: launcherSlotsUsed >= 0,
+                    })}
+                  >
+                    &nbsp;
+                  </div>
+                </RingTopItem>
+              );
+            })}
+          </>
+        )}
+
         <RingTopItem rotation={-45}>
           <RadialMenu type="hislot" />
         </RingTopItem>

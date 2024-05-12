@@ -49,6 +49,8 @@ interface ShipSnapshotSlots {
   lowslot: number;
   subsystem: number;
   rig: number;
+  launcher: number;
+  turret: number;
 }
 
 export type ShipSnapshotSlotsType = keyof ShipSnapshotSlots;
@@ -89,6 +91,8 @@ export const ShipSnapshotContext = React.createContext<ShipSnapshot>({
     lowslot: 0,
     subsystem: 0,
     rig: 0,
+    launcher: 0,
+    turret: 0,
   },
   addModule: () => {},
   removeModule: () => {},
@@ -109,6 +113,8 @@ const slotStart: Record<ShipSnapshotSlotsType, number> = {
   lowslot: 11,
   subsystem: 125,
   rig: 92,
+  launcher: 27,
+  turret: 27,
 };
 
 export interface ShipSnapshotProps {
@@ -137,6 +143,8 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
       lowslot: 0,
       subsystem: 0,
       rig: 0,
+      launcher: 0,
+      turret: 0,
     },
     addModule: () => {},
     removeModule: () => {},
@@ -409,6 +417,8 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
       lowslot: 0,
       subsystem: 0,
       rig: 0,
+      launcher: 0,
+      turret: 0,
     };
 
     slots.hislot = snapshot.hull.attributes.get(eveData?.attributeMapping?.hiSlots || 0)?.value || 0;
@@ -416,12 +426,16 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
     slots.lowslot = snapshot.hull.attributes.get(eveData?.attributeMapping?.lowSlots || 0)?.value || 0;
     slots.subsystem = snapshot.hull.attributes.get(eveData?.attributeMapping?.maxSubSystems || 0)?.value || 0;
     slots.rig = snapshot.hull?.attributes.get(eveData?.attributeMapping?.rigSlots || 0)?.value || 0;
+    slots.launcher = snapshot.hull?.attributes.get(eveData?.attributeMapping?.launcherSlotsLeft || 0)?.value || 0;
+    slots.turret = snapshot.hull?.attributes.get(eveData?.attributeMapping?.turretSlotsLeft || 0)?.value || 0;
 
     const items = snapshot.items;
     for (const item of items) {
       slots.hislot += item.attributes.get(eveData?.attributeMapping?.hiSlotModifier || 0)?.value || 0;
       slots.medslot += item.attributes.get(eveData?.attributeMapping?.medSlotModifier || 0)?.value || 0;
       slots.lowslot += item.attributes.get(eveData?.attributeMapping?.lowSlotModifier || 0)?.value || 0;
+      slots.launcher += item.attributes.get(eveData?.attributeMapping?.launcherHardPointModifier || 0)?.value || 0;
+      slots.turret += item.attributes.get(eveData?.attributeMapping?.turretHardPointModifier || 0)?.value || 0;
     }
 
     setShipSnapshot((oldSnapshot) => {
