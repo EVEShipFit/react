@@ -17,12 +17,12 @@ It will reload automatically on changes to the code.
 
 ### Linting and coding style
 
-Each Pull Request is validated by eslint and prettier.
+Each Pull Request is validated by `eslint` and `prettier`.
 To run this locally:
 
 ```bash
 npm run lint
-npm run prettier
+npm run format
 ```
 
 The last command will modify source files where needed.
