@@ -3,6 +3,8 @@ import React from "react";
 import { EveDataContext } from "../EveDataProvider";
 import { ShipSnapshotContext } from "../ShipSnapshotProvider";
 
+import { Icon, IconName } from "../Icon";
+
 import styles from "./ShipFit.module.css";
 
 const esiFlagMapping: Record<string, number[]> = {
@@ -31,6 +33,7 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
 
   let item = <></>;
   let svg = <></>;
+  let imageStyle = styles.slotImage;
 
   if (props.main !== undefined) {
     svg = (
@@ -173,6 +176,31 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
         />
       );
     }
+  } else {
+    imageStyle = styles.slotImagePlaceholder;
+
+    let icon: IconName | undefined;
+    switch (props.type) {
+      case "lowslot":
+        icon = "fitting-lowslot";
+        break;
+
+      case "medslot":
+        icon = "fitting-medslot";
+        break;
+
+      case "hislot":
+        icon = "fitting-hislot";
+        break;
+
+      case "rig":
+        icon = "fitting-rig-subsystem";
+        break;
+    }
+
+    if (icon !== undefined) {
+      item = <Icon name={icon} />;
+    }
   }
 
   const state = esiItem?.state === "Passive" && esiItem?.max_state !== "Passive" ? "Offline" : esiItem?.state;
@@ -181,7 +209,7 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
     <div className={styles.slotOuter} data-hasitem={esiItem !== undefined}>
       <div className={styles.slot} onClick={cycleState} data-state={state}>
         {svg}
-        <div className={styles.slotImage}>{item}</div>
+        <div className={imageStyle}>{item}</div>
       </div>
       <div className={styles.slotOptions}>
         {esiItem?.charge !== undefined && (

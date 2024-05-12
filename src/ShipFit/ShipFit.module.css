@@ -97,12 +97,16 @@
   z-index: 4;
 }
 
-.slotImage {
+.slotImage,
+.slotImagePlaceholder {
   height: 100%;
   position: absolute;
-  transform: rotate(var(--reverse-rotation));
   width: 100%;
   z-index: 5;
+}
+
+.slotImage {
+  transform: rotate(var(--reverse-rotation));
 }
 
 .slotImage > img {
@@ -110,6 +114,12 @@
   margin-left: -10%;
   margin-top: 5%;
   width: 120%;
+}
+
+.slotImagePlaceholder > img {
+  margin-left: 20%;
+  margin-top: 35%;
+  width: 60%;
 }
 
 .slot > svg {
