@@ -1,10 +1,11 @@
 .fitButtonBar {
+  display: flex;
+  justify-content: space-between;
   width: 100%;
 }
 
 .fitButtonBar > div {
   height: 40px;
-  margin-right: 10px;
 }
 
 .button {
