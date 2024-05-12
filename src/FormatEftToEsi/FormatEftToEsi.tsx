@@ -103,26 +103,26 @@ export function useFormatEftToEsi() {
       const chargeTypeId = lookupTypeByName(chargeType);
 
       const effects = eveData.typeDogma?.[itemTypeId]?.dogmaEffects;
-      if (effects === undefined) throw new Error(`No dogma effects defined for item '${itemType}'.`);
       const attributes = eveData.typeDogma?.[itemTypeId]?.dogmaAttributes;
-      if (attributes === undefined) throw new Error(`No dogma attributes defined for item '${itemType}'.`);
 
       /* Find what type of slot this item goes into. */
-      let slotType = "";
-      for (const effectId in effects) {
-        slotType = effectIdMapping[effects[effectId].effectID];
-        if (slotType) break;
+      let slotType = undefined;
+      if (slotType === undefined && effects !== undefined) {
+        for (const effectId in effects) {
+          slotType = effectIdMapping[effects[effectId].effectID];
+          if (slotType) break;
+        }
       }
-      if (!slotType) {
+      if (slotType === undefined && attributes !== undefined) {
         for (const attributeId in attributes) {
           slotType = attributeIdMapping[attributes[attributeId].attributeID];
           if (slotType) break;
         }
       }
-      lastSlotType = slotType;
 
       /* Ignore items we don't care about. */
-      if (!slotType) continue;
+      if (slotType === undefined) continue;
+      lastSlotType = slotType;
 
       const flag = slotType === "droneBay" ? 87 : esiFlagMapping[slotType][slotIndex[slotType]];
       let charge = undefined;
