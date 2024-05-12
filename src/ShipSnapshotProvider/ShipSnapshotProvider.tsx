@@ -53,7 +53,7 @@ interface ShipSnapshotSlots {
   turret: number;
 }
 
-export type ShipSnapshotSlotsType = keyof ShipSnapshotSlots;
+export type ShipSnapshotSlotsType = "hislot" | "medslot" | "lowslot" | "subsystem" | "rig" | "droneBay";
 
 interface ShipSnapshot {
   loaded?: boolean;
@@ -70,7 +70,7 @@ interface ShipSnapshot {
   currentFit?: EsiFit;
   currentSkills?: Record<string, number>;
 
-  addModule: (typeId: number, slot: ShipSnapshotSlotsType | "dronebay") => void;
+  addModule: (typeId: number, slot: ShipSnapshotSlotsType) => void;
   removeModule: (flag: number) => void;
   addCharge: (chargeTypeId: number) => void;
   removeCharge: (flag: number) => void;
@@ -113,8 +113,7 @@ const slotStart: Record<ShipSnapshotSlotsType, number> = {
   lowslot: 11,
   subsystem: 125,
   rig: 92,
-  launcher: 27,
-  turret: 27,
+  droneBay: 87,
 };
 
 export interface ShipSnapshotProps {
@@ -191,14 +190,14 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
   }, []);
 
   const addModule = React.useCallback(
-    (typeId: number, slot: ShipSnapshotSlotsType | "dronebay") => {
+    (typeId: number, slot: ShipSnapshotSlotsType) => {
       setCurrentFit((oldFit: EsiFit | undefined) => {
         if (oldFit === undefined) return undefined;
 
         let flag = 0;
 
         /* Find the first free slot for that slot-type. */
-        if (slot !== "dronebay") {
+        if (slot !== "droneBay") {
           for (let i = slotStart[slot]; i < slotStart[slot] + shipSnapshot.slots[slot]; i++) {
             if (oldFit.items.find((item) => item.flag === i) !== undefined) continue;
 
