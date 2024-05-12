@@ -97,7 +97,9 @@ export function useFormatEftToEsi() {
       const itemType = line.split(",")[0].split(" x")[0].split("[")[0].trim();
       const itemCount = parseInt(line.split(",")[0].split(" x")[1]?.trim() ?? "1");
       const itemTypeId = lookupTypeByName(itemType);
-      if (itemTypeId === undefined) throw new Error(`Unknown item '${itemType}'.`);
+      /* This can be a typo in the EFT, a field we don't know yet, or our eveData is incomplete.
+       * Either way, there is not much we can do, then to skip, and hope that is fine. */
+      if (itemTypeId === undefined) continue;
 
       const chargeType = (line.split(",")[1] ?? "").trim();
       const chargeTypeId = lookupTypeByName(chargeType);
