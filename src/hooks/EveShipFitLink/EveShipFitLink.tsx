@@ -1,6 +1,6 @@
 import React from "react";
 
-import { EsiFit, ShipSnapshotContext } from "../../providers/ShipSnapshotProvider";
+import { EsiFit, ShipSnapshotContext } from "@/providers/ShipSnapshotProvider";
 
 async function compress(str: string): Promise<string> {
   const stream = new Blob([str]).stream();

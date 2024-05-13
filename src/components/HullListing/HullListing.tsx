@@ -1,12 +1,12 @@
 import clsx from "clsx";
 import React from "react";
 
-import { EsiContext } from "../../providers/EsiProvider";
-import { EsiFit, ShipSnapshotContext } from "../../providers/ShipSnapshotProvider";
-import { EveDataContext } from "../../providers/EveDataProvider";
-import { Icon, IconName } from "../Icon";
-import { TreeListing, TreeHeader, TreeHeaderAction, TreeLeaf } from "../TreeListing";
-import { LocalFitContext } from "../../providers/LocalFitProvider";
+import { EsiContext } from "@/providers/EsiProvider";
+import { EsiFit, ShipSnapshotContext } from "@/providers/ShipSnapshotProvider";
+import { EveDataContext } from "@/providers/EveDataProvider";
+import { LocalFitContext } from "@/providers/LocalFitProvider";
+import { Icon, IconName } from "@/components/Icon";
+import { TreeListing, TreeHeader, TreeHeaderAction, TreeLeaf } from "@/components/TreeListing";
 
 import styles from "./HullListing.module.css";
 

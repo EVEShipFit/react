@@ -1,17 +1,17 @@
 import clsx from "clsx";
 import React from "react";
 
-import { ShipAttribute } from "../ShipAttribute";
-import { EveDataContext } from "../../providers/EveDataProvider";
-import { ShipSnapshotContext } from "../../providers/ShipSnapshotProvider";
+import { EveDataContext } from "@/providers/EveDataProvider";
+import { ShipSnapshotContext } from "@/providers/ShipSnapshotProvider";
+import { ShipAttribute } from "@/components/ShipAttribute";
+import { Icon } from "@/components/Icon";
+import { CharAttribute } from "@/components/ShipAttribute/ShipAttribute";
 
 import { Category, CategoryLine } from "./Category";
 import { RechargeRate } from "./RechargeRate";
 import { Resistance } from "./Resistance";
 
 import styles from "./ShipStatistics.module.css";
-import { Icon } from "../Icon";
-import { CharAttribute } from "../ShipAttribute/ShipAttribute";
 
 /**
  * Render ship statistics similar to how it is done in-game.

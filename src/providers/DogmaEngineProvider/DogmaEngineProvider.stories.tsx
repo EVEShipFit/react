@@ -3,7 +3,7 @@ import React from "react";
 
 import { fullFit } from "../../../.storybook/fits";
 
-import { EveDataProvider } from "../EveDataProvider";
+import { EveDataProvider } from "@/providers/EveDataProvider";
 import { DogmaEngineContext, DogmaEngineProvider } from "./";
 
 const meta: Meta<typeof DogmaEngineProvider> = {

@@ -1,15 +1,15 @@
 import clsx from "clsx";
 import React from "react";
 
-import { EveDataContext } from "../../providers/EveDataProvider";
+import { EveDataContext } from "@/providers/EveDataProvider";
 import {
   ShipSnapshotContext,
   ShipSnapshotItemAttribute,
   ShipSnapshotItemAttributeEffect,
-} from "../../providers/ShipSnapshotProvider";
+} from "@/providers/ShipSnapshotProvider";
+import { Icon } from "@/components/Icon";
 
 import styles from "./CalculationDetail.module.css";
-import { Icon } from "../Icon";
 
 const EffectOperatorOrder: Record<string, string> = {
   PreAssign: "=",

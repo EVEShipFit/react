@@ -3,9 +3,10 @@ import React from "react";
 
 import { fullFit } from "../../../.storybook/fits";
 
+import { EveDataProvider } from "@/providers/EveDataProvider";
+import { ShipSnapshotProvider } from "@/providers/ShipSnapshotProvider";
+
 import { EsiContext, EsiProvider } from "./";
-import { EveDataProvider } from "../EveDataProvider";
-import { ShipSnapshotProvider } from "../ShipSnapshotProvider";
 
 const meta: Meta<typeof EsiProvider> = {
   component: EsiProvider,

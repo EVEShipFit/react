@@ -1,6 +1,6 @@
 import React from "react";
 
-import { useAttribute } from "../ShipAttribute";
+import { useAttribute } from "@/components/ShipAttribute";
 
 import styles from "./ShipStatistics.module.css";
 

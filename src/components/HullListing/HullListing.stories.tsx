@@ -4,11 +4,11 @@ import React from "react";
 import { fullFit } from "../../../.storybook/fits";
 
 import { HullListing } from "./";
-import { DogmaEngineProvider } from "../../providers/DogmaEngineProvider";
-import { EsiProvider } from "../../providers/EsiProvider";
-import { EveDataProvider } from "../../providers/EveDataProvider";
-import { LocalFitProvider } from "../../providers/LocalFitProvider";
-import { ShipSnapshotProvider } from "../../providers/ShipSnapshotProvider";
+import { DogmaEngineProvider } from "@/providers/DogmaEngineProvider";
+import { EsiProvider } from "@/providers/EsiProvider";
+import { EveDataProvider } from "@/providers/EveDataProvider";
+import { LocalFitProvider } from "@/providers/LocalFitProvider";
+import { ShipSnapshotProvider } from "@/providers/ShipSnapshotProvider";
 
 const meta: Meta<typeof HullListing> = {
   component: HullListing,

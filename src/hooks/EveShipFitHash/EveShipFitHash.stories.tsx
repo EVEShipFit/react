@@ -3,7 +3,7 @@ import React from "react";
 
 import { hashFit } from "../../../.storybook/fits";
 
-import { EveDataProvider } from "../../providers/EveDataProvider";
+import { EveDataProvider } from "@/providers/EveDataProvider";
 import { EveShipFitHash } from "./EveShipFitHash";
 
 const meta: Meta<typeof EveShipFitHash> = {

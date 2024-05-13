@@ -1,11 +1,11 @@
 import clsx from "clsx";
 import React from "react";
 
-import { defaultDataUrl } from "../../settings";
-import { EveDataContext } from "../../providers/EveDataProvider";
-import { Icon } from "../Icon";
-import { ShipSnapshotContext, ShipSnapshotSlotsType } from "../../providers/ShipSnapshotProvider";
-import { TreeListing, TreeHeader, TreeLeaf } from "../TreeListing";
+import { defaultDataUrl } from "@/settings";
+import { EveDataContext } from "@/providers/EveDataProvider";
+import { ShipSnapshotContext, ShipSnapshotSlotsType } from "@/providers/ShipSnapshotProvider";
+import { Icon } from "@/components/Icon";
+import { TreeListing, TreeHeader, TreeLeaf } from "@/components/TreeListing";
 
 import styles from "./HardwareListing.module.css";
 

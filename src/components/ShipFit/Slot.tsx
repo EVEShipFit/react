@@ -1,9 +1,8 @@
 import React from "react";
 
-import { EveDataContext } from "../../providers/EveDataProvider";
-import { ShipSnapshotContext } from "../../providers/ShipSnapshotProvider";
-
-import { Icon, IconName } from "../Icon";
+import { EveDataContext } from "@/providers/EveDataProvider";
+import { ShipSnapshotContext } from "@/providers/ShipSnapshotProvider";
+import { Icon, IconName } from "@/components/Icon";
 
 import styles from "./ShipFit.module.css";
 

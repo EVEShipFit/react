@@ -1,7 +1,7 @@
 import React from "react";
 
-import { useEveShipFitLink } from "../../hooks/EveShipFitLink";
-import { useClipboard } from "../../hooks/Clipboard";
+import { useEveShipFitLink } from "@/hooks/EveShipFitLink";
+import { useClipboard } from "@/hooks/Clipboard";
 
 import styles from "./ShipFit.module.css";
 

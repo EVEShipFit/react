@@ -1,9 +1,9 @@
 import type { Decorator, Meta, StoryObj } from "@storybook/react";
 import React from "react";
 
-import { EsiProvider } from "../../providers/EsiProvider";
+import { EsiProvider } from "@/providers/EsiProvider";
+import { EveDataProvider } from "@/providers/EveDataProvider";
 import { EsiCharacterSelection } from "./";
-import { EveDataProvider } from "../../providers/EveDataProvider";
 
 const meta: Meta<typeof EsiCharacterSelection> = {
   component: EsiCharacterSelection,

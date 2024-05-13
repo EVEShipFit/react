@@ -1,6 +1,6 @@
 import React from "react";
 
-import { defaultDataUrl } from "../../settings";
+import { defaultDataUrl } from "@/settings";
 
 const iconMapping = {
   "align-time": "texture/classes/fitting/statsicons/aligntime.png",

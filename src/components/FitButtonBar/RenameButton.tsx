@@ -1,8 +1,8 @@
 import clsx from "clsx";
 import React from "react";
 
-import { ShipSnapshotContext } from "../../providers/ShipSnapshotProvider";
-import { ModalDialog } from "../ModalDialog";
+import { ShipSnapshotContext } from "@/providers/ShipSnapshotProvider";
+import { ModalDialog } from "@/components/ModalDialog";
 
 import styles from "./FitButtonBar.module.css";
 

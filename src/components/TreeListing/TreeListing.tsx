@@ -1,7 +1,7 @@
 import clsx from "clsx";
 import React from "react";
 
-import { Icon, IconName } from "../Icon";
+import { Icon, IconName } from "@/components/Icon";
 
 import styles from "./TreeListing.module.css";
 

@@ -1,14 +1,14 @@
+import clsx from "clsx";
 import React from "react";
 
-import { Icon } from "../Icon";
-import { ShipFit } from "../ShipFit";
-import { ShipAttribute } from "../ShipAttribute";
-import { ShipSnapshotContext } from "../../providers/ShipSnapshotProvider";
+import { ShipSnapshotContext } from "@/providers/ShipSnapshotProvider";
+import { EveDataContext } from "@/providers/EveDataProvider";
+import { Icon } from "@/components/Icon";
+import { ShipFit } from "@/components/ShipFit";
+import { ShipAttribute } from "@/components/ShipAttribute";
+import { DroneBay } from "@/components/DroneBay";
 
 import styles from "./ShipFitExtended.module.css";
-import clsx from "clsx";
-import { DroneBay } from "../DroneBay";
-import { EveDataContext } from "../../providers/EveDataProvider";
 
 const ShipCargoHold = () => {
   return (

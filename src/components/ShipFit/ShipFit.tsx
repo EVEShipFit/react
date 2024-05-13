@@ -1,12 +1,12 @@
 import React from "react";
 import clsx from "clsx";
 
-import { EveDataContext } from "../../providers/EveDataProvider";
-import { ShipSnapshotContext } from "../../providers/ShipSnapshotProvider";
+import { EveDataContext } from "@/providers/EveDataProvider";
+import { ShipSnapshotContext } from "@/providers/ShipSnapshotProvider";
+import { Icon } from "@/components/Icon";
 
 import { FitLink } from "./FitLink";
 import { Hull } from "./Hull";
-import { Icon } from "../Icon";
 import { RadialMenu } from "./RadialMenu";
 import { RingInner } from "./RingInner";
 import { RingOuter } from "./RingOuter";

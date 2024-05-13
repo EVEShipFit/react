@@ -3,8 +3,8 @@ import React from "react";
 
 import { fullFit } from "../../../.storybook/fits";
 
-import { EveDataContext, EveDataProvider } from "../EveDataProvider";
-import { DogmaEngineProvider } from "../DogmaEngineProvider";
+import { EveDataContext, EveDataProvider } from "@/providers/EveDataProvider";
+import { DogmaEngineProvider } from "@/providers/DogmaEngineProvider";
 import { ShipSnapshotItemAttribute, ShipSnapshotContext, ShipSnapshotProvider } from "./";
 
 const meta: Meta<typeof ShipSnapshotProvider> = {

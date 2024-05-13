@@ -1,11 +1,11 @@
 import clsx from "clsx";
 import React from "react";
 
-import { EsiFit, ShipSnapshotContext } from "../../providers/ShipSnapshotProvider";
-import { ModalDialog } from "../ModalDialog";
-import { useClipboard } from "../../hooks/Clipboard";
-import { useFormatAsEft } from "../../hooks/FormatAsEft";
-import { useFormatEftToEsi } from "../../hooks/FormatEftToEsi";
+import { EsiFit, ShipSnapshotContext } from "@/providers/ShipSnapshotProvider";
+import { ModalDialog } from "@/components/ModalDialog";
+import { useClipboard } from "@/hooks/Clipboard";
+import { useFormatAsEft } from "@/hooks/FormatAsEft";
+import { useFormatEftToEsi } from "@/hooks/FormatEftToEsi";
 
 import styles from "./FitButtonBar.module.css";
 

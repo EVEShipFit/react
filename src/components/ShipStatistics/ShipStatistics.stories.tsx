@@ -3,10 +3,10 @@ import React from "react";
 
 import { fullFit } from "../../../.storybook/fits";
 
-import { DogmaEngineProvider } from "../../providers/DogmaEngineProvider";
-import { EsiProvider } from "../../providers/EsiProvider";
-import { EveDataProvider } from "../../providers/EveDataProvider";
-import { ShipSnapshotProvider } from "../../providers/ShipSnapshotProvider";
+import { DogmaEngineProvider } from "@/providers/DogmaEngineProvider";
+import { EsiProvider } from "@/providers/EsiProvider";
+import { EveDataProvider } from "@/providers/EveDataProvider";
+import { ShipSnapshotProvider } from "@/providers/ShipSnapshotProvider";
 import { ShipStatistics } from "./";
 
 const meta: Meta<typeof ShipStatistics> = {
