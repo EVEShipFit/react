@@ -1,2 +1,2 @@
-src/EveDataProvider/esf_pb2.js
-src/EveDataProvider/protobuf.js
+src/providers/EveDataProvider/esf_pb2.js
+src/providers/EveDataProvider/protobuf.js
