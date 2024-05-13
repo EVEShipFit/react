@@ -30,7 +30,6 @@ module.exports = {
   parserOptions: {
     project: "./tsconfig.json",
   },
-  ignorePatterns: ["src/EveDataProvider/esf_pb2.js", "src/EveDataProvider/protobuf.js"],
   overrides: [
     {
       // The files listed below are part of the build process, so they will be using packages that are listed
