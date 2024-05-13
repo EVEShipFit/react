@@ -1,14 +1,13 @@
 import { jwtDecode } from "jwt-decode";
 import React from "react";
 
-import { EsiFit, ShipSnapshotContext } from "../ShipSnapshotProvider";
+import { EsiFit, ShipSnapshotContext } from "@/providers/ShipSnapshotProvider";
+import { EveDataContext } from "@/providers/EveDataProvider";
+import { useLocalStorage } from "@/hooks/LocalStorage";
 
 import { getAccessToken } from "./EsiAccessToken";
 import { getSkills } from "./EsiSkills";
 import { getCharFittings } from "./EsiFittings";
-import { EveDataContext } from "../EveDataProvider";
-
-import { useLocalStorage } from "../../hooks/LocalStorage";
 
 export interface EsiCharacter {
   name: string;

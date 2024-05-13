@@ -3,7 +3,7 @@ import React from "react";
 
 import { eftFit } from "../../../.storybook/fits";
 
-import { EveDataProvider } from "../../providers/EveDataProvider";
+import { EveDataProvider } from "@/providers/EveDataProvider";
 import { FormatEftToEsi } from "./FormatEftToEsi";
 
 const meta: Meta<typeof FormatEftToEsi> = {

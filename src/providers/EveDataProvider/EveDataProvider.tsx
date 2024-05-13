@@ -1,7 +1,8 @@
 import React from "react";
 
+import { defaultDataUrl } from "@/settings";
+
 import { DogmaAttribute, DogmaEffect, GroupID, MarketGroup, TypeDogma, TypeID } from "./DataTypes";
-import { defaultDataUrl } from "../../settings";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore

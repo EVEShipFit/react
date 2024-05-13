@@ -3,11 +3,11 @@ import React from "react";
 
 import { fullFit } from "../../../.storybook/fits";
 
-import { DogmaEngineProvider } from "../../providers/DogmaEngineProvider";
-import { EveDataProvider } from "../../providers/EveDataProvider";
-import { LocalFitProvider } from "../../providers/LocalFitProvider";
-import { ModalDialogAnchor } from "../ModalDialog/ModalDialog";
-import { ShipSnapshotProvider } from "../../providers/ShipSnapshotProvider";
+import { DogmaEngineProvider } from "@/providers/DogmaEngineProvider";
+import { EveDataProvider } from "@/providers/EveDataProvider";
+import { LocalFitProvider } from "@/providers/LocalFitProvider";
+import { ShipSnapshotProvider } from "@/providers/ShipSnapshotProvider";
+import { ModalDialogAnchor } from "@/components/ModalDialog/ModalDialog";
 
 import { FitButtonBar } from "./";
 

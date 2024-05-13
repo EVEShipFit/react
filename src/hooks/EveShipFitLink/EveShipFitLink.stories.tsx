@@ -3,9 +3,9 @@ import React from "react";
 
 import { fullFit } from "../../../.storybook/fits";
 
-import { EveDataProvider } from "../../providers/EveDataProvider";
-import { DogmaEngineProvider } from "../../providers/DogmaEngineProvider";
-import { ShipSnapshotProvider } from "../../providers/ShipSnapshotProvider";
+import { EveDataProvider } from "@/providers/EveDataProvider";
+import { DogmaEngineProvider } from "@/providers/DogmaEngineProvider";
+import { ShipSnapshotProvider } from "@/providers/ShipSnapshotProvider";
 import { EveShipFitLink } from "./EveShipFitLink";
 
 const meta: Meta<typeof EveShipFitLink> = {

@@ -1,10 +1,11 @@
 import clsx from "clsx";
 import React from "react";
 
+import { ShipSnapshotContext, ShipSnapshotItem } from "@/providers/ShipSnapshotProvider";
+import { EveDataContext } from "@/providers/EveDataProvider";
+import { CharAttribute, ShipAttribute } from "@/components/ShipAttribute";
+
 import styles from "./DroneBay.module.css";
-import { CharAttribute, ShipAttribute } from "../ShipAttribute";
-import { ShipSnapshotContext, ShipSnapshotItem } from "../../providers/ShipSnapshotProvider";
-import { EveDataContext } from "../../providers/EveDataProvider";
 
 const DroneBayEntrySelected = ({
   drone,

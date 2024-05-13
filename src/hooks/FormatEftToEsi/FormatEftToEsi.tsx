@@ -1,7 +1,7 @@
 import React from "react";
 
-import { EveDataContext } from "../../providers/EveDataProvider";
-import { EsiFit } from "../../providers/ShipSnapshotProvider";
+import { EveDataContext } from "@/providers/EveDataProvider";
+import { EsiFit } from "@/providers/ShipSnapshotProvider";
 
 /** Mapping between slot types and ESI flags (for first slot in the type). */
 const esiFlagMapping: Record<string, number[]> = {

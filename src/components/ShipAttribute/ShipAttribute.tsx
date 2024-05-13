@@ -1,7 +1,7 @@
 import React from "react";
 
-import { EveDataContext } from "../../providers/EveDataProvider";
-import { ShipSnapshotContext } from "../../providers/ShipSnapshotProvider";
+import { EveDataContext } from "@/providers/EveDataProvider";
+import { ShipSnapshotContext } from "@/providers/ShipSnapshotProvider";
 
 export interface AttributeProps {
   /** Name of the attribute. */

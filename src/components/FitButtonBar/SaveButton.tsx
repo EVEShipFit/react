@@ -1,9 +1,9 @@
 import clsx from "clsx";
 import React from "react";
 
-import { ShipSnapshotContext } from "../../providers/ShipSnapshotProvider";
-import { LocalFitContext } from "../../providers/LocalFitProvider";
-import { ModalDialog } from "../ModalDialog";
+import { ShipSnapshotContext } from "@/providers/ShipSnapshotProvider";
+import { LocalFitContext } from "@/providers/LocalFitProvider";
+import { ModalDialog } from "@/components/ModalDialog";
 
 import styles from "./FitButtonBar.module.css";
 

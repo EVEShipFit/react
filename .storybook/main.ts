@@ -1,3 +1,5 @@
+import path from "path";
+
 import type { StorybookConfig } from "@storybook/react-webpack5";
 import type { Configuration } from "webpack";
 
@@ -24,6 +26,13 @@ const config: StorybookConfig = {
       ...webpackConfig,
       experiments: {
         asyncWebAssembly: true,
+      },
+      resolve: {
+        ...webpackConfig.resolve,
+        alias: {
+          ...webpackConfig.resolve?.alias,
+          "@": path.resolve(__dirname, "./../src"),
+        },
       },
     };
   },

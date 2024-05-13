@@ -21,8 +21,13 @@ module.exports = {
     react: {
       version: "detect",
     },
+    "import/resolver": {
+      "typescript": {
+      }
+    }
   },
   rules: {
+    "import/no-named-as-default-member": "off",
     "newline-per-chained-call": "off",
     "react/jsx-pascal-case": "off",
     "react/require-default-props": "off",

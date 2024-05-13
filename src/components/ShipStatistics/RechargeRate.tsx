@@ -1,10 +1,10 @@
+import clsx from "clsx";
 import React from "react";
 
-import { useAttribute } from "../ShipAttribute";
+import { useAttribute } from "@/components/ShipAttribute";
+import { IconName, Icon } from "@/components/Icon";
 
 import styles from "./ShipStatistics.module.css";
-import clsx from "clsx";
-import { IconName, Icon } from "../Icon";
 
 export const RechargeRateItem = (props: { name: string; icon: IconName }) => {
   const stringValue = useAttribute("Ship", {

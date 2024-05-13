@@ -1,7 +1,7 @@
 import React from "react";
 
-import { DogmaEngineContext } from "../DogmaEngineProvider";
-import { EveDataContext } from "../EveDataProvider";
+import { DogmaEngineContext } from "@/providers/DogmaEngineProvider";
+import { EveDataContext } from "@/providers/EveDataProvider";
 
 export interface ShipSnapshotItemAttributeEffect {
   operator: string;

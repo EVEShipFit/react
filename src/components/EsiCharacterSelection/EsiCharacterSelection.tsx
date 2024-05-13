@@ -1,6 +1,6 @@
 import React from "react";
 
-import { EsiContext } from "../../providers/EsiProvider";
+import { EsiContext } from "@/providers/EsiProvider";
 
 import styles from "./EsiCharacterSelection.module.css";
 

@@ -1,8 +1,7 @@
 import React from "react";
 
-import { EsiFit } from "../ShipSnapshotProvider";
-
-import { useLocalStorage } from "../../hooks/LocalStorage";
+import { useLocalStorage } from "@/hooks/LocalStorage";
+import { EsiFit } from "@/providers/ShipSnapshotProvider";
 
 export interface LocalFit {
   loaded?: boolean;

@@ -1,11 +1,12 @@
 import type { Decorator, Meta, StoryObj } from "@storybook/react";
 import React from "react";
 
-import { DogmaEngineProvider } from "../../providers/DogmaEngineProvider";
-import { EsiProvider } from "../../providers/EsiProvider";
-import { EveDataProvider } from "../../providers/EveDataProvider";
 import { fullFit } from "../../../.storybook/fits";
-import { ShipSnapshotProvider } from "../../providers/ShipSnapshotProvider";
+
+import { DogmaEngineProvider } from "@/providers/DogmaEngineProvider";
+import { EsiProvider } from "@/providers/EsiProvider";
+import { EveDataProvider } from "@/providers/EveDataProvider";
+import { ShipSnapshotProvider } from "@/providers/ShipSnapshotProvider";
 
 import { HardwareListing } from "./";
 

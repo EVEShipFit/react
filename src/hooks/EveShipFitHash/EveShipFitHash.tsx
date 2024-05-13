@@ -1,8 +1,8 @@
 import React from "react";
 
-import { EsiFit } from "../../providers/ShipSnapshotProvider";
-import { EveDataContext } from "../../providers/EveDataProvider";
-import { useFormatEftToEsi } from "../FormatEftToEsi";
+import { EsiFit } from "@/providers/ShipSnapshotProvider";
+import { EveDataContext } from "@/providers/EveDataProvider";
+import { useFormatEftToEsi } from "@/hooks/FormatEftToEsi";
 
 async function decompress(base64compressedBytes: string): Promise<string> {
   const stream = new Blob([Uint8Array.from(atob(base64compressedBytes), (c) => c.charCodeAt(0))]).stream();

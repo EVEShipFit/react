@@ -1,5 +1,7 @@
 import React from "react";
 
+import type { init, calculate } from "@eveshipfit/dogma-engine";
+
 import {
   DogmaAttribute,
   DogmaEffect,
@@ -7,8 +9,7 @@ import {
   TypeDogmaEffect,
   TypeID,
   EveDataContext,
-} from "../EveDataProvider";
-import type { init, calculate } from "@eveshipfit/dogma-engine";
+} from "@/providers/EveDataProvider";
 
 interface EsfDogmaEngine {
   init: typeof init;

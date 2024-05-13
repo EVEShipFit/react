@@ -1,4 +1,4 @@
-import { EsiFit } from "../ShipSnapshotProvider";
+import { EsiFit } from "@/providers/ShipSnapshotProvider";
 
 export async function getCharFittings(characterId: string, accessToken: string): Promise<EsiFit[] | undefined> {
   let response;

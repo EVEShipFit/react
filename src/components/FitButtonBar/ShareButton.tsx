@@ -1,7 +1,7 @@
 import React from "react";
 
-import { useClipboard } from "../../hooks/Clipboard";
-import { useEveShipFitLink } from "../../hooks/EveShipFitLink";
+import { useClipboard } from "@/hooks/Clipboard";
+import { useEveShipFitLink } from "@/hooks/EveShipFitLink";
 
 import styles from "./FitButtonBar.module.css";
 

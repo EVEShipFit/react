@@ -1,6 +1,6 @@
 import React from "react";
 
-import { ShipSnapshotContext } from "../../providers/ShipSnapshotProvider";
+import { ShipSnapshotContext } from "@/providers/ShipSnapshotProvider";
 
 import styles from "./ShipFit.module.css";
 
