@@ -151,7 +151,7 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
 
   const onDragStart = React.useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
-      if (!esiItem) return;
+      if (esiItem === undefined) return;
 
       e.dataTransfer.setData("application/type_id", esiItem.type_id.toString());
       e.dataTransfer.setData("application/slot_id", esiFlag.toString());
@@ -177,11 +177,10 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
       const draggedSlotId: number | undefined = parseNumber(e.dataTransfer.getData("application/slot_id"));
       const draggedSlotType: string = e.dataTransfer.getData("application/slot_type");
 
-      if (!draggedTypeId) {
+      if (draggedTypeId === undefined) {
         return;
       }
 
-      // TODO: Move validation into ShipSnapshotProvider
       const isValidSlotGroup = draggedSlotType === esiFlagType;
       if (!isValidSlotGroup) {
         return;
@@ -194,7 +193,7 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
         shipSnapshot.setModule(draggedTypeId, esiFlag);
       }
     },
-    [shipSnapshot, esiItem, esiFlag, esiFlagType],
+    [shipSnapshot, esiFlag, esiFlagType],
   );
 
   /* Not fittable and nothing fitted; no need to render the slot. */

@@ -210,7 +210,7 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
       fromItem.flag = toFlag;
 
       if (toItem !== undefined) {
-        /* Target slot is non-empty, swap items */
+        /* Target slot is non-empty, swap items. */
         toItem.flag = fromFlag;
       }
 
