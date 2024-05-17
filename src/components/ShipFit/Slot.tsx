@@ -270,14 +270,17 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
       <div className={styles.slotOptions}>
         {esiItem?.charge !== undefined && (
           <svg viewBox="0 0 20 20" width={20} xmlns="http://www.w3.org/2000/svg" onClick={unfitCharge}>
+            <title>Remove Charge</title>
             <use href="#uncharge" />
           </svg>
         )}
         <svg viewBox="0 0 20 20" width={20} xmlns="http://www.w3.org/2000/svg" onClick={unfitModule}>
+          <title>Unfit Module</title>
           <use href="#unfit" />
         </svg>
         {esiItem?.max_state !== "Passive" && (
           <svg viewBox="0 0 20 20" width={20} xmlns="http://www.w3.org/2000/svg" onClick={offlineState}>
+            <title>Put Offline</title>
             <use href="#offline" />
           </svg>
         )}
