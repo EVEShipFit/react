@@ -72,6 +72,7 @@ const ModuleGroup = (props: { level: number; group: ListingGroup; hideGroup?: bo
                   level={2}
                   content={item.name}
                   onClick={() => shipSnapShot.addCharge(item.typeId)}
+                  onDragStart={onItemDragStart(item.typeId, "charge")}
                 />
               );
             } else {
