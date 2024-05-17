@@ -43,6 +43,16 @@
   width: calc(100% - 2 * 3%);
 }
 
+.hullDraggable {
+  border-radius: 50%;
+  height: 76%;
+  left: 12%;
+  position: absolute;
+  top: 12%;
+  width: 76%;
+  z-index: 3;
+}
+
 .ringTop {
   height: 100%;
   position: absolute;
@@ -66,6 +76,11 @@
   pointer-events: all;
   position: absolute;
   top: 3.5%;
+}
+
+.ringTopItem.background > div,
+.ringTopItem.background > svg {
+  pointer-events: none;
 }
 
 .turretLauncherIcon {

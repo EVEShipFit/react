@@ -74,7 +74,7 @@ interface ShipSnapshot {
   setModule: (typeId: number, flag: number) => void;
   addModule: (typeId: number, slot: ShipSnapshotSlotsType) => void;
   removeModule: (flag: number) => void;
-  addCharge: (chargeTypeId: number) => void;
+  addCharge: (chargeTypeId: number, flag?: number) => void;
   removeCharge: (flag: number) => void;
   toggleDrones: (typeId: number, active: number) => void;
   removeDrones: (typeId: number) => void;
@@ -286,7 +286,7 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
   }, []);
 
   const addCharge = React.useCallback(
-    (chargeTypeId: number) => {
+    (chargeTypeId: number, flag?: number) => {
       const chargeSize =
         eveData.typeDogma?.[chargeTypeId]?.dogmaAttributes.find(
           (attr) => attr.attributeID === eveData.attributeMapping?.chargeSize,
@@ -304,6 +304,10 @@ export const ShipSnapshotProvider = (props: ShipSnapshotProps) => {
             (attr) => attr.attributeID === eveData.attributeMapping?.chargeSize,
           )?.value;
           if (moduleChargeSize !== undefined && moduleChargeSize !== chargeSize) {
+            newItems.push(item);
+            continue;
+          }
+          if (flag !== undefined && item.flag !== flag) {
             newItems.push(item);
             continue;
           }

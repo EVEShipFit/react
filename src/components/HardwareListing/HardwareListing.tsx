@@ -71,7 +71,7 @@ const ModuleGroup = (props: { level: number; group: ListingGroup; hideGroup?: bo
                   key={item.typeId}
                   level={2}
                   content={item.name}
-                  onClick={() => shipSnapShot.addCharge(item.typeId)}
+                  onDoubleClick={() => shipSnapShot.addCharge(item.typeId)}
                   onDragStart={onItemDragStart(item.typeId, "charge")}
                 />
               );
@@ -82,7 +82,7 @@ const ModuleGroup = (props: { level: number; group: ListingGroup; hideGroup?: bo
                   key={item.typeId}
                   level={2}
                   content={item.name}
-                  onClick={() => shipSnapShot.addModule(item.typeId, slotType)}
+                  onDoubleClick={() => shipSnapShot.addModule(item.typeId, slotType)}
                   onDragStart={onItemDragStart(item.typeId, slotType)}
                 />
               );
