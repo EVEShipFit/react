@@ -53,6 +53,7 @@ export const TreeLeaf = (props: {
   iconTitle?: string;
   content: string;
   onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
+  onDragStart?: (e: React.DragEvent<HTMLDivElement>) => void;
 }) => {
   const stylesHeader = styles[`header${props.level}`];
 
@@ -69,6 +70,8 @@ export const TreeLeaf = (props: {
             [styles.leaf]: props.onClick !== undefined,
           })}
           onClick={props.onClick}
+          draggable={!!props.onDragStart}
+          onDragStart={props.onDragStart}
         >
           {props.icon !== undefined && (
             <span className={styles.leafIcon}>

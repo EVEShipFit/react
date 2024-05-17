@@ -43,6 +43,22 @@ interface Filter {
 const ModuleGroup = (props: { level: number; group: ListingGroup; hideGroup?: boolean }) => {
   const shipSnapShot = React.useContext(ShipSnapshotContext);
 
+  const onItemDragStart = React.useCallback(
+    (
+      typeId: ListingItem["typeId"],
+      slotType: ListingItem["slotType"],
+    ): ((e: React.DragEvent<HTMLDivElement>) => void) => {
+      return (e: React.DragEvent<HTMLDivElement>) => {
+        const img = new Image();
+        img.src = `https://images.evetech.net/types/${typeId}/icon?size=64`;
+        e.dataTransfer.setDragImage(img, 32, 32);
+        e.dataTransfer.setData("application/type_id", typeId.toString());
+        e.dataTransfer.setData("application/slot_type", slotType);
+      };
+    },
+    [],
+  );
+
   const getChildren = React.useCallback(() => {
     return (
       <>
@@ -66,6 +82,7 @@ const ModuleGroup = (props: { level: number; group: ListingGroup; hideGroup?: bo
                   level={2}
                   content={item.name}
                   onClick={() => shipSnapShot.addModule(item.typeId, slotType)}
+                  onDragStart={onItemDragStart(item.typeId, slotType)}
                 />
               );
             }
@@ -81,7 +98,7 @@ const ModuleGroup = (props: { level: number; group: ListingGroup; hideGroup?: bo
           })}
       </>
     );
-  }, [props, shipSnapShot]);
+  }, [props, shipSnapShot, onItemDragStart]);
 
   if (props.hideGroup) {
     return <TreeListing level={props.level} getChildren={getChildren} />;
