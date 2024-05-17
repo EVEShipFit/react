@@ -15,6 +15,7 @@ import { Slot } from "./Slot";
 import { Usage } from "./Usage";
 
 import styles from "./ShipFit.module.css";
+import { HullDraggable } from "./HullDraggable";
 
 /**
  * Render a ship fit similar to how it is done in-game.
@@ -48,7 +49,7 @@ export const ShipFit = (props: { withStats?: boolean }) => {
       <RingTop>
         {props.withStats && (
           <>
-            <RingTopItem rotation={-45}>
+            <RingTopItem rotation={-45} background>
               <div className={styles.turretLauncherIcon}>
                 <Icon name="hardpoint-turret" size={16} />
               </div>
@@ -56,7 +57,7 @@ export const ShipFit = (props: { withStats?: boolean }) => {
             {Array.from({ length: slots?.turret }, (_, i) => {
               turretSlotsUsed--;
               return (
-                <RingTopItem key={i} rotation={-40 + i * 3}>
+                <RingTopItem key={i} rotation={-40 + i * 3} background>
                   <div
                     className={clsx(styles.turretLauncherItem, {
                       [styles.turretLauncherItemUsed]: turretSlotsUsed >= 0,
@@ -68,7 +69,7 @@ export const ShipFit = (props: { withStats?: boolean }) => {
               );
             })}
 
-            <RingTopItem rotation={43}>
+            <RingTopItem rotation={43} background>
               <div className={styles.turretLauncherIcon}>
                 <Icon name="hardpoint-launcher" size={16} />
               </div>
@@ -76,7 +77,7 @@ export const ShipFit = (props: { withStats?: boolean }) => {
             {Array.from({ length: slots?.launcher }, (_, i) => {
               launcherSlotsUsed--;
               return (
-                <RingTopItem key={i} rotation={39 - i * 3}>
+                <RingTopItem key={i} rotation={39 - i * 3} background>
                   <div
                     className={clsx(styles.turretLauncherItem, {
                       [styles.turretLauncherItemUsed]: launcherSlotsUsed >= 0,
@@ -88,17 +89,17 @@ export const ShipFit = (props: { withStats?: boolean }) => {
               );
             })}
 
-            <RingTopItem rotation={-47}>
+            <RingTopItem rotation={-47} background>
               <div className={styles.usage}>
                 <Usage type="rig" angle={-30} intervals={30} markers={2} color="#3d4547" />
               </div>
             </RingTopItem>
-            <RingTopItem rotation={134.5}>
+            <RingTopItem rotation={134.5} background>
               <div className={styles.usage}>
                 <Usage type="cpu" angle={-44} intervals={40} markers={5} color="#2a504f" />
               </div>
             </RingTopItem>
-            <RingTopItem rotation={135}>
+            <RingTopItem rotation={135} background>
               <div className={styles.usage}>
                 <Usage type="pg" angle={44} intervals={40} markers={5} color="#541208" />
               </div>
@@ -106,7 +107,7 @@ export const ShipFit = (props: { withStats?: boolean }) => {
           </>
         )}
 
-        <RingTopItem rotation={-45}>
+        <RingTopItem rotation={-45} background>
           <RadialMenu type="hislot" />
         </RingTopItem>
 
@@ -135,7 +136,7 @@ export const ShipFit = (props: { withStats?: boolean }) => {
           <Slot type="hislot" index={8} fittable={slots?.hislot >= 8} />
         </RingTopItem>
 
-        <RingTopItem rotation={43}>
+        <RingTopItem rotation={43} background>
           <RadialMenu type="medslot" />
         </RingTopItem>
 
@@ -164,7 +165,7 @@ export const ShipFit = (props: { withStats?: boolean }) => {
           <Slot type="medslot" index={8} fittable={slots?.medslot >= 8} />
         </RingTopItem>
 
-        <RingTopItem rotation={133}>
+        <RingTopItem rotation={133} background>
           <RadialMenu type="lowslot" />
         </RingTopItem>
 
@@ -216,6 +217,8 @@ export const ShipFit = (props: { withStats?: boolean }) => {
           <Slot type="subsystem" index={4} fittable={slots?.subsystem >= 4} />
         </RingTopItem>
       </RingTop>
+
+      <HullDraggable />
     </div>
   );
 };
