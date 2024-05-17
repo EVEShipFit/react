@@ -181,6 +181,11 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
         return;
       }
 
+      if (draggedSlotType === "charge") {
+        shipSnapshot.addCharge(draggedTypeId, esiFlag);
+        return;
+      }
+
       const isValidSlotGroup = draggedSlotType === esiFlagType;
       if (!isValidSlotGroup) {
         return;
