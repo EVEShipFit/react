@@ -59,6 +59,16 @@ const ModuleGroup = (props: { level: number; group: ListingGroup; hideGroup?: bo
     [],
   );
 
+  const preloadImage = React.useCallback(
+    (typeId: number): ((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void) => {
+      return () => {
+        const img = new Image();
+        img.src = `https://images.evetech.net/types/${typeId}/icon?size=64`;
+      };
+    },
+    [],
+  );
+
   const getChildren = React.useCallback(() => {
     return (
       <>
@@ -73,6 +83,7 @@ const ModuleGroup = (props: { level: number; group: ListingGroup; hideGroup?: bo
                   content={item.name}
                   onDoubleClick={() => shipSnapShot.addCharge(item.typeId)}
                   onDragStart={onItemDragStart(item.typeId, "charge")}
+                  onMouseEnter={preloadImage(item.typeId)}
                 />
               );
             } else {
@@ -84,6 +95,7 @@ const ModuleGroup = (props: { level: number; group: ListingGroup; hideGroup?: bo
                   content={item.name}
                   onDoubleClick={() => shipSnapShot.addModule(item.typeId, slotType)}
                   onDragStart={onItemDragStart(item.typeId, slotType)}
+                  onMouseEnter={preloadImage(item.typeId)}
                 />
               );
             }
@@ -99,7 +111,7 @@ const ModuleGroup = (props: { level: number; group: ListingGroup; hideGroup?: bo
           })}
       </>
     );
-  }, [props, shipSnapShot, onItemDragStart]);
+  }, [props, shipSnapShot, onItemDragStart, preloadImage]);
 
   if (props.hideGroup) {
     return <TreeListing level={props.level} getChildren={getChildren} />;
