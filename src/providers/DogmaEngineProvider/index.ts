@@ -1,1 +1,1 @@
-export { DogmaEngineContext, DogmaEngineProvider } from "./DogmaEngineProvider";
+export { DogmaEngineProvider, useDogmaEngine } from "./DogmaEngineProvider";

@@ -1,47 +1,35 @@
-import type { Decorator, Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 
-import { fullFit } from "../../../.storybook/fits";
+import { fitArgType } from "../../../.storybook/fits";
+import { useFitSelection, withDecoratorFull } from "../../../.storybook/helpers";
 
-import { DogmaEngineProvider } from "@/providers/DogmaEngineProvider";
-import { EsiProvider } from "@/providers/EsiProvider";
-import { EveDataProvider } from "@/providers/EveDataProvider";
-import { ShipSnapshotProvider } from "@/providers/ShipSnapshotProvider";
+import { EsfFit } from "@/providers/CurrentFitProvider";
+
 import { CalculationDetail } from "./";
 
-const meta: Meta<typeof CalculationDetail> = {
+type StoryProps = React.ComponentProps<typeof CalculationDetail> & { fit: EsfFit | null };
+
+const meta: Meta<StoryProps> = {
   component: CalculationDetail,
   tags: ["autodocs"],
-  title: "Component/CalculationDetail",
 };
 
 export default meta;
-type Story = StoryObj<typeof CalculationDetail>;
-
-const useShipSnapshotProvider: Decorator<{
-  source: "Ship" | "Char" | "Structure" | "Target" | { Item?: number; Cargo?: number };
-}> = (Story, context) => {
-  return (
-    <EveDataProvider>
-      <DogmaEngineProvider>
-        <ShipSnapshotProvider {...context.parameters.snapshot}>
-          <EsiProvider>
-            <Story {...context.args} />
-          </EsiProvider>
-        </ShipSnapshotProvider>
-      </DogmaEngineProvider>
-    </EveDataProvider>
-  );
-};
+type Story = StoryObj<StoryProps>;
 
 export const Default: Story = {
+  argTypes: {
+    fit: fitArgType,
+  },
   args: {
+    fit: null,
     source: "Ship",
   },
-  decorators: [useShipSnapshotProvider],
-  parameters: {
-    snapshot: {
-      initialFit: fullFit,
-    },
+  decorators: [withDecoratorFull],
+  render: ({ fit, ...args }) => {
+    useFitSelection(fit);
+
+    return <CalculationDetail {...args} />;
   },
 };

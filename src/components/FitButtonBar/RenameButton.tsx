@@ -1,26 +1,32 @@
 import clsx from "clsx";
 import React from "react";
 
-import { ShipSnapshotContext } from "@/providers/ShipSnapshotProvider";
 import { ModalDialog } from "@/components/ModalDialog";
+import { useCurrentFit } from "@/providers/CurrentFitProvider";
+import { useFitManager } from "@/providers/FitManagerProvider";
 
 import styles from "./FitButtonBar.module.css";
 
 export const RenameButton = () => {
-  const shipSnapshot = React.useContext(ShipSnapshotContext);
+  const currentFit = useCurrentFit();
+  const fitManager = useFitManager();
 
   const [isRenameOpen, setIsRenameOpen] = React.useState(false);
-  const [rename, setRename] = React.useState("");
+  const [name, setName] = React.useState("");
+
+  const nameRef = React.useRef<string>(name);
+  nameRef.current = name;
 
   const saveRename = React.useCallback(() => {
-    shipSnapshot?.setName(rename);
+    fitManager.setName(nameRef.current);
     setIsRenameOpen(false);
-  }, [rename, shipSnapshot]);
+  }, [fitManager]);
 
   const openRename = React.useCallback(() => {
-    setRename(shipSnapshot?.currentFit?.name ?? "");
+    if (currentFit.fit === null) return;
+    setName(currentFit.fit.name);
     setIsRenameOpen(true);
-  }, [shipSnapshot]);
+  }, [currentFit.fit]);
 
   return (
     <>
@@ -31,7 +37,7 @@ export const RenameButton = () => {
       <ModalDialog visible={isRenameOpen} onClose={() => setIsRenameOpen(false)} title="Fit Name">
         <div>
           <span className={styles.renameEdit}>
-            <input type="text" autoFocus value={rename} onChange={(e) => setRename(e.target.value)} />
+            <input type="text" autoFocus value={name} onChange={(e) => setName(e.target.value)} />
           </span>
           <span className={clsx(styles.button, styles.buttonSmall)} onClick={() => saveRename()}>
             Save

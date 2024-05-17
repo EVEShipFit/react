@@ -1,47 +1,91 @@
-import type { Decorator, Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 
-import { fullFit } from "../../../.storybook/fits";
+import { fitArgType } from "../../../.storybook/fits";
+import { useFitSelection, withDecoratorFull } from "../../../.storybook/helpers";
 
-import { DogmaEngineProvider } from "@/providers/DogmaEngineProvider";
-import { EsiProvider } from "@/providers/EsiProvider";
-import { EveDataProvider } from "@/providers/EveDataProvider";
-import { ShipSnapshotProvider } from "@/providers/ShipSnapshotProvider";
+import { HardwareListing } from "@/components/HardwareListing";
+import { HullListing } from "@/components/HullListing";
+import { EsfFit } from "@/providers/CurrentFitProvider";
+
 import { ShipFitExtended } from "./";
 
-const meta: Meta<typeof ShipFitExtended> = {
+type StoryProps = React.ComponentProps<typeof ShipFitExtended> & { fit: EsfFit | null; width: number };
+
+const meta: Meta<StoryProps> = {
   component: ShipFitExtended,
   tags: ["autodocs"],
-  title: "Component/ShipFitExtended",
 };
 
 export default meta;
-type Story = StoryObj<typeof ShipFitExtended>;
-
-const useShipSnapshotProvider: Decorator<Record<string, never>> = (Story, context) => {
-  return (
-    <EveDataProvider>
-      <DogmaEngineProvider>
-        <ShipSnapshotProvider {...context.parameters.snapshot}>
-          <EsiProvider>
-            <div style={{ width: context.args.width, height: context.args.width }}>
-              <Story />
-            </div>
-          </EsiProvider>
-        </ShipSnapshotProvider>
-      </DogmaEngineProvider>
-    </EveDataProvider>
-  );
-};
+type Story = StoryObj<StoryProps>;
 
 export const Default: Story = {
+  argTypes: {
+    fit: fitArgType,
+  },
   args: {
+    fit: null,
     width: 730,
   },
-  decorators: [useShipSnapshotProvider],
-  parameters: {
-    snapshot: {
-      initialFit: fullFit,
-    },
+  decorators: [withDecoratorFull],
+  render: ({ fit, width, ...args }) => {
+    useFitSelection(fit);
+
+    return (
+      <div style={{ width: width, height: width }}>
+        <ShipFitExtended {...args} />
+      </div>
+    );
+  },
+};
+
+export const WithHardwareListing: Story = {
+  argTypes: {
+    fit: fitArgType,
+  },
+  args: {
+    fit: null,
+  },
+  decorators: [withDecoratorFull],
+  render: ({ fit, width, ...args }) => {
+    useFitSelection(fit);
+
+    return (
+      <div style={{ width: 1230, height: 730, display: "flex" }}>
+        <div style={{ width: 400 }}>
+          <HardwareListing />
+        </div>
+        <div style={{ width: 100 }}></div>
+        <div style={{ width: 730, height: 730 }}>
+          <ShipFitExtended {...args} />
+        </div>
+      </div>
+    );
+  },
+};
+
+export const WithHullListing: Story = {
+  argTypes: {
+    fit: fitArgType,
+  },
+  args: {
+    fit: null,
+  },
+  decorators: [withDecoratorFull],
+  render: ({ fit, width, ...args }) => {
+    useFitSelection(fit);
+
+    return (
+      <div style={{ width: 1230, height: 730, display: "flex" }}>
+        <div style={{ width: 400 }}>
+          <HullListing />
+        </div>
+        <div style={{ width: 100 }}></div>
+        <div style={{ width: 730, height: 730 }}>
+          <ShipFitExtended {...args} />
+        </div>
+      </div>
+    );
   },
 };

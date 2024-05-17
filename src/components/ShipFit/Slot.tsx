@@ -1,8 +1,10 @@
 import React from "react";
 
-import { EveDataContext } from "@/providers/EveDataProvider";
-import { ShipSnapshotContext } from "@/providers/ShipSnapshotProvider";
 import { Icon, IconName } from "@/components/Icon";
+import { useEveData } from "@/providers/EveDataProvider";
+import { useStatistics } from "@/providers/StatisticsProvider";
+import { useFitManager } from "@/providers/FitManagerProvider";
+import { State } from "@/providers/CurrentFitProvider";
 
 import styles from "./ShipFit.module.css";
 
@@ -14,7 +16,7 @@ const esiFlagMapping: Record<string, number[]> = {
   subsystem: [125, 126, 127, 128],
 };
 
-const stateRotation: Record<string, string[]> = {
+const stateRotation: Record<string, State[]> = {
   Passive: ["Passive"],
   Online: ["Passive", "Online"],
   Active: ["Passive", "Online", "Active"],
@@ -22,14 +24,124 @@ const stateRotation: Record<string, string[]> = {
 };
 
 export const Slot = (props: { type: string; index: number; fittable: boolean; main?: boolean }) => {
-  const eveData = React.useContext(EveDataContext);
-  const shipSnapshot = React.useContext(ShipSnapshotContext);
+  const eveData = useEveData();
+  const statistics = useStatistics();
+  const fitManager = useFitManager();
 
   const esiFlagType = props.type;
   const esiFlag = esiFlagMapping[esiFlagType][props.index - 1];
 
-  const esiItem = shipSnapshot?.items?.find((item) => item.flag == esiFlag);
+  const esiItem = statistics?.items.find((item) => item.flag == esiFlag);
   const active = esiItem?.max_state !== "Passive" && esiItem?.max_state !== "Online";
+
+  const offlineState = React.useCallback(
+    (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+      e.stopPropagation();
+
+      if (esiItem === undefined) return;
+
+      if (esiItem.state === "Passive") {
+        fitManager.setModuleState(esiItem.flag, "Online");
+      } else {
+        fitManager.setModuleState(esiItem.flag, "Passive");
+      }
+    },
+    [fitManager, esiItem],
+  );
+
+  const cycleState = React.useCallback(
+    (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
+      if (esiItem === undefined) return;
+
+      const states = stateRotation[esiItem.max_state];
+      const stateIndex = states.indexOf(esiItem.state);
+
+      let newState;
+      if (e.shiftKey) {
+        newState = states[(stateIndex - 1 + states.length) % states.length];
+      } else {
+        newState = states[(stateIndex + 1) % states.length];
+      }
+
+      fitManager.setModuleState(esiItem.flag, newState);
+    },
+    [fitManager, esiItem],
+  );
+
+  const unfitModule = React.useCallback(
+    (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+      e.stopPropagation();
+
+      if (esiItem === undefined) return;
+
+      fitManager.removeModule(esiItem.flag);
+    },
+    [fitManager, esiItem],
+  );
+
+  const unfitCharge = React.useCallback(
+    (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
+      e.stopPropagation();
+      if (esiItem === undefined) return;
+
+      fitManager.removeCharge(esiItem.flag);
+    },
+    [fitManager, esiItem],
+  );
+
+  const onDragStart = React.useCallback(
+    (e: React.DragEvent<HTMLDivElement>) => {
+      if (esiItem === undefined) return;
+
+      e.dataTransfer.setData("application/type_id", esiItem.type_id.toString());
+      e.dataTransfer.setData("application/slot_id", esiFlag.toString());
+      e.dataTransfer.setData("application/slot_type", esiFlagType);
+    },
+    [esiItem, esiFlag, esiFlagType],
+  );
+
+  const onDragOver = React.useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  }, []);
+
+  const onDragEnd = React.useCallback(
+    (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+
+      const parseNumber = (maybeNumber: string): number | undefined => {
+        const num = parseInt(maybeNumber);
+        return Number.isInteger(num) ? num : undefined;
+      };
+
+      const draggedTypeId: number | undefined = parseNumber(e.dataTransfer.getData("application/type_id"));
+      const draggedSlotId: number | undefined = parseNumber(e.dataTransfer.getData("application/slot_id"));
+      const draggedSlotType: string = e.dataTransfer.getData("application/slot_type");
+
+      if (draggedTypeId === undefined) {
+        return;
+      }
+
+      if (draggedSlotType === "charge") {
+        fitManager.setCharge(esiFlag, draggedTypeId);
+        return;
+      }
+
+      const isValidSlotGroup = draggedSlotType === esiFlagType;
+      if (!isValidSlotGroup) {
+        return;
+      }
+
+      const isDraggedFromAnotherSlot = draggedSlotId !== undefined;
+      if (isDraggedFromAnotherSlot) {
+        fitManager.swapModule(esiFlag, draggedSlotId);
+      } else {
+        fitManager.setModule(esiFlag, draggedTypeId);
+      }
+    },
+    [fitManager, esiFlag, esiFlagType],
+  );
+
+  if (eveData === null || statistics === null) return <></>;
 
   let item = <></>;
   let svg = <></>;
@@ -96,111 +208,6 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
     </>
   );
 
-  const offlineState = React.useCallback(
-    (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
-      e.stopPropagation();
-      if (!shipSnapshot?.loaded || !esiItem) return;
-
-      if (esiItem.state === "Passive") {
-        shipSnapshot.setItemState(esiItem.flag, "Online");
-      } else {
-        shipSnapshot.setItemState(esiItem.flag, "Passive");
-      }
-    },
-    [shipSnapshot, esiItem],
-  );
-
-  const cycleState = React.useCallback(
-    (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
-      if (!shipSnapshot?.loaded || !esiItem) return;
-
-      const states = stateRotation[esiItem.max_state];
-      const stateIndex = states.indexOf(esiItem.state);
-
-      let newState;
-      if (e.shiftKey) {
-        newState = states[(stateIndex - 1 + states.length) % states.length];
-      } else {
-        newState = states[(stateIndex + 1) % states.length];
-      }
-
-      shipSnapshot.setItemState(esiItem.flag, newState);
-    },
-    [shipSnapshot, esiItem],
-  );
-
-  const unfitModule = React.useCallback(
-    (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
-      e.stopPropagation();
-      if (!shipSnapshot?.loaded || !esiItem) return;
-
-      shipSnapshot.removeModule(esiItem.flag);
-    },
-    [shipSnapshot, esiItem],
-  );
-
-  const unfitCharge = React.useCallback(
-    (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
-      e.stopPropagation();
-      if (!shipSnapshot?.loaded || !esiItem) return;
-
-      shipSnapshot.removeCharge(esiItem.flag);
-    },
-    [shipSnapshot, esiItem],
-  );
-
-  const onDragStart = React.useCallback(
-    (e: React.DragEvent<HTMLDivElement>) => {
-      if (esiItem === undefined) return;
-
-      e.dataTransfer.setData("application/type_id", esiItem.type_id.toString());
-      e.dataTransfer.setData("application/slot_id", esiFlag.toString());
-      e.dataTransfer.setData("application/slot_type", esiFlagType);
-    },
-    [esiItem, esiFlag, esiFlagType],
-  );
-
-  const onDragOver = React.useCallback((e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-  }, []);
-
-  const onDragEnd = React.useCallback(
-    (e: React.DragEvent<HTMLDivElement>) => {
-      e.preventDefault();
-
-      const parseNumber = (maybeNumber: string): number | undefined => {
-        const num = parseInt(maybeNumber);
-        return Number.isInteger(num) ? num : undefined;
-      };
-
-      const draggedTypeId: number | undefined = parseNumber(e.dataTransfer.getData("application/type_id"));
-      const draggedSlotId: number | undefined = parseNumber(e.dataTransfer.getData("application/slot_id"));
-      const draggedSlotType: string = e.dataTransfer.getData("application/slot_type");
-
-      if (draggedTypeId === undefined) {
-        return;
-      }
-
-      if (draggedSlotType === "charge") {
-        shipSnapshot.addCharge(draggedTypeId, esiFlag);
-        return;
-      }
-
-      const isValidSlotGroup = draggedSlotType === esiFlagType;
-      if (!isValidSlotGroup) {
-        return;
-      }
-
-      const isDraggedFromAnotherSlot = draggedSlotId !== undefined;
-      if (isDraggedFromAnotherSlot) {
-        shipSnapshot.moveModule(draggedSlotId, esiFlag);
-      } else {
-        shipSnapshot.setModule(draggedTypeId, esiFlag);
-      }
-    },
-    [shipSnapshot, esiFlag, esiFlagType],
-  );
-
   /* Not fittable and nothing fitted; no need to render the slot. */
   if (esiItem === undefined && !props.fittable) {
     return (
@@ -212,12 +219,12 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
     );
   }
 
-  if (esiItem !== undefined) {
+  if (esiItem !== undefined && eveData !== null) {
     if (esiItem.charge !== undefined) {
       item = (
         <img
           src={`https://images.evetech.net/types/${esiItem.charge.type_id}/icon?size=64`}
-          title={`${eveData?.typeIDs?.[esiItem.type_id].name}\n${eveData?.typeIDs?.[esiItem.charge.type_id].name}`}
+          title={`${eveData.typeIDs[esiItem.type_id].name}\n${eveData.typeIDs[esiItem.charge.type_id].name}`}
           draggable={true}
           onDragStart={onDragStart}
         />
@@ -226,7 +233,7 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
       item = (
         <img
           src={`https://images.evetech.net/types/${esiItem.type_id}/icon?size=64`}
-          title={eveData?.typeIDs?.[esiItem.type_id].name}
+          title={eveData.typeIDs[esiItem.type_id].name}
           draggable={true}
           onDragStart={onDragStart}
         />

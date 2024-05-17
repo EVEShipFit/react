@@ -1,26 +1,19 @@
 import clsx from "clsx";
 import React from "react";
 
-import { ShipSnapshotContext, ShipSnapshotItem } from "@/providers/ShipSnapshotProvider";
-import { EveDataContext } from "@/providers/EveDataProvider";
 import { CharAttribute, ShipAttribute } from "@/components/ShipAttribute";
+import { useFitManager } from "@/providers/FitManagerProvider";
+import { useEveData } from "@/providers/EveDataProvider";
+import { StatisticsItem, useStatistics } from "@/providers/StatisticsProvider";
 
 import styles from "./DroneBay.module.css";
 
-const DroneBayEntrySelected = ({
-  drone,
-  index,
-  isOpen,
-}: {
-  drone: ShipSnapshotItem;
-  index: number;
-  isOpen: boolean;
-}) => {
-  const snapshot = React.useContext(ShipSnapshotContext);
+const DroneBayEntrySelected = ({ drone, index, isOpen }: { drone: StatisticsItem; index: number; isOpen: boolean }) => {
+  const fitManager = useFitManager();
 
   const onClick = React.useCallback(() => {
-    snapshot.toggleDrones(drone.type_id, index + 1);
-  }, [snapshot, drone, index]);
+    fitManager.activateDrones(drone.type_id, index + 1);
+  }, [fitManager, drone, index]);
 
   return (
     <div
@@ -36,21 +29,28 @@ const DroneBayEntrySelected = ({
   );
 };
 
-const DroneBayEntry = ({ name, drones }: { name: string; drones: ShipSnapshotItem[] }) => {
-  const eveData = React.useContext(EveDataContext);
-  const snapshot = React.useContext(ShipSnapshotContext);
+const DroneBayEntry = ({ name, drones }: { name: string; drones: StatisticsItem[] }) => {
+  const eveData = useEveData();
+  const statistics = useStatistics();
+  const fitManager = useFitManager();
 
-  const attributeDroneBandwidthUsedTotal = eveData.attributeMapping?.droneBandwidthUsedTotal || 0;
-  const attributeDroneActive = eveData.attributeMapping?.droneActive || 0;
-  const attributeDroneBandwidthUsed = eveData.attributeMapping?.droneBandwidthUsed || 0;
-  const attributeDroneBandwidth = eveData.attributeMapping?.droneBandwidth || 0;
-  const attributeMaxActiveDrones = eveData.attributeMapping?.maxActiveDrones || 0;
+  const onRemove = React.useCallback(() => {
+    fitManager.removeDrones(drones[0].type_id);
+  }, [fitManager, drones]);
 
-  const bandwidthUsed = snapshot.hull?.attributes?.get(attributeDroneBandwidthUsedTotal)?.value ?? 0;
-  const bandwidthAvailable = snapshot.hull?.attributes?.get(attributeDroneBandwidth)?.value ?? 0;
-  const dronesActive = snapshot.hull?.attributes?.get(attributeDroneActive)?.value ?? 0;
-  const maxDronesActive = snapshot.char?.attributes?.get(attributeMaxActiveDrones)?.value ?? 0;
-  const droneBandwidth = drones[0].attributes?.get(attributeDroneBandwidthUsed)?.value ?? 0;
+  if (eveData === null || statistics === null) return <></>;
+
+  const attributeDroneBandwidthUsedTotal = eveData.attributeMapping.droneBandwidthUsedTotal ?? 0;
+  const attributeDroneActive = eveData.attributeMapping.droneActive ?? 0;
+  const attributeDroneBandwidthUsed = eveData.attributeMapping.droneBandwidthUsed ?? 0;
+  const attributeDroneBandwidth = eveData.attributeMapping.droneBandwidth ?? 0;
+  const attributeMaxActiveDrones = eveData.attributeMapping.maxActiveDrones ?? 0;
+
+  const bandwidthUsed = statistics.hull.attributes.get(attributeDroneBandwidthUsedTotal)?.value ?? 0;
+  const bandwidthAvailable = statistics.hull.attributes.get(attributeDroneBandwidth)?.value ?? 0;
+  const dronesActive = statistics.hull.attributes.get(attributeDroneActive)?.value ?? 0;
+  const maxDronesActive = statistics.char.attributes.get(attributeMaxActiveDrones)?.value ?? 0;
+  const droneBandwidth = drones[0].attributes.get(attributeDroneBandwidthUsed)?.value ?? 0;
   const maxSelected = Math.max(0, Math.min(maxDronesActive, Math.floor(bandwidthAvailable / droneBandwidth)));
 
   let maxOpen = Math.max(
@@ -60,10 +60,6 @@ const DroneBayEntry = ({ name, drones }: { name: string; drones: ShipSnapshotIte
   let index = 0;
 
   const dronesSelected = drones.slice(0, maxSelected);
-
-  const onRemove = React.useCallback(() => {
-    snapshot.removeDrones(drones[0].type_id);
-  }, [snapshot, drones]);
 
   return (
     <div className={styles.droneBayEntry}>
@@ -91,28 +87,21 @@ const DroneBayEntry = ({ name, drones }: { name: string; drones: ShipSnapshotIte
 };
 
 export const DroneBay = () => {
-  const eveData = React.useContext(EveDataContext);
-  const snapshot = React.useContext(ShipSnapshotContext);
+  const eveData = useEveData();
+  const statistics = useStatistics();
 
-  const [drones, setDrones] = React.useState<Record<string, ShipSnapshotItem[]>>({});
+  if (eveData === null || statistics === null) return <></>;
 
-  React.useEffect(() => {
-    if (snapshot === undefined || !snapshot.loaded || snapshot.items === undefined) return;
-    if (eveData === undefined || !eveData.loaded || eveData.typeIDs === undefined) return;
+  /* Group drones by type_id */
+  const dronesGrouped: Record<string, StatisticsItem[]> = {};
+  for (const drone of statistics.items.filter((item) => item.flag == 87)) {
+    const name = eveData.typeIDs?.[drone.type_id].name ?? "";
 
-    /* Group drones by type_id */
-    const dronesGrouped: Record<string, ShipSnapshotItem[]> = {};
-    for (const drone of snapshot.items.filter((item) => item.flag == 87)) {
-      const name = eveData.typeIDs?.[drone.type_id].name ?? "";
-
-      if (dronesGrouped[name] === undefined) {
-        dronesGrouped[name] = [];
-      }
-      dronesGrouped[name].push(drone);
+    if (dronesGrouped[name] === undefined) {
+      dronesGrouped[name] = [];
     }
-
-    setDrones(dronesGrouped);
-  }, [snapshot, eveData]);
+    dronesGrouped[name].push(drone);
+  }
 
   return (
     <div className={styles.droneBay}>
@@ -120,7 +109,7 @@ export const DroneBay = () => {
         Active drones: <ShipAttribute name="droneActive" fixed={0} /> /{" "}
         <CharAttribute name="maxActiveDrones" fixed={0} />
       </div>
-      {Object.entries(drones)
+      {Object.entries(dronesGrouped)
         .sort((a, b) => a[0].localeCompare(b[0]))
         .map(([name, droneList]) => {
           return <DroneBayEntry key={name} name={name} drones={droneList} />;

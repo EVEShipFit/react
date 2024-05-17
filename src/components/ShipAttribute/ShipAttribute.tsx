@@ -1,7 +1,7 @@
 import React from "react";
 
-import { EveDataContext } from "@/providers/EveDataProvider";
-import { ShipSnapshotContext } from "@/providers/ShipSnapshotProvider";
+import { useEveData } from "@/providers/EveDataProvider";
+import { useStatistics } from "@/providers/StatisticsProvider";
 
 export interface AttributeProps {
   /** Name of the attribute. */
@@ -20,52 +20,52 @@ export interface AttributeProps {
  * Return the value of a ship's attribute.
  */
 export function useAttribute(type: "Ship" | "Char", props: AttributeProps) {
-  const eveData = React.useContext(EveDataContext);
-  const shipSnapshot = React.useContext(ShipSnapshotContext);
+  const eveData = useEveData();
+  const statistics = useStatistics();
 
-  if (shipSnapshot?.loaded) {
-    const attributeId = eveData.attributeMapping?.[props.name] || 0;
-    let value;
-    if (type === "Ship") {
-      value = shipSnapshot.hull?.attributes.get(attributeId)?.value;
-    } else {
-      value = shipSnapshot.char?.attributes.get(attributeId)?.value;
-    }
+  if (eveData === null || statistics === null) return "";
 
-    if (value == undefined) {
-      return "?";
-    }
-
-    if (props.isResistance) {
-      value = 100 - value * 100;
-    }
-
-    if (props.divideBy) {
-      value /= props.divideBy;
-    }
-
-    const k = Math.pow(10, props.fixed);
-    if (k > 0) {
-      if (props.isResistance) {
-        value -= 1 / k / 10;
-        value = Math.ceil(value * k) / k;
-      } else if (props.roundDown) {
-        value = Math.floor(value * k) / k;
-      } else {
-        value = Math.round(value * k) / k;
-      }
-    }
-
-    /* Make sure we don't display "-0", but "0" instead. */
-    if (Object.is(value, -0)) {
-      value = 0;
-    }
-
-    return value.toLocaleString("en", {
-      minimumFractionDigits: props.fixed,
-      maximumFractionDigits: props.fixed,
-    });
+  const attributeId = eveData.attributeMapping[props.name] ?? 0;
+  let value;
+  if (type === "Ship") {
+    value = statistics.hull.attributes.get(attributeId)?.value;
+  } else {
+    value = statistics.char.attributes.get(attributeId)?.value;
   }
+
+  if (value === undefined) {
+    return "?";
+  }
+
+  if (props.isResistance) {
+    value = 100 - value * 100;
+  }
+
+  if (props.divideBy) {
+    value /= props.divideBy;
+  }
+
+  const k = Math.pow(10, props.fixed);
+  if (k > 0) {
+    if (props.isResistance) {
+      value -= 1 / k / 10;
+      value = Math.ceil(value * k) / k;
+    } else if (props.roundDown) {
+      value = Math.floor(value * k) / k;
+    } else {
+      value = Math.round(value * k) / k;
+    }
+  }
+
+  /* Make sure we don't display "-0", but "0" instead. */
+  if (Object.is(value, -0)) {
+    value = 0;
+  }
+
+  return value.toLocaleString("en", {
+    minimumFractionDigits: props.fixed,
+    maximumFractionDigits: props.fixed,
+  });
 }
 
 /**

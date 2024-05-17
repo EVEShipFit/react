@@ -7,7 +7,6 @@ import { ModalDialogAnchor } from "./ModalDialog";
 const meta: Meta<typeof ModalDialog> = {
   component: ModalDialog,
   tags: ["autodocs"],
-  title: "Component/ModalDialog",
 };
 
 export default meta;

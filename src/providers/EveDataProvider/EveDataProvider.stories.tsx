@@ -1,45 +1,49 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 
-import { EveDataContext, EveDataProvider } from "./";
+import { EveDataProvider, useEveData } from "./";
 
 const meta: Meta<typeof EveDataProvider> = {
   component: EveDataProvider,
   tags: ["autodocs"],
-  title: "Provider/EveDataProvider",
 };
 
 export default meta;
 type Story = StoryObj<typeof EveDataProvider>;
 
 const TestEveData = () => {
-  const eveData = React.useContext(EveDataContext);
+  const eveData = useEveData();
+
+  if (eveData === null) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
-      TypeIDs: {eveData.typeIDs ? Object.keys(eveData.typeIDs).length : "loading"}
+      TypeIDs: {Object.keys(eveData.typeIDs).length}
       <br />
-      GroupIDs: {eveData.groupIDs ? Object.keys(eveData.groupIDs).length : "loading"}
+      GroupIDs: {Object.keys(eveData.groupIDs).length}
       <br />
-      MarketGroups: {eveData.marketGroups ? Object.keys(eveData.marketGroups).length : "loading"}
+      MarketGroups: {Object.keys(eveData.marketGroups).length}
       <br />
-      TypeDogma: {eveData.typeDogma ? Object.keys(eveData.typeDogma).length : "loading"}
+      TypeDogma: {Object.keys(eveData.typeDogma).length}
       <br />
-      DogmaEffects: {eveData.dogmaEffects ? Object.keys(eveData.dogmaEffects).length : "loading"}
+      DogmaEffects: {Object.keys(eveData.dogmaEffects).length}
       <br />
-      DogmaAttributes: {eveData.dogmaAttributes ? Object.keys(eveData.dogmaAttributes).length : "loading"}
+      DogmaAttributes: {Object.keys(eveData.dogmaAttributes).length}
       <br />
-      AttributeMapper: {eveData.attributeMapping ? Object.keys(eveData.attributeMapping).length : "loading"}
-      <br />
-      <br />
-      All loaded: {eveData.loaded ? "yes" : "no"}
+      AttributeMapper: {Object.keys(eveData.attributeMapping).length}
     </div>
   );
 };
 
 export const Default: Story = {
-  render: () => (
-    <EveDataProvider>
+  argTypes: {
+    children: { control: false },
+    dataUrl: { control: false },
+  },
+  render: (args) => (
+    <EveDataProvider {...args}>
       <TestEveData />
     </EveDataProvider>
   ),

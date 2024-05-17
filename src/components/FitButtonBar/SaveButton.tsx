@@ -1,29 +1,28 @@
 import clsx from "clsx";
 import React from "react";
 
-import { ShipSnapshotContext } from "@/providers/ShipSnapshotProvider";
-import { LocalFitContext } from "@/providers/LocalFitProvider";
 import { ModalDialog } from "@/components/ModalDialog";
+import { useCurrentFit } from "@/providers/CurrentFitProvider";
+import { useLocalFits } from "@/providers/LocalFitsProvider";
 
 import styles from "./FitButtonBar.module.css";
 
 export const SaveButton = () => {
-  const shipSnapshot = React.useContext(ShipSnapshotContext);
-  const localFit = React.useContext(LocalFitContext);
+  const currentFit = useCurrentFit();
+  const localFits = useLocalFits();
 
   const [isPopupOpen, setIsPopupOpen] = React.useState(false);
   const [isAlreadyExistsOpen, setIsAlreadyExistsOpen] = React.useState(false);
 
   const saveBrowser = React.useCallback(
     (force?: boolean) => {
-      if (!localFit.loaded) return;
-      if (!shipSnapshot.loaded || !shipSnapshot?.currentFit) return;
+      if (currentFit.fit === null) return;
 
       setIsPopupOpen(false);
 
       if (!force) {
-        for (const fit of localFit.fittings) {
-          if (fit.name === shipSnapshot.currentFit.name) {
+        for (const fit of localFits.fittings) {
+          if (fit.name === currentFit.fit.name) {
             setIsAlreadyExistsOpen(true);
             return;
           }
@@ -31,10 +30,9 @@ export const SaveButton = () => {
       }
 
       setIsAlreadyExistsOpen(false);
-
-      localFit.addFit(shipSnapshot.currentFit);
+      localFits.addFit(currentFit.fit);
     },
-    [localFit, shipSnapshot],
+    [localFits, currentFit.fit],
   );
 
   return (
@@ -61,7 +59,9 @@ export const SaveButton = () => {
         title="Update Fitting?"
       >
         <div>
-          <div>You have a fitting with the name {shipSnapshot?.currentFit?.name}, do you want to update it?</div>
+          <div>
+            You have a local fitting with the name &quot;{currentFit.fit?.name}&quot;; do you want to update it?
+          </div>
           <div className={styles.alreadyExistsButtons}>
             <span className={clsx(styles.button, styles.buttonSmall)} onClick={() => saveBrowser(true)}>
               Yes

@@ -1,7 +1,7 @@
 import React from "react";
 
-import { EveDataContext } from "@/providers/EveDataProvider";
-import { ShipSnapshotContext } from "@/providers/ShipSnapshotProvider";
+import { useEveData } from "@/providers/EveDataProvider";
+import { useStatistics } from "@/providers/StatisticsProvider";
 
 import styles from "./ShipFit.module.css";
 
@@ -18,32 +18,33 @@ export const Usage = (props: {
   markers: number;
   color: string;
 }) => {
-  const eveData = React.useContext(EveDataContext);
-  const shipSnapshot = React.useContext(ShipSnapshotContext);
+  const eveData = useEveData();
+  const statistics = useStatistics();
+
+  if (eveData === null) return <></>;
 
   let usageTotal;
   let usageUsed;
 
   switch (props.type) {
     case "rig":
-      usageTotal = shipSnapshot?.hull?.attributes?.get(eveData.attributeMapping?.upgradeCapacity ?? 0)?.value ?? 0;
+      usageTotal = statistics?.hull.attributes?.get(eveData.attributeMapping.upgradeCapacity ?? 0)?.value ?? 0;
       usageUsed =
-        shipSnapshot?.items?.reduce(
-          (acc, item) => acc + (item.attributes?.get(eveData.attributeMapping?.upgradeCost ?? 0)?.value ?? 0),
+        statistics?.items.reduce(
+          (acc, item) => acc + (item.attributes?.get(eveData.attributeMapping.upgradeCost ?? 0)?.value ?? 0),
           0,
         ) ?? 0;
       break;
 
     case "cpu":
-      usageTotal = shipSnapshot?.hull?.attributes?.get(eveData.attributeMapping?.cpuOutput ?? 0)?.value ?? 0;
-      usageUsed =
-        usageTotal - (shipSnapshot?.hull?.attributes?.get(eveData.attributeMapping?.cpuUnused ?? 0)?.value ?? 0);
+      usageTotal = statistics?.hull.attributes?.get(eveData.attributeMapping.cpuOutput ?? 0)?.value ?? 0;
+      usageUsed = usageTotal - (statistics?.hull.attributes?.get(eveData.attributeMapping.cpuUnused ?? 0)?.value ?? 0);
       break;
 
     case "pg":
-      usageTotal = shipSnapshot?.hull?.attributes?.get(eveData.attributeMapping?.powerOutput ?? 0)?.value ?? 0;
+      usageTotal = statistics?.hull.attributes?.get(eveData.attributeMapping.powerOutput ?? 0)?.value ?? 0;
       usageUsed =
-        usageTotal - (shipSnapshot?.hull?.attributes?.get(eveData.attributeMapping?.powerUnused ?? 0)?.value ?? 0);
+        usageTotal - (statistics?.hull.attributes?.get(eveData.attributeMapping.powerUnused ?? 0)?.value ?? 0);
       break;
   }
 

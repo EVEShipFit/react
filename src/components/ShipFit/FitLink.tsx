@@ -1,38 +1,31 @@
 import React from "react";
 
-import { useEveShipFitLink } from "@/hooks/EveShipFitLink";
 import { useClipboard } from "@/hooks/Clipboard";
+import { useExportEveShipFitHash } from "@/hooks/ExportEveShipFitHash";
 
 import styles from "./ShipFit.module.css";
 
-const useIsRemoteViewer = () => {
-  const [remote, setRemote] = React.useState(true);
-
-  React.useEffect(() => {
-    if (typeof window !== "undefined") {
-      setRemote(window.location.hostname !== "eveship.fit");
-    }
-  }, []);
-
-  return remote;
-};
-
 export const FitLink = () => {
-  const link = useEveShipFitLink();
-  const isRemoteViewer = useIsRemoteViewer();
+  const link = useExportEveShipFitHash();
   const { copy, copied } = useClipboard();
 
-  const linkText = isRemoteViewer ? "open on eveship.fit" : "share fit";
+  const isRemote = typeof window !== "undefined";
+
+  const linkText = isRemote ? "open on eveship.fit" : "share fit";
   const linkPropsClick = React.useCallback(
     (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
       e.preventDefault();
+
+      if (link === null) return;
       copy(link);
     },
     [copy, link],
   );
   const linkProps = {
-    onClick: isRemoteViewer ? undefined : linkPropsClick,
+    onClick: isRemote ? undefined : linkPropsClick,
   };
+
+  if (link === null) return <></>;
 
   return (
     <div className={styles.fitLink}>

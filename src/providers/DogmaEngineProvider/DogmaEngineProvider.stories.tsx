@@ -1,19 +1,22 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 
-import { fullFit } from "../../../.storybook/fits";
+import { fitArgType } from "../../../.storybook/fits";
 
 import { EveDataProvider } from "@/providers/EveDataProvider";
-import { DogmaEngineContext, DogmaEngineProvider } from "./";
+import { EsfFit } from "@/providers/CurrentFitProvider";
 
-const meta: Meta<typeof DogmaEngineProvider> = {
+import { DogmaEngineProvider, useDogmaEngine } from "./";
+
+type StoryProps = React.ComponentProps<typeof DogmaEngineProvider> & { fit: EsfFit | null };
+
+const meta: Meta<StoryProps> = {
   component: DogmaEngineProvider,
   tags: ["autodocs"],
-  title: "Provider/DogmaEngineProvider",
 };
 
 export default meta;
-type Story = StoryObj<typeof DogmaEngineProvider>;
+type Story = StoryObj<StoryProps>;
 
 /** Convert an ES6 map to an Object, which JSON can stringify. */
 function MapToDict(_key: string, value: unknown) {
@@ -24,35 +27,38 @@ function MapToDict(_key: string, value: unknown) {
   return value;
 }
 
-const TestDogmaEngine = () => {
-  const dogmaEngine = React.useContext(DogmaEngineContext);
-
-  if (dogmaEngine?.loaded) {
-    const stats = dogmaEngine.engine?.calculate(fullFit, {});
-
-    return (
-      <div>
-        DogmaEngine: loaded
-        <br />
-        Stats: {JSON.stringify(stats, MapToDict)}
-      </div>
-    );
+const TestStory = ({ fit }: { fit: EsfFit | null }) => {
+  const dogmaEngine = useDogmaEngine();
+  if (dogmaEngine === null) {
+    return <div>Loading...</div>;
+  }
+  if (fit === null) {
+    return <div>No fit selected</div>;
   }
 
-  return (
-    <div>
-      DogmaEngine: loading
-      <br />
-    </div>
-  );
+  return <div>Stats: {JSON.stringify(dogmaEngine.calculate(fit, {}), MapToDict)}</div>;
 };
 
 export const Default: Story = {
-  render: () => (
-    <EveDataProvider>
-      <DogmaEngineProvider>
-        <TestDogmaEngine />
-      </DogmaEngineProvider>
-    </EveDataProvider>
+  argTypes: {
+    children: { control: false },
+    fit: fitArgType,
+  },
+  args: {
+    fit: null,
+  },
+  decorators: [
+    (Story) => {
+      return (
+        <EveDataProvider>
+          <Story />
+        </EveDataProvider>
+      );
+    },
+  ],
+  render: ({ fit, ...args }) => (
+    <DogmaEngineProvider {...args}>
+      <TestStory fit={fit} />
+    </DogmaEngineProvider>
   ),
 };

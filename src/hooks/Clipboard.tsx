@@ -5,17 +5,26 @@ export function useClipboard({ timeout = 2000 } = {}) {
   const [copied, setCopied] = React.useState(false);
   const [copyTimeout, setCopyTimeout] = React.useState<number | undefined>(undefined);
 
-  const handleCopyResult = (value: boolean) => {
-    if (copyTimeout !== undefined) {
-      window.clearTimeout(copyTimeout);
-    }
-    setCopyTimeout(window.setTimeout(() => setCopied(false), timeout));
-    setCopied(value);
-  };
+  const copyTimeoutRef = React.useRef(copyTimeout);
+  copyTimeoutRef.current = copyTimeout;
 
-  const copy = (valueToCopy: string) => {
-    navigator.clipboard.writeText(valueToCopy).then(() => handleCopyResult(true));
-  };
+  const handleCopyResult = React.useCallback(
+    (value: boolean) => {
+      if (copyTimeoutRef.current !== undefined) {
+        window.clearTimeout(copyTimeoutRef.current);
+      }
+      setCopyTimeout(window.setTimeout(() => setCopied(false), timeout));
+      setCopied(value);
+    },
+    [timeout],
+  );
+
+  const copy = React.useCallback(
+    (valueToCopy: string) => {
+      navigator.clipboard.writeText(valueToCopy).then(() => handleCopyResult(true));
+    },
+    [handleCopyResult],
+  );
 
   return { copy, copied };
 }
