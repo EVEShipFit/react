@@ -3,7 +3,8 @@ import React from "react";
 
 import { Icon } from "@/components/Icon";
 import { useEveData } from "@/providers/EveDataProvider";
-import { StatisticsItemAttribute, StatisticsItemAttributeEffect, useStatistics } from "@/providers/StatisticsProvider";
+import { useStatistics } from "@/providers/StatisticsProvider";
+import { CalculationItemAttribute, CalculationItemAttributeEffect } from "@/providers/DogmaEngineProvider";
 
 import styles from "./CalculationDetail.module.css";
 
@@ -42,7 +43,7 @@ function stateToInteger(state: string): number {
   }
 }
 
-const Effect = (props: { effect: StatisticsItemAttributeEffect }) => {
+const Effect = (props: { effect: CalculationItemAttributeEffect }) => {
   const eveData = useEveData();
   const statistics = useStatistics();
 
@@ -123,7 +124,7 @@ const Effect = (props: { effect: StatisticsItemAttributeEffect }) => {
   );
 };
 
-const CalculationDetailMeta = (props: { attributeId: number; attribute: StatisticsItemAttribute }) => {
+const CalculationDetailMeta = (props: { attributeId: number; attribute: CalculationItemAttribute }) => {
   const [expanded, setExpanded] = React.useState(false);
   const eveData = useEveData();
 
@@ -175,7 +176,7 @@ export const CalculationDetail = (props: {
   const statistics = useStatistics();
   if (statistics === null) return <></>;
 
-  let attributes: [number, StatisticsItemAttribute][] = [];
+  let attributes: [number, CalculationItemAttribute][] = [];
 
   if (props.source === "Ship") {
     attributes = [...(statistics.hull.attributes.entries() ?? [])];

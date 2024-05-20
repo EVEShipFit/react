@@ -1,21 +1,44 @@
 import React from "react";
 
-export type State = "Passive" | "Online" | "Active" | "Overload";
+export type EsfState = "Passive" | "Online" | "Active" | "Overload";
+export type EsfSlotType = "High" | "Medium" | "Low" | "Rig" | "SubSystem";
+
+export interface EsfCharge {
+  typeId: number;
+}
+
+export interface EsfSlot {
+  type: EsfSlotType;
+  index: number;
+}
+
+export interface EsfModule {
+  typeId: number;
+  slot: EsfSlot;
+  state: EsfState;
+  charge?: EsfCharge;
+}
+
+export interface EsfDrone {
+  typeId: number;
+  states: {
+    Passive: number;
+    Active: number;
+  };
+}
+
+export interface EsfCargo {
+  typeId: number;
+  quantity: number;
+}
 
 export interface EsfFit {
   name: string;
   description: string;
-  ship_type_id: number;
-  items: {
-    type_id: number;
-    quantity: number;
-    flag: number;
-    charge?: {
-      type_id: number;
-    };
-    /* State defaults to "Active" if not set. */
-    state?: State | string;
-  }[];
+  shipTypeId: number;
+  modules: EsfModule[];
+  drones: EsfDrone[];
+  cargo: EsfCargo[];
 }
 
 interface CurrentFit {

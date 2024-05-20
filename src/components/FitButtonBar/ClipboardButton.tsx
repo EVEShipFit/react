@@ -5,6 +5,7 @@ import { ModalDialog } from "@/components/ModalDialog";
 import { useClipboard } from "@/hooks/Clipboard";
 import { useExportEft } from "@/hooks/ExportEft";
 import { useImportEft } from "@/hooks/ImportEft";
+import { useImportEsiFitting } from "@/hooks/ImportEsiFitting";
 import { EsfFit } from "@/providers/CurrentFitProvider";
 import { useFitManager } from "@/providers/FitManagerProvider";
 
@@ -14,6 +15,7 @@ export const ClipboardButton = () => {
   const fitManager = useFitManager();
   const exportEft = useExportEft();
   const importEft = useImportEft();
+  const importEsiFitting = useImportEsiFitting();
   const { copy, copied } = useClipboard();
 
   const [isPopupOpen, setIsPopupOpen] = React.useState(false);
@@ -42,7 +44,7 @@ export const ClipboardButton = () => {
 
     let fit: EsfFit | undefined | null;
     if (fitString.startsWith("{")) {
-      fit = JSON.parse(fitString);
+      fit = importEsiFitting(JSON.parse(fitString));
     } else {
       try {
         fit = importEft(fitString);
@@ -66,7 +68,7 @@ export const ClipboardButton = () => {
 
     setIsPasteOpen(false);
     setIsPopupOpen(false);
-  }, [fitManager, importEft]);
+  }, [fitManager, importEft, importEsiFitting]);
 
   return (
     <>

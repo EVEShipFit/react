@@ -1,7 +1,5 @@
 import React from "react";
 
-import type { init, calculate } from "@eveshipfit/dogma-engine";
-
 import {
   DogmaAttribute,
   DogmaEffect,
@@ -10,10 +8,14 @@ import {
   TypeID,
   useEveData,
 } from "@/providers/EveDataProvider";
+import { EsfFit } from "@/providers/CurrentFitProvider";
+import { Skills } from "@/providers/CurrentCharacterProvider";
+import { calculate } from "@eveshipfit/dogma-engine";
+
+import { Calculation } from "./DataTypes";
 
 interface DogmaEngine {
-  init: typeof init;
-  calculate: typeof calculate;
+  calculate: (fit: EsfFit, skills: Skills) => Calculation;
 }
 
 const DogmaEngineContext = React.createContext<DogmaEngine | null>(null);
@@ -60,7 +62,9 @@ export const DogmaEngineProvider = (props: DogmaEngineProps) => {
 
   const [firstLoad, setFirstLoad] = React.useState(true);
 
-  const [dogmaEngine, setDogmaEngine] = React.useState<DogmaEngine | null>(null);
+  const [dogmaEngine, setDogmaEngine] = React.useState<{
+    calculate: typeof calculate;
+  } | null>(null);
 
   if (firstLoad) {
     setFirstLoad(false);
@@ -90,7 +94,44 @@ export const DogmaEngineProvider = (props: DogmaEngineProps) => {
   }
 
   const contextValue = React.useMemo(() => {
-    return eveData === null ? null : dogmaEngine;
+    if (eveData === null || dogmaEngine === null) return null;
+
+    return {
+      calculate: (fit: EsfFit, skills: Skills): Calculation => {
+        const dogmaFit = {
+          ship_type_id: fit.shipTypeId,
+          modules: fit.modules.map((module) => ({
+            type_id: module.typeId,
+            slot: module.slot,
+            state: module.state,
+            charge:
+              module.charge === undefined
+                ? undefined
+                : {
+                    type_id: module.charge.typeId,
+                  },
+          })),
+          drones: fit.drones.flatMap((drone) => {
+            const drones = [];
+            for (let i = 0; i < drone.states.Active; i++) {
+              drones.push({
+                type_id: drone.typeId,
+                state: "Active",
+              });
+            }
+            for (let i = 0; i < drone.states.Passive; i++) {
+              drones.push({
+                type_id: drone.typeId,
+                state: "Passive",
+              });
+            }
+            return drones;
+          }),
+        };
+
+        return dogmaEngine.calculate(dogmaFit, skills);
+      },
+    };
   }, [eveData, dogmaEngine]);
 
   return <DogmaEngineContext.Provider value={contextValue}>{props.children}</DogmaEngineContext.Provider>;

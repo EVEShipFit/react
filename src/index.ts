@@ -15,6 +15,7 @@ export * from "./hooks/Clipboard";
 export * from "./hooks/ExportEft";
 export * from "./hooks/ExportEveShipFitHash";
 export * from "./hooks/ImportEft";
+export * from "./hooks/ImportEsiFitting";
 export * from "./hooks/ImportEveShipFitHash";
 export * from "./hooks/LocalStorage";
 export * from "./providers/Characters";

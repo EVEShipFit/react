@@ -3,16 +3,11 @@ import React from "react";
 
 import { fitArgType } from "../../../.storybook/fits";
 
-import {
-  CurrentCharacterProvider,
-  CurrentFitProvider,
-  DefaultCharactersProvider,
-  DogmaEngineProvider,
-  EsfFit,
-  EsiCharactersProvider,
-  EveDataProvider,
-  useCurrentFit,
-} from "@/providers";
+import { CurrentFitProvider, EsfFit, useCurrentFit } from "../CurrentFitProvider";
+import { EveDataProvider } from "../EveDataProvider";
+import { DogmaEngineProvider } from "../DogmaEngineProvider";
+import { DefaultCharactersProvider, EsiCharactersProvider } from "../Characters";
+import { CurrentCharacterProvider } from "../CurrentCharacterProvider";
 
 import { StatisticsProvider, useStatistics } from "./";
 

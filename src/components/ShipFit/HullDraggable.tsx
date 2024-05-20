@@ -1,7 +1,7 @@
 import React from "react";
 
 import { useFitManager } from "@/providers/FitManagerProvider";
-import { StatisticsSlotType } from "@/providers/StatisticsProvider";
+import { CalculationSlotType } from "@/providers/DogmaEngineProvider";
 
 import styles from "./ShipFit.module.css";
 
@@ -21,11 +21,11 @@ export const HullDraggable = () => {
         return Number.isInteger(num) ? num : undefined;
       };
 
-      const draggedTypeId: number | undefined = parseNumber(e.dataTransfer.getData("application/type_id"));
-      const draggedSlotId: number | undefined = parseNumber(e.dataTransfer.getData("application/slot_id"));
-      const draggedSlotType: StatisticsSlotType | "droneBay" | "charge" = e.dataTransfer.getData(
-        "application/slot_type",
-      ) as StatisticsSlotType | "droneBay" | "charge";
+      const draggedTypeId: number | undefined = parseNumber(e.dataTransfer.getData("application/esf-type-id"));
+      const draggedSlotId: number | undefined = parseNumber(e.dataTransfer.getData("application/esf-slot-index"));
+      const draggedSlotType: CalculationSlotType = e.dataTransfer.getData(
+        "application/esf-slot-type",
+      ) as CalculationSlotType;
 
       if (draggedTypeId === undefined) {
         return;

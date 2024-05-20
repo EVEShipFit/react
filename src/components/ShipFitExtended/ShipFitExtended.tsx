@@ -35,7 +35,7 @@ const ShipDroneBay = () => {
 
   if (eveData === null) return <></>;
 
-  const isStructure = eveData.typeIDs[currentFit.fit?.ship_type_id ?? 0]?.categoryID === 65;
+  const isStructure = eveData.typeIDs[currentFit.fit?.shipTypeId ?? 0]?.categoryID === 65;
 
   return (
     <>

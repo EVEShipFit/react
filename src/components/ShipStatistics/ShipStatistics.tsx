@@ -22,7 +22,7 @@ export const ShipStatistics = () => {
   const statistics = useStatistics();
 
   let capacitorState = "Stable";
-  const isStructure = eveData?.typeIDs[currentFit.fit?.ship_type_id ?? 0]?.categoryID === 65;
+  const isStructure = eveData?.typeIDs[currentFit.fit?.shipTypeId ?? 0]?.categoryID === 65;
 
   const attributeId = eveData?.attributeMapping.capacitorDepletesIn ?? 0;
   const capacitorDepletesIn = statistics?.hull.attributes.get(attributeId)?.value;

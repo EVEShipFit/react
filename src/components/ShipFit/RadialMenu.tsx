@@ -3,19 +3,19 @@ import React from "react";
 import styles from "./ShipFit.module.css";
 
 const highlightSettings = {
-  lowslot: {
+  Low: {
     width: 12,
     height: 3,
     x: 0,
     y: 9,
   },
-  medslot: {
+  Medium: {
     width: 3,
     height: 12,
     x: 9,
     y: 0,
   },
-  hislot: {
+  High: {
     width: 12,
     height: 3,
     x: 0,
@@ -23,7 +23,7 @@ const highlightSettings = {
   },
 };
 
-export const RadialMenu = (props: { type: "lowslot" | "medslot" | "hislot" }) => {
+export const RadialMenu = (props: { type: "Low" | "Medium" | "High" }) => {
   const highlight = highlightSettings[props.type];
 
   return (

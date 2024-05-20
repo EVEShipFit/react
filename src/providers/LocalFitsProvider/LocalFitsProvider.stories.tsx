@@ -19,7 +19,7 @@ const TestStory = () => {
       {Object.values(localFits.fittings).map((fit) => {
         return (
           <div key={fit.name}>
-            {fit.name} - {Object.keys(fit.items).length} items
+            {fit.name} - {Object.keys(fit.modules).length} modules
           </div>
         );
       })}

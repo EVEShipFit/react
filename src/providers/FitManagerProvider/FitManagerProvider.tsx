@@ -1,7 +1,7 @@
 import React from "react";
 
-import { EsfFit, State, useCurrentFit } from "@/providers/CurrentFitProvider";
-import { StatisticsSlotType, useStatistics } from "@/providers/StatisticsProvider";
+import { EsfFit, EsfSlot, EsfSlotType, EsfState, useCurrentFit } from "@/providers/CurrentFitProvider";
+import { useStatistics } from "@/providers/StatisticsProvider";
 import { useEveData } from "@/providers/EveDataProvider";
 
 interface FitManager {
@@ -13,37 +13,27 @@ interface FitManager {
   setName: (name: string) => void;
 
   /** Add an item (module, charge, drone) to the fit. */
-  addItem: (typeId: number, slot: StatisticsSlotType | "droneBay" | "charge") => void;
+  addItem: (typeId: number, slot: EsfSlotType | "DroneBay" | "Charge") => void;
 
   /** Set a module in a slot. */
-  setModule: (flag: number, typeId: number) => void;
+  setModule: (slot: EsfSlot, typeId: number) => void;
   /** Set the state of a module. */
-  setModuleState: (flag: number, state: State) => void;
+  setModuleState: (slot: EsfSlot, state: EsfState) => void;
   /** Remove a module from a slot. */
-  removeModule: (flag: number) => void;
+  removeModule: (slot: EsfSlot) => void;
   /** Swap two modules. */
-  swapModule: (flagA: number, flagB: number) => void;
+  swapModule: (slotA: EsfSlot, slotB: EsfSlot) => void;
 
   /** Set a charge in a module. */
-  setCharge: (flag: number, typeId: number) => void;
+  setCharge: (slot: EsfSlot, typeId: number) => void;
   /** Remove a charge from a module. */
-  removeCharge: (flag: number) => void;
+  removeCharge: (slot: EsfSlot) => void;
 
   /** Activate N drones of a given type. */
   activateDrones: (typeId: number, amount: number) => void;
   /** Remove all drones of a given type. */
   removeDrones: (typeId: number) => void;
 }
-
-const slotStart: Record<StatisticsSlotType, number> = {
-  hislot: 27,
-  medslot: 19,
-  lowslot: 11,
-  subsystem: 125,
-  rig: 92,
-  launcher: 0,
-  turret: 0,
-};
 
 const FitManagerContext = React.createContext<FitManager>({
   setFit: () => {},
@@ -112,12 +102,14 @@ export const FitManagerProvider = (props: FitManagerProps) => {
         setFit({
           name: "Unnamed Fit",
           description: "",
-          ship_type_id: typeId,
-          items: [],
+          shipTypeId: typeId,
+          modules: [],
+          drones: [],
+          cargo: [],
         });
       },
       setName: (name: string) => {
-        setFit((oldFit) => {
+        setFit((oldFit: EsfFit | null): EsfFit | null => {
           if (oldFit === null) return null;
 
           return {
@@ -127,30 +119,30 @@ export const FitManagerProvider = (props: FitManagerProps) => {
         });
       },
 
-      addItem: (typeId: number, slot: StatisticsSlotType | "droneBay" | "charge") => {
-        setFit((oldFit) => {
+      addItem: (typeId: number, slot: EsfSlotType | "DroneBay" | "Charge") => {
+        setFit((oldFit: EsfFit | null): EsfFit | null => {
           if (oldFit === null) return null;
 
-          if (slot === "charge") {
+          if (slot === "Charge") {
             const chargeSize =
               eveData.typeDogma[typeId]?.dogmaAttributes.find(
                 (attr) => attr.attributeID === eveData.attributeMapping?.chargeSize,
               )?.value ?? -1;
             const groupID = eveData.typeIDs[typeId]?.groupID ?? -1;
 
-            const newItems = [];
-            for (let item of oldFit.items) {
+            const newModules = [];
+            for (let module of oldFit.modules) {
               /* If the module has size restrictions, ensure the charge matches. */
-              const moduleChargeSize = eveData.typeDogma[item.type_id]?.dogmaAttributes.find(
+              const moduleChargeSize = eveData.typeDogma[module.typeId]?.dogmaAttributes.find(
                 (attr) => attr.attributeID === eveData.attributeMapping.chargeSize,
               )?.value;
               if (moduleChargeSize !== undefined && moduleChargeSize !== chargeSize) {
-                newItems.push(item);
+                newModules.push(module);
                 continue;
               }
 
               /* Check if the charge fits in this module; if so, assign it. */
-              for (const attr of eveData.typeDogma[item.type_id]?.dogmaAttributes ?? []) {
+              for (const attr of eveData.typeDogma[module.typeId]?.dogmaAttributes ?? []) {
                 switch (attr.attributeID) {
                   case eveData.attributeMapping.chargeGroup1:
                   case eveData.attributeMapping.chargeGroup2:
@@ -158,10 +150,10 @@ export const FitManagerProvider = (props: FitManagerProps) => {
                   case eveData.attributeMapping.chargeGroup4:
                   case eveData.attributeMapping.chargeGroup5:
                     if (attr.value === groupID) {
-                      item = {
-                        ...item,
+                      module = {
+                        ...module,
                         charge: {
-                          type_id: typeId,
+                          typeId,
                         },
                       };
                     }
@@ -169,73 +161,92 @@ export const FitManagerProvider = (props: FitManagerProps) => {
                 }
               }
 
-              newItems.push(item);
+              newModules.push(module);
             }
 
             return {
               ...oldFit,
-              items: newItems,
+              modules: newModules,
             };
           }
 
-          let flag = undefined;
+          if (slot === "DroneBay") {
+            const drone = oldFit.drones.find((item) => item.typeId === typeId);
+
+            if (drone !== undefined) {
+              drone.states.Active++;
+              return oldFit;
+            }
+
+            return {
+              ...oldFit,
+              drones: [
+                ...oldFit.drones,
+                {
+                  typeId: typeId,
+                  states: {
+                    Active: 1,
+                    Passive: 0,
+                  },
+                },
+              ],
+            };
+          }
 
           /* Find the first free slot for that slot-type. */
-          if (slot !== "droneBay") {
-            const slotsAvailable = statistics?.slots[slot] ?? 0;
-            for (let i = slotStart[slot]; i < slotStart[slot] + slotsAvailable; i++) {
-              if (oldFit.items.find((item) => item.flag === i) !== undefined) continue;
+          let index = undefined;
+          const slotsAvailable = statistics?.slots[slot] ?? 0;
+          for (let i = 1; i <= slotsAvailable; i++) {
+            if (oldFit.modules.find((item) => item.slot.type === slot && item.slot.index === i) !== undefined) continue;
 
-              flag = i;
-              break;
-            }
-            console.log(flag);
-          } else {
-            flag = 87;
+            index = i;
+            break;
           }
 
           /* Couldn't find a free slot. */
-          if (flag === undefined) return oldFit;
+          if (index === undefined) return oldFit;
 
           return {
             ...oldFit,
-            items: [
-              ...oldFit.items,
+            modules: [
+              ...oldFit.modules,
               {
-                flag: flag,
-                type_id: typeId,
-                quantity: 1,
+                slot: {
+                  type: slot,
+                  index: index,
+                },
+                typeId: typeId,
+                charge: undefined,
+                state: "Active",
               },
             ],
           };
         });
       },
 
-      setModule: (flag: number, typeId: number) => {
-        setFit((oldFit) => {
+      setModule: (slot: EsfSlot, typeId: number) => {
+        setFit((oldFit: EsfFit | null): EsfFit | null => {
           if (oldFit === null) return null;
-
-          const newItems = oldFit.items
-            .filter((item) => item.flag !== flag)
-            .concat({ flag: flag, type_id: typeId, quantity: 1 });
 
           return {
             ...oldFit,
-            items: newItems,
+            modules: oldFit.modules
+              .filter((item) => item.slot.type !== slot.type || item.slot.index !== slot.index)
+              .concat({ slot, typeId, state: "Active" }),
           };
         });
       },
-      setModuleState: (flag: number, state: State) => {
-        setFit((oldFit) => {
+      setModuleState: (slot: EsfSlot, state: EsfState) => {
+        setFit((oldFit: EsfFit | null): EsfFit | null => {
           if (oldFit === null) return null;
 
           return {
             ...oldFit,
-            items: oldFit?.items.map((item) => {
-              if (item.flag === flag) {
+            modules: oldFit.modules.map((item) => {
+              if (item.slot.type === slot.type && item.slot.index === slot.index) {
                 return {
                   ...item,
-                  state: state,
+                  state,
                 };
               }
 
@@ -244,70 +255,68 @@ export const FitManagerProvider = (props: FitManagerProps) => {
           };
         });
       },
-      removeModule: (flag: number) => {
-        setFit((oldFit) => {
+      removeModule: (slot: EsfSlot) => {
+        setFit((oldFit: EsfFit | null): EsfFit | null => {
           if (oldFit === null) return null;
 
           return {
             ...oldFit,
-            items: oldFit.items.filter((item) => item.flag !== flag),
+            modules: oldFit.modules.filter((item) => item.slot.type !== slot.type || item.slot.index !== slot.index),
           };
         });
       },
-      swapModule: (flagA: number, flagB: number) => {
-        setFit((oldFit) => {
+      swapModule: (slotA: EsfSlot, slotB: EsfSlot) => {
+        setFit((oldFit: EsfFit | null): EsfFit | null => {
           if (oldFit === null) return null;
 
-          const newItems = [...oldFit.items];
+          const modules = [...oldFit.modules];
 
-          const fromItemIndex = newItems.findIndex((item) => item.flag === flagA);
-          const fromItem = newItems[fromItemIndex];
+          const moduleA = modules.find((item) => item.slot.type === slotA.type && item.slot.index === slotA.index);
+          const moduleB = modules.find((item) => item.slot.type === slotB.type && item.slot.index === slotB.index);
 
-          const toItemIndex = newItems.findIndex((item) => item.flag === flagB);
-          const toItem = newItems[toItemIndex];
+          if (moduleA !== undefined) {
+            moduleA.slot.index = slotB.index;
+          }
 
-          fromItem.flag = flagB;
-
-          if (toItem !== undefined) {
-            /* Target slot is non-empty, swap items. */
-            toItem.flag = flagA;
+          if (moduleB !== undefined) {
+            moduleB.slot.index = slotA.index;
           }
 
           return {
             ...oldFit,
-            items: newItems,
+            modules,
           };
         });
       },
 
-      setCharge: (flag: number, typeId: number) => {
+      setCharge: (slot: EsfSlot, typeId: number) => {
         const chargeSize =
           eveData.typeDogma[typeId]?.dogmaAttributes.find(
             (attr) => attr.attributeID === eveData.attributeMapping?.chargeSize,
           )?.value ?? -1;
         const groupID = eveData.typeIDs[typeId]?.groupID ?? -1;
 
-        setFit((oldFit) => {
+        setFit((oldFit: EsfFit | null): EsfFit | null => {
           if (oldFit === null) return null;
 
-          const newItems = [];
+          const modules = [];
 
-          for (let item of oldFit.items) {
+          for (let module of oldFit.modules) {
             /* If the module has size restrictions, ensure the charge matches. */
-            const moduleChargeSize = eveData.typeDogma[item.type_id]?.dogmaAttributes.find(
+            const moduleChargeSize = eveData.typeDogma[module.typeId]?.dogmaAttributes.find(
               (attr) => attr.attributeID === eveData.attributeMapping.chargeSize,
             )?.value;
             if (moduleChargeSize !== undefined && moduleChargeSize !== chargeSize) {
-              newItems.push(item);
+              modules.push(module);
               continue;
             }
-            if (item.flag !== flag) {
-              newItems.push(item);
+            if (module.slot.type !== slot.type || module.slot.index !== slot.index) {
+              modules.push(module);
               continue;
             }
 
             /* Check if the charge fits in this module; if so, assign it. */
-            for (const attr of eveData.typeDogma[item.type_id]?.dogmaAttributes ?? []) {
+            for (const attr of eveData.typeDogma[module.typeId]?.dogmaAttributes ?? []) {
               switch (attr.attributeID) {
                 case eveData.attributeMapping.chargeGroup1:
                 case eveData.attributeMapping.chargeGroup2:
@@ -315,10 +324,10 @@ export const FitManagerProvider = (props: FitManagerProps) => {
                 case eveData.attributeMapping.chargeGroup4:
                 case eveData.attributeMapping.chargeGroup5:
                   if (attr.value === groupID) {
-                    item = {
-                      ...item,
+                    module = {
+                      ...module,
                       charge: {
-                        type_id: typeId,
+                        typeId: typeId,
                       },
                     };
                   }
@@ -326,23 +335,23 @@ export const FitManagerProvider = (props: FitManagerProps) => {
               }
             }
 
-            newItems.push(item);
+            modules.push(module);
           }
 
           return {
             ...oldFit,
-            items: newItems,
+            modules,
           };
         });
       },
-      removeCharge: (flag: number) => {
-        setFit((oldFit) => {
+      removeCharge: (slot: EsfSlot) => {
+        setFit((oldFit: EsfFit | null): EsfFit | null => {
           if (oldFit === null) return null;
 
           return {
             ...oldFit,
-            items: oldFit.items.map((item) => {
-              if (item.flag === flag) {
+            modules: oldFit.modules.map((item) => {
+              if (item.slot.type === slot.type && item.slot.index === slot.index) {
                 return {
                   ...item,
                   charge: undefined,
@@ -356,19 +365,19 @@ export const FitManagerProvider = (props: FitManagerProps) => {
       },
 
       activateDrones: (typeId: number, active: number) => {
-        setFit((oldFit) => {
+        setFit((oldFit: EsfFit | null): EsfFit | null => {
           if (oldFit === null) return null;
 
           /* Find the amount of drones in the current fit. */
-          const count = oldFit.items
-            .filter((item) => item.flag === 87 && item.type_id === typeId)
-            .reduce((acc, item) => acc + item.quantity, 0);
+          const count = oldFit.drones
+            .filter((item) => item.typeId === typeId)
+            .reduce((acc, item) => acc + item.states.Active + item.states.Passive, 0);
           if (count === 0) return oldFit;
 
           /* If we request the same amount of active than we had, assume we want to deactivate the current. */
-          const currentActive = oldFit.items
-            .filter((item) => item.flag === 87 && item.type_id === typeId && item.state === "Active")
-            .reduce((acc, item) => acc + item.quantity, 0);
+          const currentActive = oldFit.drones
+            .filter((item) => item.typeId === typeId)
+            .reduce((acc, item) => acc + item.states.Active, 0);
           if (currentActive === active) {
             active = active - 1;
           }
@@ -377,41 +386,30 @@ export const FitManagerProvider = (props: FitManagerProps) => {
           active = Math.min(count, active);
 
           /* Remove all drones of this type. */
-          const newItems = oldFit.items.filter((item) => item.flag !== 87 || item.type_id !== typeId);
+          const drones = oldFit.drones.filter((item) => item.typeId !== typeId);
+          const passive = count - active;
 
-          /* Add the active drones. */
-          if (active > 0) {
-            newItems.push({
-              flag: 87,
-              type_id: typeId,
-              quantity: active,
-              state: "Active",
-            });
-          }
-
-          /* Add the passive drones. */
-          if (active < count) {
-            newItems.push({
-              flag: 87,
-              type_id: typeId,
-              quantity: count - active,
-              state: "Passive",
-            });
-          }
+          drones.push({
+            typeId,
+            states: {
+              Active: active,
+              Passive: passive,
+            },
+          });
 
           return {
             ...oldFit,
-            items: newItems,
+            drones,
           };
         });
       },
       removeDrones: (typeId: number) => {
-        setFit((oldFit) => {
+        setFit((oldFit: EsfFit | null): EsfFit | null => {
           if (oldFit === null) return null;
 
           return {
             ...oldFit,
-            items: oldFit.items.filter((item) => item.flag !== 87 || item.type_id !== typeId),
+            drones: oldFit.drones.filter((item) => item.typeId !== typeId),
           };
         });
       },

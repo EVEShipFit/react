@@ -1,6 +1,6 @@
-import { EsfFit } from "@/providers/CurrentFitProvider";
+import { EsiFit } from "@/hooks/ImportEsiFitting";
 
-export async function getCharFittings(characterId: string, accessToken: string): Promise<EsfFit[] | undefined> {
+export async function getCharFittings(characterId: string, accessToken: string): Promise<EsiFit[] | undefined> {
   let response;
   try {
     response = await fetch(`https://esi.evetech.net/v1/characters/${characterId}/fittings/`, {

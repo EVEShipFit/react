@@ -4,9 +4,10 @@ import React from "react";
 import { defaultDataUrl } from "@/settings";
 import { Icon } from "@/components/Icon";
 import { TreeListing, TreeHeader, TreeLeaf } from "@/components/TreeListing";
-import { StatisticsSlotType, useStatistics } from "@/providers/StatisticsProvider";
+import { useStatistics } from "@/providers/StatisticsProvider";
 import { useFitManager } from "@/providers/FitManagerProvider";
 import { useEveData } from "@/providers/EveDataProvider";
+import { CalculationSlotType } from "@/providers/DogmaEngineProvider";
 
 import styles from "./HardwareListing.module.css";
 
@@ -21,7 +22,7 @@ interface ListingItem {
   name: string;
   meta: number;
   typeId: number;
-  slotType: StatisticsSlotType | "droneBay" | "charge";
+  slotType: CalculationSlotType;
 }
 
 interface ListingGroup {
@@ -43,14 +44,14 @@ interface Filter {
 
 const OnItemDragStart = (
   typeId: number,
-  slotType: StatisticsSlotType | "droneBay" | "charge",
+  slotType: CalculationSlotType,
 ): ((e: React.DragEvent<HTMLDivElement>) => void) => {
   return (e: React.DragEvent<HTMLDivElement>) => {
     const img = new Image();
     img.src = `https://images.evetech.net/types/${typeId}/icon?size=64`;
     e.dataTransfer.setDragImage(img, 32, 32);
-    e.dataTransfer.setData("application/type_id", typeId.toString());
-    e.dataTransfer.setData("application/slot_type", slotType);
+    e.dataTransfer.setData("application/esf-type-id", typeId.toString());
+    e.dataTransfer.setData("application/esf-slot-type", slotType);
   };
 };
 
@@ -193,35 +194,35 @@ export const HardwareListing = () => {
       if (module.marketGroupID === undefined) continue;
       if (!module.published) continue;
 
-      let slotType: StatisticsSlotType | "droneBay" | "charge" | undefined;
+      let slotType: CalculationSlotType | undefined;
       if (module.categoryID !== 8) {
         slotType = eveData.typeDogma[typeId]?.dogmaEffects
           .map((effect) => {
             switch (effect.effectID) {
               case eveData.effectMapping.loPower:
-                return "lowslot";
+                return "Low";
               case eveData.effectMapping.medPower:
-                return "medslot";
+                return "Medium";
               case eveData.effectMapping.hiPower:
-                return "hislot";
+                return "High";
               case eveData.effectMapping.rigSlot:
-                return "rig";
+                return "Rig";
               case eveData.effectMapping.subSystem:
-                return "subsystem";
+                return "SubSystem";
             }
           })
           .filter((slot) => slot !== undefined)[0];
         if (module.categoryID === 18) {
-          slotType = "droneBay";
+          slotType = "DroneBay";
         }
 
         if (slotType === undefined) continue;
 
         if (filter.lowslot || filter.medslot || filter.hislot || filter.rig_subsystem || filter.drone) {
-          if (slotType === "lowslot" && !filter.lowslot) continue;
-          if (slotType === "medslot" && !filter.medslot) continue;
-          if (slotType === "hislot" && !filter.hislot) continue;
-          if ((slotType === "rig" || slotType === "subsystem") && !filter.rig_subsystem) continue;
+          if (slotType === "Low" && !filter.lowslot) continue;
+          if (slotType === "Medium" && !filter.medslot) continue;
+          if (slotType === "High" && !filter.hislot) continue;
+          if ((slotType === "Rig" || slotType === "SubSystem") && !filter.rig_subsystem) continue;
           if (module.categoryID === 18 && !filter.drone) continue;
         }
       } else {
@@ -236,13 +237,13 @@ export const HardwareListing = () => {
           for (const chargeGroupID of filter.moduleWithCharge.chargeGroupIDs) {
             if (module.groupID !== chargeGroupID) continue;
 
-            slotType = "charge";
+            slotType = "Charge";
             break;
           }
 
           if (slotType === undefined) continue;
         } else {
-          slotType = "charge";
+          slotType = "Charge";
         }
       }
 

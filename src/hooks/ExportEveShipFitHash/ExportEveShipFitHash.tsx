@@ -19,13 +19,19 @@ async function compress(str: string): Promise<string> {
 }
 
 async function encodeFit(fit: EsfFit): Promise<string> {
-  let result = `${fit.ship_type_id},${fit.name},${fit.description}\n`;
+  let result = `ship,${fit.shipTypeId},${fit.name},${fit.description}\n`;
 
-  for (const item of fit.items) {
-    result += `${item.flag},${item.type_id},${item.quantity},${item.charge?.type_id ?? ""},${item.state ?? ""}\n`;
+  for (const module of fit.modules) {
+    result += `module,${module.slot.type},${module.slot.index},${module.typeId},${module.state},${module.charge?.typeId ?? ""}\n`;
+  }
+  for (const drone of fit.drones) {
+    result += `drone,${drone.typeId},${drone.states.Active},${drone.states.Passive}\n`;
+  }
+  for (const cargo of fit.cargo) {
+    result += `cargo,${cargo.typeId},${cargo.quantity}\n`;
   }
 
-  return "v2:" + (await compress(result));
+  return "v3:" + (await compress(result));
 }
 
 /**

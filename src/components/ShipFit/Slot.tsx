@@ -4,57 +4,47 @@ import { Icon, IconName } from "@/components/Icon";
 import { useEveData } from "@/providers/EveDataProvider";
 import { useStatistics } from "@/providers/StatisticsProvider";
 import { useFitManager } from "@/providers/FitManagerProvider";
-import { State } from "@/providers/CurrentFitProvider";
+import { CalculationSlot } from "@/providers/DogmaEngineProvider";
+import { EsfSlot, EsfSlotType, EsfState } from "@/providers/CurrentFitProvider";
 
 import styles from "./ShipFit.module.css";
 
-const esiFlagMapping: Record<string, number[]> = {
-  lowslot: [11, 12, 13, 14, 15, 16, 17, 18],
-  medslot: [19, 20, 21, 22, 23, 24, 25, 26],
-  hislot: [27, 28, 29, 30, 31, 32, 33, 34],
-  rig: [92, 93, 94],
-  subsystem: [125, 126, 127, 128],
-};
-
-const stateRotation: Record<string, State[]> = {
+const stateRotation: Record<string, EsfState[]> = {
   Passive: ["Passive"],
   Online: ["Passive", "Online"],
   Active: ["Passive", "Online", "Active"],
   Overload: ["Passive", "Online", "Active", "Overload"],
 };
 
-export const Slot = (props: { type: string; index: number; fittable: boolean; main?: boolean }) => {
+export const Slot = (props: { type: EsfSlotType; index: number; fittable: boolean; main?: boolean }) => {
   const eveData = useEveData();
   const statistics = useStatistics();
   const fitManager = useFitManager();
 
-  const esiFlagType = props.type;
-  const esiFlag = esiFlagMapping[esiFlagType][props.index - 1];
-
-  const esiItem = statistics?.items.find((item) => item.flag == esiFlag);
-  const active = esiItem?.max_state !== "Passive" && esiItem?.max_state !== "Online";
+  const module = statistics?.items.find((item) => item.slot.type === props.type && item.slot.index === props.index);
+  const active = module?.max_state !== "Passive" && module?.max_state !== "Online";
 
   const offlineState = React.useCallback(
     (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
       e.stopPropagation();
 
-      if (esiItem === undefined) return;
+      if (module === undefined) return;
 
-      if (esiItem.state === "Passive") {
-        fitManager.setModuleState(esiItem.flag, "Online");
+      if (module.state === "Passive") {
+        fitManager.setModuleState(module.slot as EsfSlot, "Online");
       } else {
-        fitManager.setModuleState(esiItem.flag, "Passive");
+        fitManager.setModuleState(module.slot as EsfSlot, "Passive");
       }
     },
-    [fitManager, esiItem],
+    [fitManager, module],
   );
 
   const cycleState = React.useCallback(
     (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
-      if (esiItem === undefined) return;
+      if (module === undefined) return;
 
-      const states = stateRotation[esiItem.max_state];
-      const stateIndex = states.indexOf(esiItem.state);
+      const states = stateRotation[module.max_state];
+      const stateIndex = states.indexOf(module.state as EsfState);
 
       let newState;
       if (e.shiftKey) {
@@ -63,41 +53,41 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
         newState = states[(stateIndex + 1) % states.length];
       }
 
-      fitManager.setModuleState(esiItem.flag, newState);
+      fitManager.setModuleState(module.slot as EsfSlot, newState);
     },
-    [fitManager, esiItem],
+    [fitManager, module],
   );
 
   const unfitModule = React.useCallback(
     (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
       e.stopPropagation();
 
-      if (esiItem === undefined) return;
+      if (module === undefined) return;
 
-      fitManager.removeModule(esiItem.flag);
+      fitManager.removeModule(module.slot as EsfSlot);
     },
-    [fitManager, esiItem],
+    [fitManager, module],
   );
 
   const unfitCharge = React.useCallback(
     (e: React.MouseEvent<SVGSVGElement, MouseEvent>) => {
       e.stopPropagation();
-      if (esiItem === undefined) return;
+      if (module === undefined) return;
 
-      fitManager.removeCharge(esiItem.flag);
+      fitManager.removeCharge(module.slot as EsfSlot);
     },
-    [fitManager, esiItem],
+    [fitManager, module],
   );
 
   const onDragStart = React.useCallback(
     (e: React.DragEvent<HTMLDivElement>) => {
-      if (esiItem === undefined) return;
+      if (module === undefined) return;
 
-      e.dataTransfer.setData("application/type_id", esiItem.type_id.toString());
-      e.dataTransfer.setData("application/slot_id", esiFlag.toString());
-      e.dataTransfer.setData("application/slot_type", esiFlagType);
+      e.dataTransfer.setData("application/esf-type-id", module.type_id.toString());
+      e.dataTransfer.setData("application/esf-slot-type", module.slot.type);
+      e.dataTransfer.setData("application/esf-slot-index", module.slot.index?.toString() ?? "");
     },
-    [esiItem, esiFlag, esiFlagType],
+    [module],
   );
 
   const onDragOver = React.useCallback((e: React.DragEvent<HTMLDivElement>) => {
@@ -113,32 +103,39 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
         return Number.isInteger(num) ? num : undefined;
       };
 
-      const draggedTypeId: number | undefined = parseNumber(e.dataTransfer.getData("application/type_id"));
-      const draggedSlotId: number | undefined = parseNumber(e.dataTransfer.getData("application/slot_id"));
-      const draggedSlotType: string = e.dataTransfer.getData("application/slot_type");
+      const draggedTypeId: number | undefined = parseNumber(e.dataTransfer.getData("application/esf-type-id"));
+      const draggedSlotIndex: CalculationSlot["index"] = parseNumber(
+        e.dataTransfer.getData("application/esf-slot-index"),
+      );
+      const draggedSlotType: CalculationSlot["type"] = e.dataTransfer.getData(
+        "application/esf-slot-type",
+      ) as CalculationSlot["type"];
 
-      if (draggedTypeId === undefined) {
+      if (draggedTypeId === undefined || draggedSlotType === "DroneBay") {
         return;
       }
 
-      if (draggedSlotType === "charge") {
-        fitManager.setCharge(esiFlag, draggedTypeId);
+      if (draggedSlotType === "Charge") {
+        fitManager.setCharge({ type: props.type, index: props.index }, draggedTypeId);
         return;
       }
 
-      const isValidSlotGroup = draggedSlotType === esiFlagType;
+      const isValidSlotGroup = draggedSlotType === props.type;
       if (!isValidSlotGroup) {
         return;
       }
 
-      const isDraggedFromAnotherSlot = draggedSlotId !== undefined;
+      const isDraggedFromAnotherSlot = draggedSlotIndex !== undefined;
       if (isDraggedFromAnotherSlot) {
-        fitManager.swapModule(esiFlag, draggedSlotId);
+        fitManager.swapModule(
+          { type: props.type, index: props.index },
+          { type: draggedSlotType, index: draggedSlotIndex },
+        );
       } else {
-        fitManager.setModule(esiFlag, draggedTypeId);
+        fitManager.setModule({ type: props.type, index: props.index }, draggedTypeId);
       }
     },
-    [fitManager, esiFlag, esiFlagType],
+    [fitManager, props],
   );
 
   if (eveData === null || statistics === null) return <></>;
@@ -202,14 +199,14 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
         preserveAspectRatio="xMidYMin slice"
       >
         <use href="#slot" />
-        {props.fittable && esiItem && active && <use href="#slot-active" />}
-        {props.fittable && esiItem && !active && <use href="#slot-passive" />}
+        {props.fittable && module !== undefined && active && <use href="#slot-active" />}
+        {props.fittable && module !== undefined && !active && <use href="#slot-passive" />}
       </svg>
     </>
   );
 
   /* Not fittable and nothing fitted; no need to render the slot. */
-  if (esiItem === undefined && !props.fittable) {
+  if (module === undefined && !props.fittable) {
     return (
       <div className={styles.slotOuter} data-hasitem={false}>
         <div className={styles.slot} data-state="Unavailable">
@@ -219,12 +216,12 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
     );
   }
 
-  if (esiItem !== undefined && eveData !== null) {
-    if (esiItem.charge !== undefined) {
+  if (module !== undefined && eveData !== null) {
+    if (module.charge !== undefined) {
       item = (
         <img
-          src={`https://images.evetech.net/types/${esiItem.charge.type_id}/icon?size=64`}
-          title={`${eveData.typeIDs[esiItem.type_id].name}\n${eveData.typeIDs[esiItem.charge.type_id].name}`}
+          src={`https://images.evetech.net/types/${module.charge.type_id}/icon?size=64`}
+          title={`${eveData.typeIDs[module.type_id].name}\n${eveData.typeIDs[module.charge.type_id].name}`}
           draggable={true}
           onDragStart={onDragStart}
         />
@@ -232,8 +229,8 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
     } else {
       item = (
         <img
-          src={`https://images.evetech.net/types/${esiItem.type_id}/icon?size=64`}
-          title={eveData.typeIDs[esiItem.type_id].name}
+          src={`https://images.evetech.net/types/${module.type_id}/icon?size=64`}
+          title={eveData.typeIDs[module.type_id].name}
           draggable={true}
           onDragStart={onDragStart}
         />
@@ -244,19 +241,19 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
 
     let icon: IconName | undefined;
     switch (props.type) {
-      case "lowslot":
+      case "Low":
         icon = "fitting-lowslot";
         break;
 
-      case "medslot":
+      case "Medium":
         icon = "fitting-medslot";
         break;
 
-      case "hislot":
+      case "High":
         icon = "fitting-hislot";
         break;
 
-      case "rig":
+      case "Rig":
         icon = "fitting-rig-subsystem";
         break;
     }
@@ -266,16 +263,16 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
     }
   }
 
-  const state = esiItem?.state === "Passive" && esiItem?.max_state !== "Passive" ? "Offline" : esiItem?.state;
+  const state = module?.state === "Passive" && module?.max_state !== "Passive" ? "Offline" : module?.state;
 
   return (
-    <div className={styles.slotOuter} data-hasitem={esiItem !== undefined}>
+    <div className={styles.slotOuter} data-hasitem={module !== undefined}>
       <div className={styles.slot} onClick={cycleState} data-state={state} onDrop={onDragEnd} onDragOver={onDragOver}>
         {svg}
         <div className={imageStyle}>{item}</div>
       </div>
       <div className={styles.slotOptions}>
-        {esiItem?.charge !== undefined && (
+        {module?.charge !== undefined && (
           <svg viewBox="0 0 20 20" width={20} xmlns="http://www.w3.org/2000/svg" onClick={unfitCharge}>
             <title>Remove Charge</title>
             <use href="#uncharge" />
@@ -285,7 +282,7 @@ export const Slot = (props: { type: string; index: number; fittable: boolean; ma
           <title>Unfit Module</title>
           <use href="#unfit" />
         </svg>
-        {esiItem?.max_state !== "Passive" && (
+        {module?.max_state !== "Passive" && (
           <svg viewBox="0 0 20 20" width={20} xmlns="http://www.w3.org/2000/svg" onClick={offlineState}>
             <title>Put Offline</title>
             <use href="#offline" />
