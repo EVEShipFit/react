@@ -1,1 +1,0 @@
-export { EsiCharacterSelection } from "./EsiCharacterSelection";

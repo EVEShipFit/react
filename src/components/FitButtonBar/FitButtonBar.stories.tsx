@@ -1,47 +1,39 @@
-import type { Decorator, Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 
-import { fullFit } from "../../../.storybook/fits";
+import { fitArgType } from "../../../.storybook/fits";
+import { useFitSelection, withDecoratorFull } from "../../../.storybook/helpers";
 
-import { DogmaEngineProvider } from "@/providers/DogmaEngineProvider";
-import { EveDataProvider } from "@/providers/EveDataProvider";
-import { LocalFitProvider } from "@/providers/LocalFitProvider";
-import { ShipSnapshotProvider } from "@/providers/ShipSnapshotProvider";
-import { ModalDialogAnchor } from "@/components/ModalDialog/ModalDialog";
+import { EsfFit } from "@/providers/CurrentFitProvider";
 
 import { FitButtonBar } from "./";
 
-const meta: Meta<typeof FitButtonBar> = {
+type StoryProps = React.ComponentProps<typeof FitButtonBar> & { fit: EsfFit | null; width: number };
+
+const meta: Meta<StoryProps> = {
   component: FitButtonBar,
   tags: ["autodocs"],
-  title: "Component/FitButtonBar",
 };
 
 export default meta;
-type Story = StoryObj<typeof FitButtonBar>;
-
-const withEveDataProvider: Decorator<Record<string, never>> = (Story, context) => {
-  return (
-    <EveDataProvider>
-      <DogmaEngineProvider>
-        <LocalFitProvider>
-          <ShipSnapshotProvider {...context.parameters.snapshot}>
-            <div style={{ marginTop: "100px" }}>
-              <ModalDialogAnchor />
-              <Story />
-            </div>
-          </ShipSnapshotProvider>
-        </LocalFitProvider>
-      </DogmaEngineProvider>
-    </EveDataProvider>
-  );
-};
+type Story = StoryObj<StoryProps>;
 
 export const Default: Story = {
-  decorators: [withEveDataProvider],
-  parameters: {
-    snapshot: {
-      initialFit: fullFit,
-    },
+  argTypes: {
+    fit: fitArgType,
+  },
+  args: {
+    fit: null,
+    width: 400,
+  },
+  decorators: [withDecoratorFull],
+  render: ({ fit, width, ...args }) => {
+    useFitSelection(fit);
+
+    return (
+      <div style={{ width: width, height: width, marginTop: 100 }}>
+        <FitButtonBar {...args} />
+      </div>
+    );
   },
 };

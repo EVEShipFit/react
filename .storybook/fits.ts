@@ -1,4 +1,8 @@
-export const eftFit = `[Loki,Loki basic PVE]
+import { EsfFit } from "@/providers";
+import { InputType } from "@storybook/types";
+
+export const eftFits = {
+  Loki: `[Loki,Loki basic PVE]
 Caldari Navy Ballistic Control System
 Caldari Navy Ballistic Control System
 Caldari Navy Ballistic Control System
@@ -28,12 +32,15 @@ Loki Offensive - Launcher Efficiency Configuration
 Loki Propulsion - Wake Limiter
 
 Hammerhead II x1
-`;
+`,
+};
 
-export const hashFit =
-  "fit:v2:H4sIAAAAAAAACmWQMZJDMQhD+38WChBgwx32Ijtb5P5d4ONkdpLOTwhbFjKT6efx90uXk+pmJqE+I9YKEueblC0WyXpDvABrZy2OTTR8UTIPwtp4UIQApNz3C/5DkiRYbwA3RA70TowLINl+8qHMJoYBIxPgTLwnHAOb4FtKOlkuxJeSn0p95lORLwVVQ+i6n9FKI77nTbXqbntPpqgrKoWVEDXN2pNtY01tWBM8rcAjTj9OtaJ6aBV5+qHdM345owlT0hPutE6T0AEAAA==";
+export const hashFits = {
+  Loki: "fit:v2:H4sIAAAAAAAACmWQMZJDMQhD+38WChBgwx32Ijtb5P5d4ONkdpLOTwhbFjKT6efx90uXk+pmJqE+I9YKEueblC0WyXpDvABrZy2OTTR8UTIPwtp4UIQApNz3C/5DkiRYbwA3RA70TowLINl+8qHMJoYBIxPgTLwnHAOb4FtKOlkuxJeSn0p95lORLwVVQ+i6n9FKI77nTbXqbntPpqgrKoWVEDXN2pNtY01tWBM8rcAjTj9OtaJ6aBV5+qHdM345owlT0hPutE6T0AEAAA==",
+};
 
 export const fullFits = [
+  null,
   {
     name: "Tengu",
     ship_type_id: 29984,
@@ -148,8 +155,8 @@ export const fullFits = [
     ],
   },
   {
-    ship_type_id: 35833,
     name: "Killmail 117621358",
+    ship_type_id: 35833,
     description: "",
     items: [
       { flag: 5, type_id: 37821, quantity: 6 },
@@ -195,3 +202,12 @@ export const fullFits = [
 ];
 
 export const fullFit = fullFits[2];
+
+export const fitArgType: InputType = {
+  control: "select",
+  options: fullFits.map((fit: EsfFit | null) => fit?.name ?? "(empty)"),
+  mapping: fullFits.reduce((acc: Record<string, EsfFit | null>, fit: EsfFit | null) => {
+    acc[fit?.name ?? "(empty)"] = fit;
+    return acc;
+  }, {}),
+};

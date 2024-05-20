@@ -1,11 +1,11 @@
 import clsx from "clsx";
 import React from "react";
 
-import { EveDataContext } from "@/providers/EveDataProvider";
-import { ShipSnapshotContext } from "@/providers/ShipSnapshotProvider";
-import { ShipAttribute } from "@/components/ShipAttribute";
 import { Icon } from "@/components/Icon";
-import { CharAttribute } from "@/components/ShipAttribute/ShipAttribute";
+import { CharAttribute, ShipAttribute } from "@/components/ShipAttribute";
+import { useCurrentFit } from "@/providers/CurrentFitProvider";
+import { useEveData } from "@/providers/EveDataProvider";
+import { useStatistics } from "@/providers/StatisticsProvider";
 
 import { Category, CategoryLine } from "./Category";
 import { RechargeRate } from "./RechargeRate";
@@ -17,26 +17,25 @@ import styles from "./ShipStatistics.module.css";
  * Render ship statistics similar to how it is done in-game.
  */
 export const ShipStatistics = () => {
-  const eveData = React.useContext(EveDataContext);
-  const shipSnapshot = React.useContext(ShipSnapshotContext);
+  const eveData = useEveData();
+  const currentFit = useCurrentFit();
+  const statistics = useStatistics();
 
   let capacitorState = "Stable";
-  const isStructure = eveData.typeIDs?.[shipSnapshot?.hull?.type_id ?? 0]?.categoryID === 65;
+  const isStructure = eveData?.typeIDs[currentFit.fit?.ship_type_id ?? 0]?.categoryID === 65;
 
-  if (shipSnapshot?.loaded) {
-    const attributeId = eveData.attributeMapping?.capacitorDepletesIn || 0;
-    const capacitorDepletesIn = shipSnapshot.hull?.attributes.get(attributeId)?.value;
+  const attributeId = eveData?.attributeMapping.capacitorDepletesIn ?? 0;
+  const capacitorDepletesIn = statistics?.hull.attributes.get(attributeId)?.value;
 
-    if (capacitorDepletesIn !== undefined && capacitorDepletesIn >= 0) {
-      const hours = Math.floor(capacitorDepletesIn / 3600);
-      const minutes = Math.floor((capacitorDepletesIn % 3600) / 60);
-      const seconds = Math.floor(capacitorDepletesIn % 60);
-      capacitorState = `Depletes in ${hours.toString().padStart(2, "0")}:${minutes
-        .toString()
-        .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-    } else {
-      capacitorState = "Stable";
-    }
+  if (capacitorDepletesIn !== undefined && capacitorDepletesIn >= 0) {
+    const hours = Math.floor(capacitorDepletesIn / 3600);
+    const minutes = Math.floor((capacitorDepletesIn % 3600) / 60);
+    const seconds = Math.floor(capacitorDepletesIn % 60);
+    capacitorState = `Depletes in ${hours.toString().padStart(2, "0")}:${minutes
+      .toString()
+      .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  } else {
+    capacitorState = "Stable";
   }
 
   return (

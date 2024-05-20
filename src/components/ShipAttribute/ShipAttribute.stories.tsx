@@ -1,42 +1,35 @@
-import type { Decorator, Meta, StoryObj } from "@storybook/react";
+import type { Meta, StoryObj } from "@storybook/react";
 import React from "react";
 
-import { fullFit } from "../../../.storybook/fits";
+import { fitArgType } from "../../../.storybook/fits";
+import { useFitSelection, withDecoratorFull } from "../../../.storybook/helpers";
 
-import { DogmaEngineProvider } from "@/providers/DogmaEngineProvider";
-import { EveDataProvider } from "@/providers/EveDataProvider";
-import { ShipSnapshotProvider } from "@/providers/ShipSnapshotProvider";
+import { EsfFit } from "@/providers/CurrentFitProvider";
+
 import { ShipAttribute } from "./";
 
-const meta: Meta<typeof ShipAttribute> = {
+type StoryProps = React.ComponentProps<typeof ShipAttribute> & { fit: EsfFit | null };
+
+const meta: Meta<StoryProps> = {
   component: ShipAttribute,
   tags: ["autodocs"],
-  title: "Component/ShipAttribute",
 };
 
 export default meta;
-type Story = StoryObj<typeof ShipAttribute>;
-
-const withShipSnapshotProvider: Decorator<{ name: string }> = (Story, context) => {
-  return (
-    <EveDataProvider>
-      <DogmaEngineProvider>
-        <ShipSnapshotProvider {...context.parameters.snapshot}>
-          cpuUsage: <Story />
-        </ShipSnapshotProvider>
-      </DogmaEngineProvider>
-    </EveDataProvider>
-  );
-};
+type Story = StoryObj<StoryProps>;
 
 export const Default: Story = {
+  argTypes: {
+    fit: fitArgType,
+  },
   args: {
+    fit: null,
     name: "cpuUsed",
   },
-  decorators: [withShipSnapshotProvider],
-  parameters: {
-    snapshot: {
-      initialFit: fullFit,
-    },
+  decorators: [withDecoratorFull],
+  render: ({ fit, ...args }) => {
+    useFitSelection(fit);
+
+    return <ShipAttribute {...args} />;
   },
 };

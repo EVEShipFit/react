@@ -1,13 +1,9 @@
 import clsx from "clsx";
 import React from "react";
 
-import { EveDataContext } from "@/providers/EveDataProvider";
-import {
-  ShipSnapshotContext,
-  ShipSnapshotItemAttribute,
-  ShipSnapshotItemAttributeEffect,
-} from "@/providers/ShipSnapshotProvider";
 import { Icon } from "@/components/Icon";
+import { useEveData } from "@/providers/EveDataProvider";
+import { StatisticsItemAttribute, StatisticsItemAttributeEffect, useStatistics } from "@/providers/StatisticsProvider";
 
 import styles from "./CalculationDetail.module.css";
 
@@ -46,11 +42,13 @@ function stateToInteger(state: string): number {
   }
 }
 
-const Effect = (props: { effect: ShipSnapshotItemAttributeEffect }) => {
-  const eveData = React.useContext(EveDataContext);
-  const shipSnapshot = React.useContext(ShipSnapshotContext);
+const Effect = (props: { effect: StatisticsItemAttributeEffect }) => {
+  const eveData = useEveData();
+  const statistics = useStatistics();
 
-  const eveAttribute = eveData.dogmaAttributes?.[props.effect.source_attribute_id];
+  if (eveData === null || statistics === null) return <></>;
+
+  const eveAttribute = eveData.dogmaAttributes[props.effect.source_attribute_id];
 
   let sourceName = "Unknown";
   let attribute = undefined;
@@ -59,22 +57,22 @@ const Effect = (props: { effect: ShipSnapshotItemAttributeEffect }) => {
   switch (props.effect.source) {
     case "Ship":
       sourceName = "Ship";
-      attribute = shipSnapshot.hull?.attributes.get(props.effect.source_attribute_id);
+      attribute = statistics.hull.attributes.get(props.effect.source_attribute_id);
       break;
 
     case "Char":
       sourceName = "Character";
-      attribute = shipSnapshot.char?.attributes.get(props.effect.source_attribute_id);
+      attribute = statistics.char.attributes.get(props.effect.source_attribute_id);
       break;
 
     case "Structure":
       sourceName = "Structure";
-      attribute = shipSnapshot.structure?.attributes.get(props.effect.source_attribute_id);
+      attribute = statistics.structure.attributes.get(props.effect.source_attribute_id);
       break;
 
     case "Target":
       sourceName = "Target";
-      attribute = shipSnapshot.target?.attributes.get(props.effect.source_attribute_id);
+      attribute = statistics.target.attributes.get(props.effect.source_attribute_id);
       break;
 
     default:
@@ -83,13 +81,13 @@ const Effect = (props: { effect: ShipSnapshotItemAttributeEffect }) => {
 
       /* Lookup the source of the effect. */
       if (props.effect.source.Item !== undefined) {
-        item = shipSnapshot.items?.[props.effect.source.Item];
+        item = statistics.items[props.effect.source.Item];
         sourceType = "Item";
       } else if (props.effect.source.Skill !== undefined) {
-        item = shipSnapshot.skills?.[props.effect.source.Skill];
+        item = statistics.skills[props.effect.source.Skill];
         sourceType = "Skill";
       } else if (props.effect.source.Charge !== undefined) {
-        item = shipSnapshot.items?.[props.effect.source.Charge].charge;
+        item = statistics.items[props.effect.source.Charge].charge;
         sourceType = "Charge";
       }
 
@@ -125,11 +123,13 @@ const Effect = (props: { effect: ShipSnapshotItemAttributeEffect }) => {
   );
 };
 
-const CalculationDetailMeta = (props: { attributeId: number; attribute: ShipSnapshotItemAttribute }) => {
+const CalculationDetailMeta = (props: { attributeId: number; attribute: StatisticsItemAttribute }) => {
   const [expanded, setExpanded] = React.useState(false);
-  const eveData = React.useContext(EveDataContext);
+  const eveData = useEveData();
 
-  const eveAttribute = eveData.dogmaAttributes?.[props.attributeId];
+  if (eveData === null) return <></>;
+
+  const eveAttribute = eveData.dogmaAttributes[props.attributeId];
   const sortedEffects = Object.values(props.attribute.effects).sort((a, b) => {
     const aIndex = Object.keys(EffectOperatorOrder).indexOf(a.operator);
     const bIndex = Object.keys(EffectOperatorOrder).indexOf(b.operator);
@@ -172,25 +172,26 @@ const CalculationDetailMeta = (props: { attributeId: number; attribute: ShipSnap
 export const CalculationDetail = (props: {
   source: "Ship" | "Char" | "Structure" | "Target" | { Item?: number; Charge?: number };
 }) => {
-  const shipSnapshot = React.useContext(ShipSnapshotContext);
+  const statistics = useStatistics();
+  if (statistics === null) return <></>;
 
-  let attributes: [number, ShipSnapshotItemAttribute][] = [];
+  let attributes: [number, StatisticsItemAttribute][] = [];
 
   if (props.source === "Ship") {
-    attributes = [...(shipSnapshot.hull?.attributes.entries() || [])];
+    attributes = [...(statistics.hull.attributes.entries() ?? [])];
   } else if (props.source === "Char") {
-    attributes = [...(shipSnapshot.char?.attributes.entries() || [])];
+    attributes = [...(statistics.char.attributes.entries() ?? [])];
   } else if (props.source === "Structure") {
-    attributes = [...(shipSnapshot.structure?.attributes.entries() || [])];
+    attributes = [...(statistics.structure.attributes.entries() ?? [])];
   } else if (props.source === "Target") {
-    attributes = [...(shipSnapshot.target?.attributes.entries() || [])];
+    attributes = [...(statistics.target.attributes.entries() ?? [])];
   } else if (props.source.Item !== undefined) {
-    const item = shipSnapshot.items?.[props.source.Item];
+    const item = statistics.items[props.source.Item];
     if (item !== undefined) {
       attributes = [...item.attributes.entries()];
     }
   } else if (props.source.Charge !== undefined) {
-    const item = shipSnapshot.items?.[props.source.Charge].charge;
+    const item = statistics.items[props.source.Charge].charge;
     if (item !== undefined) {
       attributes = [...item.attributes.entries()];
     }

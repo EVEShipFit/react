@@ -1,11 +1,12 @@
 import React from "react";
 
-import { ShipSnapshotContext, ShipSnapshotSlotsType } from "@/providers";
+import { useFitManager } from "@/providers/FitManagerProvider";
+import { StatisticsSlotType } from "@/providers/StatisticsProvider";
 
 import styles from "./ShipFit.module.css";
 
 export const HullDraggable = () => {
-  const shipSnapshot = React.useContext(ShipSnapshotContext);
+  const fitManager = useFitManager();
 
   const onDragOver = React.useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -22,9 +23,9 @@ export const HullDraggable = () => {
 
       const draggedTypeId: number | undefined = parseNumber(e.dataTransfer.getData("application/type_id"));
       const draggedSlotId: number | undefined = parseNumber(e.dataTransfer.getData("application/slot_id"));
-      const draggedSlotType: ShipSnapshotSlotsType | "charge" = e.dataTransfer.getData("application/slot_type") as
-        | ShipSnapshotSlotsType
-        | "charge";
+      const draggedSlotType: StatisticsSlotType | "droneBay" | "charge" = e.dataTransfer.getData(
+        "application/slot_type",
+      ) as StatisticsSlotType | "droneBay" | "charge";
 
       if (draggedTypeId === undefined) {
         return;
@@ -34,14 +35,9 @@ export const HullDraggable = () => {
         return;
       }
 
-      if (draggedSlotType === "charge") {
-        shipSnapshot.addCharge(draggedTypeId);
-        return;
-      }
-
-      shipSnapshot.addModule(draggedTypeId, draggedSlotType);
+      fitManager.addItem(draggedTypeId, draggedSlotType);
     },
-    [shipSnapshot],
+    [fitManager],
   );
 
   return <div className={styles.hullDraggable} onDragOver={onDragOver} onDrop={onDragEnd} />;

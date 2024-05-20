@@ -2,10 +2,11 @@ import clsx from "clsx";
 import React from "react";
 
 import { defaultDataUrl } from "@/settings";
-import { EveDataContext } from "@/providers/EveDataProvider";
-import { ShipSnapshotContext, ShipSnapshotSlotsType } from "@/providers/ShipSnapshotProvider";
 import { Icon } from "@/components/Icon";
 import { TreeListing, TreeHeader, TreeLeaf } from "@/components/TreeListing";
+import { StatisticsSlotType, useStatistics } from "@/providers/StatisticsProvider";
+import { useFitManager } from "@/providers/FitManagerProvider";
+import { useEveData } from "@/providers/EveDataProvider";
 
 import styles from "./HardwareListing.module.css";
 
@@ -20,7 +21,7 @@ interface ListingItem {
   name: string;
   meta: number;
   typeId: number;
-  slotType: ShipSnapshotSlotsType | "charge";
+  slotType: StatisticsSlotType | "droneBay" | "charge";
 }
 
 interface ListingGroup {
@@ -40,34 +41,28 @@ interface Filter {
   moduleWithCharge: ModuleCharge | undefined;
 }
 
+const OnItemDragStart = (
+  typeId: number,
+  slotType: StatisticsSlotType | "droneBay" | "charge",
+): ((e: React.DragEvent<HTMLDivElement>) => void) => {
+  return (e: React.DragEvent<HTMLDivElement>) => {
+    const img = new Image();
+    img.src = `https://images.evetech.net/types/${typeId}/icon?size=64`;
+    e.dataTransfer.setDragImage(img, 32, 32);
+    e.dataTransfer.setData("application/type_id", typeId.toString());
+    e.dataTransfer.setData("application/slot_type", slotType);
+  };
+};
+
+const PreloadImage = (typeId: number): ((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void) => {
+  return () => {
+    const img = new Image();
+    img.src = `https://images.evetech.net/types/${typeId}/icon?size=64`;
+  };
+};
+
 const ModuleGroup = (props: { level: number; group: ListingGroup; hideGroup?: boolean }) => {
-  const shipSnapShot = React.useContext(ShipSnapshotContext);
-
-  const onItemDragStart = React.useCallback(
-    (
-      typeId: ListingItem["typeId"],
-      slotType: ListingItem["slotType"],
-    ): ((e: React.DragEvent<HTMLDivElement>) => void) => {
-      return (e: React.DragEvent<HTMLDivElement>) => {
-        const img = new Image();
-        img.src = `https://images.evetech.net/types/${typeId}/icon?size=64`;
-        e.dataTransfer.setDragImage(img, 32, 32);
-        e.dataTransfer.setData("application/type_id", typeId.toString());
-        e.dataTransfer.setData("application/slot_type", slotType);
-      };
-    },
-    [],
-  );
-
-  const preloadImage = React.useCallback(
-    (typeId: number): ((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void) => {
-      return () => {
-        const img = new Image();
-        img.src = `https://images.evetech.net/types/${typeId}/icon?size=64`;
-      };
-    },
-    [],
-  );
+  const fitManager = useFitManager();
 
   const getChildren = React.useCallback(() => {
     return (
@@ -75,30 +70,17 @@ const ModuleGroup = (props: { level: number; group: ListingGroup; hideGroup?: bo
         {Object.values(props.group.items)
           .sort((a, b) => a.meta - b.meta || a.name.localeCompare(b.name))
           .map((item) => {
-            if (item.slotType === "charge") {
-              return (
-                <TreeLeaf
-                  key={item.typeId}
-                  level={2}
-                  content={item.name}
-                  onDoubleClick={() => shipSnapShot.addCharge(item.typeId)}
-                  onDragStart={onItemDragStart(item.typeId, "charge")}
-                  onMouseEnter={preloadImage(item.typeId)}
-                />
-              );
-            } else {
-              const slotType = item.slotType;
-              return (
-                <TreeLeaf
-                  key={item.typeId}
-                  level={2}
-                  content={item.name}
-                  onDoubleClick={() => shipSnapShot.addModule(item.typeId, slotType)}
-                  onDragStart={onItemDragStart(item.typeId, slotType)}
-                  onMouseEnter={preloadImage(item.typeId)}
-                />
-              );
-            }
+            const slotType = item.slotType;
+            return (
+              <TreeLeaf
+                key={item.typeId}
+                level={2}
+                content={item.name}
+                onDoubleClick={() => fitManager.addItem(item.typeId, slotType)}
+                onDragStart={OnItemDragStart(item.typeId, slotType)}
+                onMouseEnter={PreloadImage(item.typeId)}
+              />
+            );
           })}
         {Object.keys(props.group.groups)
           .sort(
@@ -111,7 +93,7 @@ const ModuleGroup = (props: { level: number; group: ListingGroup; hideGroup?: bo
           })}
       </>
     );
-  }, [props, shipSnapShot, onItemDragStart, preloadImage]);
+  }, [fitManager, props.group, props.level]);
 
   if (props.hideGroup) {
     return <TreeListing level={props.level} getChildren={getChildren} />;
@@ -130,21 +112,9 @@ const ModuleGroup = (props: { level: number; group: ListingGroup; hideGroup?: bo
  * Show all the modules you can fit to a ship.
  */
 export const HardwareListing = () => {
-  const eveData = React.useContext(EveDataContext);
-  const shipSnapShot = React.useContext(ShipSnapshotContext);
+  const eveData = useEveData();
+  const statistics = useStatistics();
 
-  const [moduleGroups, setModuleGroups] = React.useState<ListingGroup>({
-    name: "Modules",
-    meta: 0,
-    groups: {},
-    items: [],
-  });
-  const [chargeGroups, setChageGroups] = React.useState<ListingGroup>({
-    name: "Charges",
-    meta: 0,
-    groups: {},
-    items: [],
-  });
   const [search, setSearch] = React.useState<string>("");
   const [filter, setFilter] = React.useState<Filter>({
     lowslot: false,
@@ -155,21 +125,19 @@ export const HardwareListing = () => {
     moduleWithCharge: undefined,
   });
   const [selection, setSelection] = React.useState<"modules" | "charges">("modules");
-  const [modulesWithCharges, setModulesWithCharges] = React.useState<ModuleCharge[]>([]);
 
-  React.useEffect(() => {
-    if (!eveData.loaded) return;
-    if (!shipSnapShot.loaded || shipSnapShot.items === undefined) return;
+  const modulesWithCharges = React.useMemo(() => {
+    if (eveData === null || statistics === null) return [];
 
     /* Iterate all items to check if they have a charge. */
-    const newModulesWithCharges: ModuleCharge[] = [];
+    const modules: ModuleCharge[] = [];
     const seenModules = new Set<number>();
-    for (const item of shipSnapShot.items) {
-      const chargeGroup1 = item.attributes.get(eveData?.attributeMapping?.chargeGroup1 || 0)?.value;
-      const chargeGroup2 = item.attributes.get(eveData?.attributeMapping?.chargeGroup2 || 0)?.value;
-      const chargeGroup3 = item.attributes.get(eveData?.attributeMapping?.chargeGroup3 || 0)?.value;
-      const chargeGroup4 = item.attributes.get(eveData?.attributeMapping?.chargeGroup4 || 0)?.value;
-      const chargeGroup5 = item.attributes.get(eveData?.attributeMapping?.chargeGroup5 || 0)?.value;
+    for (const item of statistics.items) {
+      const chargeGroup1 = item.attributes.get(eveData?.attributeMapping.chargeGroup1 ?? 0)?.value;
+      const chargeGroup2 = item.attributes.get(eveData?.attributeMapping.chargeGroup2 ?? 0)?.value;
+      const chargeGroup3 = item.attributes.get(eveData?.attributeMapping.chargeGroup3 ?? 0)?.value;
+      const chargeGroup4 = item.attributes.get(eveData?.attributeMapping.chargeGroup4 ?? 0)?.value;
+      const chargeGroup5 = item.attributes.get(eveData?.attributeMapping.chargeGroup5 ?? 0)?.value;
 
       const chargeGroupIDs: number[] = [chargeGroup1, chargeGroup2, chargeGroup3, chargeGroup4, chargeGroup5].filter(
         (x): x is number => x !== undefined,
@@ -179,30 +147,23 @@ export const HardwareListing = () => {
       if (seenModules.has(item.type_id)) continue;
       seenModules.add(item.type_id);
 
-      newModulesWithCharges.push({
+      modules.push({
         typeId: item.type_id,
         name: eveData?.typeIDs?.[item.type_id].name ?? "Unknown",
         chargeGroupIDs,
-        chargeSize: item.attributes.get(eveData?.attributeMapping?.chargeSize || 0)?.value ?? -1,
+        chargeSize: item.attributes.get(eveData?.attributeMapping.chargeSize ?? 0)?.value ?? -1,
       });
     }
 
-    setModulesWithCharges(newModulesWithCharges);
+    return modules;
+  }, [eveData, statistics]);
 
-    /* If the moduleWithCharge filter was set, validate if it is still valid. */
-    if (newModulesWithCharges.find((charge) => charge.typeId === filter.moduleWithCharge?.typeId) !== undefined) return;
-
-    setFilter({
-      ...filter,
-      moduleWithCharge: undefined,
-    });
-
-    /* Filter should not be part of the dependency array. */
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shipSnapShot, eveData, setFilter]);
-
-  React.useEffect(() => {
-    if (!eveData.loaded) return;
+  const { charges, modules } = React.useMemo(() => {
+    if (eveData === null)
+      return {
+        charges: {} as ListingGroup,
+        modules: {} as ListingGroup,
+      };
 
     const newModuleGroups: ListingGroup = {
       name: "Modules",
@@ -232,20 +193,20 @@ export const HardwareListing = () => {
       if (module.marketGroupID === undefined) continue;
       if (!module.published) continue;
 
-      let slotType: ShipSnapshotSlotsType | "charge" | undefined;
+      let slotType: StatisticsSlotType | "droneBay" | "charge" | undefined;
       if (module.categoryID !== 8) {
-        slotType = eveData.typeDogma?.[typeId]?.dogmaEffects
+        slotType = eveData.typeDogma[typeId]?.dogmaEffects
           .map((effect) => {
             switch (effect.effectID) {
-              case eveData.effectMapping?.loPower:
+              case eveData.effectMapping.loPower:
                 return "lowslot";
-              case eveData.effectMapping?.medPower:
+              case eveData.effectMapping.medPower:
                 return "medslot";
-              case eveData.effectMapping?.hiPower:
+              case eveData.effectMapping.hiPower:
                 return "hislot";
-              case eveData.effectMapping?.rigSlot:
+              case eveData.effectMapping.rigSlot:
                 return "rig";
-              case eveData.effectMapping?.subSystem:
+              case eveData.effectMapping.subSystem:
                 return "subsystem";
             }
           })
@@ -267,8 +228,8 @@ export const HardwareListing = () => {
         if (filter.moduleWithCharge !== undefined) {
           /* If the module has size restrictions, ensure the charge matches. */
           const chargeSize =
-            eveData.typeDogma?.[typeId]?.dogmaAttributes.find(
-              (attr) => attr.attributeID === eveData.attributeMapping?.chargeSize,
+            eveData.typeDogma[typeId]?.dogmaAttributes.find(
+              (attr) => attr.attributeID === eveData.attributeMapping.chargeSize,
             )?.value ?? -1;
           if (filter.moduleWithCharge.chargeSize !== -1 && chargeSize !== filter.moduleWithCharge.chargeSize) continue;
 
@@ -308,7 +269,7 @@ export const HardwareListing = () => {
       let marketGroup: number | undefined = module.marketGroupID;
       while (marketGroup !== undefined) {
         marketGroups.push(marketGroup);
-        marketGroup = eveData.marketGroups?.[marketGroup].parentGroupID;
+        marketGroup = eveData.marketGroups[marketGroup].parentGroupID;
       }
 
       /* Remove the root group. */
@@ -348,9 +309,9 @@ export const HardwareListing = () => {
               break;
 
             default:
-              name = eveData.marketGroups?.[group].name ?? "Unknown group";
+              name = eveData.marketGroups[group].name ?? "Unknown group";
               meta = 1;
-              iconID = eveData.marketGroups?.[group].iconID;
+              iconID = eveData.marketGroups[group].iconID;
               break;
           }
 
@@ -374,9 +335,22 @@ export const HardwareListing = () => {
       });
     }
 
-    setModuleGroups(newModuleGroups);
-    setChageGroups(newChargeGroups);
+    return {
+      charges: newChargeGroups,
+      modules: newModuleGroups,
+    };
   }, [eveData, search, filter]);
+
+  /* If the moduleWithCharge filter was set, validate if it is still valid. */
+  if (
+    filter.moduleWithCharge !== undefined &&
+    modulesWithCharges.find((charge) => charge.typeId === filter.moduleWithCharge?.typeId) === undefined
+  ) {
+    setFilter({
+      ...filter,
+      moduleWithCharge: undefined,
+    });
+  }
 
   return (
     <div className={styles.listing}>
@@ -451,10 +425,10 @@ export const HardwareListing = () => {
         </div>
       </div>
       <div className={clsx(styles.listingContent, { [styles.collapsed]: selection !== "modules" })}>
-        <ModuleGroup key="modules" level={0} group={moduleGroups} hideGroup={true} />
+        <ModuleGroup key="modules" level={0} group={modules} hideGroup={true} />
       </div>
       <div className={clsx(styles.listingContent, { [styles.collapsed]: selection !== "charges" })}>
-        <ModuleGroup key="charges" level={0} group={chargeGroups} hideGroup={true} />
+        <ModuleGroup key="charges" level={0} group={charges} hideGroup={true} />
       </div>
     </div>
   );

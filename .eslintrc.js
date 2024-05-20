@@ -39,7 +39,7 @@ module.exports = {
     {
       // The files listed below are part of the build process, so they will be using packages that are listed
       // under devDependences and/or peerDependencies, so we need to be lenient with the import/no-extraneous-dependencies
-      files: [".storybook/**/*.ts", ".eslintrc.js", "rollup.config.mjs"],
+      files: [".storybook/**/*.ts", ".storybook/**/*.tsx", ".eslintrc.js", "rollup.config.mjs", "**/*.stories.tsx"],
       rules: {
         "import/no-extraneous-dependencies": ["error", { peerDependencies: true, devDependencies: true }],
       },

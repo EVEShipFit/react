@@ -8,21 +8,19 @@ import {
   TypeDogmaAttribute,
   TypeDogmaEffect,
   TypeID,
-  EveDataContext,
+  useEveData,
 } from "@/providers/EveDataProvider";
 
-interface EsfDogmaEngine {
+interface DogmaEngine {
   init: typeof init;
   calculate: typeof calculate;
 }
 
-interface DogmaEngine {
-  loaded?: boolean;
-  loadedData?: boolean;
-  engine?: EsfDogmaEngine;
-}
+const DogmaEngineContext = React.createContext<DogmaEngine | null>(null);
 
-export const DogmaEngineContext = React.createContext<DogmaEngine>({});
+export const useDogmaEngine = () => {
+  return React.useContext(DogmaEngineContext);
+};
 
 declare global {
   interface Window {
@@ -43,11 +41,11 @@ export interface DogmaEngineProps {
  * Provides method of calculating accurate attributes for a ship fit.
  *
  * ```typescript
- * const dogmaEngine = React.useContext(DogmaEngineContext);
+ * const dogmaEngine = useDogmaEngine();
  *
- * if (dogmaEngine?.loaded) {
- *   // calculate(esiFit: EsiFit, skills: Record<string, number>)
- *   const stats = dogmaEngine.engine.calculate(esiFit, {});
+ * if (dogmaEngine !== null) {
+ *   // calculate(fit: EsfFit, skills: Skills)
+ *   const stats = dogmaEngine.calculate(fit, {});
  *   console.log(stats);
  * }
  * ```
@@ -58,50 +56,42 @@ export interface DogmaEngineProps {
  * that are not trained.
  */
 export const DogmaEngineProvider = (props: DogmaEngineProps) => {
-  const [dogmaEngine, setDogmaEngine] = React.useState<DogmaEngine>({});
-  const eveData = React.useContext(EveDataContext);
+  const eveData = useEveData();
 
-  React.useEffect(() => {
-    if (!eveData.loaded) return;
+  const [firstLoad, setFirstLoad] = React.useState(true);
 
-    setDogmaEngine((prevDogmaEngine: DogmaEngine) => {
-      return {
-        ...prevDogmaEngine,
-        loadedData: true,
-        loaded: prevDogmaEngine.engine !== undefined,
-      };
-    });
+  const [dogmaEngine, setDogmaEngine] = React.useState<DogmaEngine | null>(null);
 
-    window.get_dogma_attributes = (type_id: number): TypeDogmaAttribute[] | undefined => {
-      return eveData.typeDogma?.[type_id].dogmaAttributes;
-    };
-    window.get_dogma_attribute = (attribute_id: number): DogmaAttribute | undefined => {
-      return eveData.dogmaAttributes?.[attribute_id];
-    };
-    window.get_dogma_effects = (type_id: number): TypeDogmaEffect[] | undefined => {
-      return eveData.typeDogma?.[type_id].dogmaEffects;
-    };
-    window.get_dogma_effect = (effect_id: number): DogmaEffect | undefined => {
-      return eveData.dogmaEffects?.[effect_id];
-    };
-    window.get_type_id = (type_id: number): TypeID | undefined => {
-      return eveData.typeIDs?.[type_id];
-    };
-  }, [eveData]);
+  if (firstLoad) {
+    setFirstLoad(false);
 
-  React.useEffect(() => {
     import("@eveshipfit/dogma-engine").then((newDogmaEngine) => {
       newDogmaEngine.init();
-
-      setDogmaEngine((prevDogmaEngine: DogmaEngine) => {
-        return {
-          ...prevDogmaEngine,
-          engine: newDogmaEngine,
-          loaded: prevDogmaEngine.loadedData,
-        };
-      });
+      setDogmaEngine(newDogmaEngine);
     });
-  }, []);
+  }
 
-  return <DogmaEngineContext.Provider value={dogmaEngine}>{props.children}</DogmaEngineContext.Provider>;
+  if (eveData !== null) {
+    window.get_dogma_attributes = (type_id: number): TypeDogmaAttribute[] | undefined => {
+      return eveData.typeDogma[type_id].dogmaAttributes;
+    };
+    window.get_dogma_attribute = (attribute_id: number): DogmaAttribute | undefined => {
+      return eveData.dogmaAttributes[attribute_id];
+    };
+    window.get_dogma_effects = (type_id: number): TypeDogmaEffect[] | undefined => {
+      return eveData.typeDogma[type_id].dogmaEffects;
+    };
+    window.get_dogma_effect = (effect_id: number): DogmaEffect | undefined => {
+      return eveData.dogmaEffects[effect_id];
+    };
+    window.get_type_id = (type_id: number): TypeID | undefined => {
+      return eveData.typeIDs[type_id];
+    };
+  }
+
+  const contextValue = React.useMemo(() => {
+    return eveData === null ? null : dogmaEngine;
+  }, [eveData, dogmaEngine]);
+
+  return <DogmaEngineContext.Provider value={contextValue}>{props.children}</DogmaEngineContext.Provider>;
 };

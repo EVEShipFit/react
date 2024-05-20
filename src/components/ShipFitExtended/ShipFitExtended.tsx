@@ -1,12 +1,12 @@
 import clsx from "clsx";
 import React from "react";
 
-import { ShipSnapshotContext } from "@/providers/ShipSnapshotProvider";
-import { EveDataContext } from "@/providers/EveDataProvider";
-import { Icon } from "@/components/Icon";
-import { ShipFit } from "@/components/ShipFit";
-import { ShipAttribute } from "@/components/ShipAttribute";
 import { DroneBay } from "@/components/DroneBay";
+import { Icon } from "@/components/Icon";
+import { ShipAttribute } from "@/components/ShipAttribute";
+import { ShipFit } from "@/components/ShipFit";
+import { useCurrentFit } from "@/providers/CurrentFitProvider";
+import { useEveData } from "@/providers/EveDataProvider";
 
 import styles from "./ShipFitExtended.module.css";
 
@@ -28,12 +28,14 @@ const ShipCargoHold = () => {
 };
 
 const ShipDroneBay = () => {
-  const eveData = React.useContext(EveDataContext);
-  const shipSnapshot = React.useContext(ShipSnapshotContext);
+  const eveData = useEveData();
+  const currentFit = useCurrentFit();
 
   const [isOpen, setIsOpen] = React.useState(false);
 
-  const isStructure = eveData.typeIDs?.[shipSnapshot?.hull?.type_id ?? 0]?.categoryID === 65;
+  if (eveData === null) return <></>;
+
+  const isStructure = eveData.typeIDs[currentFit.fit?.ship_type_id ?? 0]?.categoryID === 65;
 
   return (
     <>
@@ -69,12 +71,12 @@ const CpuPg = (props: { title: string; children: React.ReactNode }) => {
 };
 
 const FitName = () => {
-  const shipSnapshot = React.useContext(ShipSnapshotContext);
+  const currentFit = useCurrentFit();
 
   return (
     <>
       <div className={styles.fitNameTitle}>Name</div>
-      <div className={styles.fitNameContent}>{shipSnapshot?.currentFit?.name}</div>
+      <div className={styles.fitNameContent}>{currentFit.fit?.name}</div>
     </>
   );
 };
@@ -87,6 +89,8 @@ const FitName = () => {
  * bottom of the fit.
  */
 export const ShipFitExtended = () => {
+  const currentFit = useCurrentFit();
+
   return (
     <div className={styles.fit}>
       <ShipFit withStats />
@@ -108,6 +112,8 @@ export const ShipFitExtended = () => {
           <ShipAttribute name="powerUnused" fixed={1} />/<ShipAttribute name="powerOutput" fixed={1} />
         </CpuPg>
       </div>
+
+      {currentFit.fit === null && <div className={styles.empty}>To start, select a hull on the left.</div>}
     </div>
   );
 };

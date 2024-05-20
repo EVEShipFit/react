@@ -1,18 +1,19 @@
 import clsx from "clsx";
 import React from "react";
 
-import { EsiContext } from "@/providers/EsiProvider";
-import { EsiFit, ShipSnapshotContext } from "@/providers/ShipSnapshotProvider";
-import { EveDataContext } from "@/providers/EveDataProvider";
-import { LocalFitContext } from "@/providers/LocalFitProvider";
 import { Icon, IconName } from "@/components/Icon";
 import { TreeListing, TreeHeader, TreeHeaderAction, TreeLeaf } from "@/components/TreeListing";
+import { EsfFit, useCurrentFit } from "@/providers/CurrentFitProvider";
+import { useFitManager } from "@/providers/FitManagerProvider";
+import { useEveData } from "@/providers/EveDataProvider";
+import { useCurrentCharacter } from "@/providers/CurrentCharacterProvider";
+import { useLocalFits } from "@/providers/LocalFitsProvider";
 
 import styles from "./HullListing.module.css";
 
 interface ListingFit {
-  origin: "local" | "esi-character";
-  fit: EsiFit;
+  origin: "local" | "character";
+  fit: EsfFit;
 }
 
 interface ListingHull {
@@ -41,7 +42,7 @@ const factionIdToRace: Record<number, string> = {
 } as const;
 
 const Hull = (props: { typeId: number; entry: ListingHull }) => {
-  const shipSnapShot = React.useContext(ShipSnapshotContext);
+  const fitManager = useFitManager();
 
   const getChildren = React.useCallback(() => {
     if (props.entry.fits.length === 0) {
@@ -63,7 +64,7 @@ const Hull = (props: { typeId: number; entry: ListingHull }) => {
                   iconTitle = "Browser-stored fitting";
                   break;
 
-                case "esi-character":
+                case "character":
                   icon = "fitting-character";
                   iconTitle = "In-game personal fitting";
                   break;
@@ -74,7 +75,7 @@ const Hull = (props: { typeId: number; entry: ListingHull }) => {
                   key={`${fit.fit.ship_type_id}-${index}`}
                   level={4}
                   content={fit.fit.name}
-                  onClick={() => shipSnapShot.changeFit(fit.fit)}
+                  onClick={() => fitManager.setFit(fit.fit)}
                   icon={icon}
                   iconTitle={iconTitle}
                 />
@@ -83,14 +84,14 @@ const Hull = (props: { typeId: number; entry: ListingHull }) => {
         </>
       );
     }
-  }, [props, shipSnapShot]);
+  }, [fitManager, props.entry]);
 
   const onClick = React.useCallback(
     (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
       e.stopPropagation();
-      shipSnapShot.changeHull(props.typeId);
+      fitManager.createNewFit(props.typeId);
     },
-    [props, shipSnapShot],
+    [fitManager, props.typeId],
   );
 
   const headerAction = <TreeHeaderAction icon="simulate" onClick={onClick} />;
@@ -116,7 +117,7 @@ const HullRace = (props: { raceId: number; entries: ListingHulls }) => {
           })}
       </>
     );
-  }, [props]);
+  }, [props.entries]);
 
   if (props.entries === undefined) return null;
 
@@ -140,7 +141,7 @@ const HullGroup = (props: { name: string; entries: ListingGroup }) => {
         <HullRace raceId={1} entries={props.entries.NonEmpire} />
       </>
     );
-  }, [props]);
+  }, [props.entries]);
 
   const header = <TreeHeader text={`${props.name}`} />;
   return <TreeListing level={1} header={header} getChildren={getChildren} />;
@@ -150,114 +151,103 @@ const HullGroup = (props: { name: string; entries: ListingGroup }) => {
  * Show all the fittings for the current ESI character.
  */
 export const HullListing = () => {
-  const esi = React.useContext(EsiContext);
-  const localFit = React.useContext(LocalFitContext);
-  const eveData = React.useContext(EveDataContext);
-  const shipSnapShot = React.useContext(ShipSnapshotContext);
+  const eveData = useEveData();
+  const currentFit = useCurrentFit();
+  const currentCharacter = useCurrentCharacter();
+  const localFits = useLocalFits();
 
-  const [hullGroups, setHullGroups] = React.useState<ListingGroups>({});
   const [search, setSearch] = React.useState<string>("");
   const [filter, setFilter] = React.useState({
-    localCharacter: false,
-    esiCharacter: false,
+    localFits: false,
+    characterFits: false,
     currentHull: false,
   });
 
-  const [localCharacterFits, setLocalCharacterFits] = React.useState<Record<string, ListingFit[]>>({});
-  const [esiCharacterFits, setEsiCharacterFits] = React.useState<Record<string, ListingFit[]>>({});
-
-  React.useEffect(() => {
-    if (!localFit.loaded) return;
-    if (!localFit.fittings) return;
-
-    const newLocalCharacterFits: Record<string, ListingFit[]> = {};
-    for (const fit of localFit.fittings) {
+  const localFitsGrouped = React.useMemo(() => {
+    const grouped: Record<string, ListingFit[]> = {};
+    for (const fit of localFits.fittings) {
       if (fit.ship_type_id === undefined) continue;
 
-      if (newLocalCharacterFits[fit.ship_type_id] === undefined) {
-        newLocalCharacterFits[fit.ship_type_id] = [];
+      if (grouped[fit.ship_type_id] === undefined) {
+        grouped[fit.ship_type_id] = [];
       }
 
-      newLocalCharacterFits[fit.ship_type_id].push({
+      grouped[fit.ship_type_id].push({
         origin: "local",
         fit,
       });
     }
 
-    setLocalCharacterFits(newLocalCharacterFits);
-  }, [localFit]);
+    return grouped;
+  }, [localFits]);
 
-  React.useEffect(() => {
-    if (!esi.loaded) return;
-    if (!esi.currentCharacter) return;
+  const characterFitsGrouped = React.useMemo(() => {
+    const characterFittings = currentCharacter.character?.fittings ?? [];
 
-    const charFittings = esi.characters[esi.currentCharacter].charFittings || [];
-
-    const newEsiCharacterFits: Record<string, ListingFit[]> = {};
-    for (const fit of charFittings) {
+    const grouped: Record<string, ListingFit[]> = {};
+    for (const fit of characterFittings) {
       if (fit.ship_type_id === undefined) continue;
 
-      if (newEsiCharacterFits[fit.ship_type_id] === undefined) {
-        newEsiCharacterFits[fit.ship_type_id] = [];
+      if (grouped[fit.ship_type_id] === undefined) {
+        grouped[fit.ship_type_id] = [];
       }
 
-      newEsiCharacterFits[fit.ship_type_id].push({
-        origin: "esi-character",
+      grouped[fit.ship_type_id].push({
+        origin: "character",
         fit,
       });
     }
 
-    setEsiCharacterFits(newEsiCharacterFits);
-  }, [esi]);
+    return grouped;
+  }, [currentCharacter.character?.fittings]);
 
-  React.useEffect(() => {
-    if (!eveData.loaded) return;
-    const anyFilter = filter.localCharacter || filter.esiCharacter;
+  const hullGrouped = React.useMemo(() => {
+    if (eveData === null) return {};
 
-    const newHullGroups: ListingGroups = {};
+    const anyFilter = filter.localFits || filter.characterFits;
 
+    const grouped: ListingGroups = {};
     for (const typeId in eveData.typeIDs) {
       const hull = eveData.typeIDs[typeId];
       if (hull.categoryID !== 6) continue;
       if (hull.marketGroupID === undefined) continue;
       if (!hull.published) continue;
 
-      if (filter.currentHull && shipSnapShot.currentFit?.ship_type_id !== parseInt(typeId)) continue;
+      if (filter.currentHull && currentFit.fit?.ship_type_id !== parseInt(typeId)) continue;
 
       const fits: ListingFit[] = [];
       if (anyFilter) {
-        if (filter.localCharacter && Object.keys(localCharacterFits).includes(typeId))
-          fits.push(...localCharacterFits[typeId]);
-        if (filter.esiCharacter && Object.keys(esiCharacterFits).includes(typeId))
-          fits.push(...esiCharacterFits[typeId]);
+        if (filter.localFits && Object.keys(localFitsGrouped).includes(typeId)) fits.push(...localFitsGrouped[typeId]);
+        if (filter.characterFits && Object.keys(characterFitsGrouped).includes(typeId))
+          fits.push(...characterFitsGrouped[typeId]);
         if (fits.length == 0) {
-          if (!filter.currentHull || shipSnapShot.currentFit?.ship_type_id !== parseInt(typeId)) continue;
+          if (!filter.currentHull || currentFit.fit?.ship_type_id !== parseInt(typeId)) continue;
         }
       } else {
-        if (Object.keys(localCharacterFits).includes(typeId)) fits.push(...localCharacterFits[typeId]);
-        if (Object.keys(esiCharacterFits).includes(typeId)) fits.push(...esiCharacterFits[typeId]);
+        if (Object.keys(localFitsGrouped).includes(typeId)) fits.push(...localFitsGrouped[typeId]);
+        if (Object.keys(characterFitsGrouped).includes(typeId)) fits.push(...characterFitsGrouped[typeId]);
       }
 
       if (search !== "" && !hull.name.toLowerCase().includes(search.toLowerCase())) continue;
 
-      const group = eveData.groupIDs?.[hull.groupID]?.name ?? "Unknown Group";
-      const race = factionIdToRace[hull.factionID || 0] ?? "NonEmpire";
+      const group = eveData.groupIDs[hull.groupID]?.name ?? "Unknown Group";
+      const race = factionIdToRace[hull.factionID ?? 0] ?? "NonEmpire";
 
-      if (newHullGroups[group] === undefined) {
-        newHullGroups[group] = {};
+      if (grouped[group] === undefined) {
+        grouped[group] = {};
       }
-      if (newHullGroups[group][race] === undefined) {
-        newHullGroups[group][race] = {};
+      if (grouped[group][race] === undefined) {
+        grouped[group][race] = {};
       }
 
-      newHullGroups[group][race][typeId] = {
+      grouped[group][race][typeId] = {
         name: hull.name,
         fits,
       };
     }
 
-    setHullGroups(newHullGroups);
-  }, [eveData, search, filter, localCharacterFits, esiCharacterFits, shipSnapShot.currentFit?.ship_type_id]);
+    return grouped;
+  }, [eveData, search, filter, localFitsGrouped, characterFitsGrouped, currentFit]);
 
   return (
     <div className={styles.listing}>
@@ -266,14 +256,14 @@ export const HullListing = () => {
       </div>
       <div className={styles.filter}>
         <span
-          className={clsx({ [styles.selected]: filter.localCharacter })}
-          onClick={() => setFilter({ ...filter, localCharacter: !filter.localCharacter })}
+          className={clsx({ [styles.selected]: filter.localFits })}
+          onClick={() => setFilter({ ...filter, localFits: !filter.localFits })}
         >
           <Icon name="fitting-local" size={32} title="Filter: Browser-stored fittings" />
         </span>
         <span
-          className={clsx({ [styles.selected]: filter.esiCharacter })}
-          onClick={() => setFilter({ ...filter, esiCharacter: !filter.esiCharacter })}
+          className={clsx({ [styles.selected]: filter.characterFits })}
+          onClick={() => setFilter({ ...filter, characterFits: !filter.characterFits })}
         >
           <Icon name="fitting-character" size={32} title="Filter: in-game personal fittings" />
         </span>
@@ -291,10 +281,10 @@ export const HullListing = () => {
         </span>
       </div>
       <div className={styles.listingContent}>
-        {Object.keys(hullGroups)
+        {Object.keys(hullGrouped)
           .sort()
           .map((groupName) => {
-            const groupData = hullGroups[groupName];
+            const groupData = hullGrouped[groupName];
             return <HullGroup key={groupName} name={groupName} entries={groupData} />;
           })}
       </div>

@@ -9,21 +9,28 @@ import { DogmaAttribute, DogmaEffect, GroupID, MarketGroup, TypeDogma, TypeID } 
 // eslint-disable-next-line import/extensions
 import * as esf_pb2 from "./esf_pb2.js";
 
-interface DogmaData {
-  loaded?: boolean;
-  typeIDs?: Record<string, TypeID>;
-  groupIDs?: Record<string, GroupID>;
-  marketGroups?: Record<string, MarketGroup>;
-  typeDogma?: Record<string, TypeDogma>;
-  dogmaEffects?: Record<string, DogmaEffect>;
-  dogmaAttributes?: Record<string, DogmaAttribute>;
-  effectMapping?: Record<string, number>;
-  attributeMapping?: Record<string, number>;
+export interface EveData {
+  typeIDs: Record<string, TypeID>;
+  groupIDs: Record<string, GroupID>;
+  marketGroups: Record<string, MarketGroup>;
+  typeDogma: Record<string, TypeDogma>;
+  dogmaEffects: Record<string, DogmaEffect>;
+  dogmaAttributes: Record<string, DogmaAttribute>;
+  effectMapping: Record<string, number>;
+  attributeMapping: Record<string, number>;
 }
 
-export const EveDataContext = React.createContext<DogmaData>({});
+const EveDataContext = React.createContext<EveData | null>(null);
 
-export interface DogmaDataProps {
+export const useEveData = () => {
+  return React.useContext(EveDataContext);
+};
+
+export interface EveDataProps {
+  /**
+   * URL where the data-files are located. Changing this value after first render has no effect.
+   * If not set, a built-in default is used, which can only be used for localhost development.
+   */
   dataUrl?: string;
 
   /** Children that can use this provider. */
@@ -39,15 +46,13 @@ async function fetchDataFile(dataUrl: string, name: string, pb2: any): Promise<o
   return result.entries;
 }
 
-function isLoaded(dogmaData: DogmaData): boolean | undefined {
-  if (dogmaData.typeIDs === undefined) return undefined;
-  if (dogmaData.groupIDs === undefined) return undefined;
-  if (dogmaData.marketGroups === undefined) return undefined;
-  if (dogmaData.typeDogma === undefined) return undefined;
-  if (dogmaData.dogmaEffects === undefined) return undefined;
-  if (dogmaData.dogmaAttributes === undefined) return undefined;
-  if (dogmaData.effectMapping === undefined) return undefined;
-  if (dogmaData.attributeMapping === undefined) return undefined;
+function isLoaded(dogmaData: EveData): boolean {
+  if (Object.keys(dogmaData.typeIDs).length === 0) return false;
+  if (Object.keys(dogmaData.groupIDs).length === 0) return false;
+  if (Object.keys(dogmaData.marketGroups).length === 0) return false;
+  if (Object.keys(dogmaData.typeDogma).length === 0) return false;
+  if (Object.keys(dogmaData.dogmaEffects).length === 0) return false;
+  if (Object.keys(dogmaData.dogmaAttributes).length === 0) return false;
 
   return true;
 }
@@ -56,28 +61,37 @@ function isLoaded(dogmaData: DogmaData): boolean | undefined {
  * Provides information like TypeIDs, Dogma information, etc.
  *
  * ```typescript
- * const eveData = React.useContext(EveDataContext);
+ * const eveData = useEveData();
  *
- * if (eveData?.loaded) {
+ * if (eveData !== null) {
  *   console.log(eveData.typeIDs.length);
  * }
  * ```
  */
-export const EveDataProvider = (props: DogmaDataProps) => {
+export const EveDataProvider = (props: EveDataProps) => {
   const dataUrl = props.dataUrl ?? `${defaultDataUrl}sde/`;
-  const [dogmaData, setDogmaData] = React.useState<DogmaData>({});
+  /* Initialize with empty data; we never set the context till everything is loaded. */
+  const [dogmaData, setDogmaData] = React.useState<EveData>({
+    typeIDs: {},
+    groupIDs: {},
+    marketGroups: {},
+    typeDogma: {},
+    dogmaEffects: {},
+    dogmaAttributes: {},
+    effectMapping: {},
+    attributeMapping: {},
+  });
 
   React.useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     function fetchAndLoadDataFile(name: string, pb2: any) {
       fetchDataFile(dataUrl, name, pb2).then((result) => {
-        setDogmaData((prevDogmaData: DogmaData) => {
+        setDogmaData((prevDogmaData: EveData) => {
           const newDogmaData = {
             ...prevDogmaData,
             [name]: result,
           };
 
-          newDogmaData.loaded = isLoaded(newDogmaData);
           return newDogmaData;
         });
       });
@@ -89,34 +103,30 @@ export const EveDataProvider = (props: DogmaDataProps) => {
     fetchAndLoadDataFile("typeDogma", esf_pb2.esf.TypeDogma);
     fetchAndLoadDataFile("dogmaEffects", esf_pb2.esf.DogmaEffects);
     fetchAndLoadDataFile("dogmaAttributes", esf_pb2.esf.DogmaAttributes);
-  }, [dataUrl]);
 
-  React.useEffect(() => {
-    if (!dogmaData.dogmaAttributes || !dogmaData.dogmaEffects) return;
+    /* Only fire on first load of this component. */
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-    /* Create a reverse mapping to quickly lookup attribute/effect name to attribute/effect ID. */
-    const attributeMapping: Record<string, number> = {};
-    for (const id in dogmaData.dogmaAttributes) {
-      const name = dogmaData.dogmaAttributes[id].name;
-      attributeMapping[name] = parseInt(id);
-    }
-    const effectMapping: Record<string, number> = {};
-    for (const id in dogmaData.dogmaEffects) {
-      const name = dogmaData.dogmaEffects[id].name;
-      effectMapping[name] = parseInt(id);
-    }
+  if (!isLoaded(dogmaData)) return <></>;
 
-    setDogmaData((prevDogmaData: DogmaData) => {
-      const newDogmaData = {
-        ...prevDogmaData,
-        attributeMapping: attributeMapping,
-        effectMapping: effectMapping,
-      };
+  /* Create a reverse mapping to quickly lookup attribute/effect name to attribute/effect ID. */
+  const attributeMapping: Record<string, number> = {};
+  for (const id in dogmaData.dogmaAttributes) {
+    const name = dogmaData.dogmaAttributes[id].name;
+    attributeMapping[name] = parseInt(id);
+  }
+  const effectMapping: Record<string, number> = {};
+  for (const id in dogmaData.dogmaEffects) {
+    const name = dogmaData.dogmaEffects[id].name;
+    effectMapping[name] = parseInt(id);
+  }
 
-      newDogmaData.loaded = isLoaded(newDogmaData);
-      return newDogmaData;
-    });
-  }, [dogmaData.dogmaAttributes, dogmaData.dogmaEffects]);
+  const contextValue = {
+    ...dogmaData,
+    attributeMapping: attributeMapping,
+    effectMapping: effectMapping,
+  };
 
-  return <EveDataContext.Provider value={dogmaData}>{props.children}</EveDataContext.Provider>;
+  return <EveDataContext.Provider value={contextValue}>{props.children}</EveDataContext.Provider>;
 };
