@@ -1,27 +1,18 @@
 import React from "react";
 
-import { EsfFit } from "@/providers/CurrentFitProvider";
+import { EsfFit, EsfSlotType } from "@/providers/CurrentFitProvider";
 import { useEveData } from "@/providers/EveDataProvider";
 
-/** Mapping between slot types and ESI flags (for first slot in the type). */
-const esiFlagMapping: Record<string, number[]> = {
-  lowslot: [11, 12, 13, 14, 15, 16, 17, 18],
-  medslot: [19, 20, 21, 22, 23, 24, 25, 26],
-  hislot: [27, 28, 29, 30, 31, 32, 33, 34],
-  rig: [92, 93, 94],
-  subsystem: [125, 126, 127, 128],
-};
-
 /** Mapping between dogma effect IDs and slot types. */
-const effectIdMapping: Record<number, string> = {
-  11: "lowslot",
-  13: "medslot",
-  12: "hislot",
-  2663: "rig",
-  3772: "subsystem",
+const effectIdMapping: Record<number, EsfSlotType | "DroneBay"> = {
+  11: "Low",
+  13: "Medium",
+  12: "High",
+  2663: "Rig",
+  3772: "SubSystem",
 };
-const attributeIdMapping: Record<number, string> = {
-  1272: "droneBay",
+const attributeIdMapping: Record<number, EsfSlotType | "DroneBay"> = {
+  1272: "DroneBay",
 };
 
 /**
@@ -34,9 +25,7 @@ export function useImportEft() {
     if (eveData === null) return null;
 
     function lookupTypeByName(name: string): number | undefined {
-      if (eveData === null) return undefined;
-
-      for (const typeId in eveData.typeIDs) {
+      for (const typeId in eveData?.typeIDs) {
         const type = eveData.typeIDs[typeId];
 
         if (type.name === name) {
@@ -48,10 +37,12 @@ export function useImportEft() {
     }
 
     const fit: EsfFit = {
+      shipTypeId: 0,
       name: "EFT Import",
       description: "",
-      ship_type_id: 0,
-      items: [],
+      modules: [],
+      drones: [],
+      cargo: [],
     };
 
     const lines = eft.trim().split("\n");
@@ -63,19 +54,18 @@ export function useImportEft() {
     const shipTypeId = lookupTypeByName(shipType);
     if (shipTypeId === undefined) throw new Error(`Unknown ship '${shipType}'.`);
 
-    fit.ship_type_id = shipTypeId;
+    fit.shipTypeId = shipTypeId;
     fit.name = lines[0].split(",")[1].slice(0, -1).trim();
 
-    const slotIndex: Record<string, number> = {
-      lowslot: 0,
-      medslot: 0,
-      hislot: 0,
-      rig: 0,
-      subsystem: 0,
-      droneBay: 0,
+    const slotIndex: Record<EsfSlotType, number> = {
+      Low: 1,
+      Medium: 1,
+      High: 1,
+      Rig: 1,
+      SubSystem: 1,
     };
 
-    let lastSlotType = "";
+    let lastSlotType: EsfSlotType | "DroneBay" | undefined = undefined;
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i];
       if (line.trim() === "") continue;
@@ -90,7 +80,7 @@ export function useImportEft() {
        */
 
       if (line.startsWith("[") || line.startsWith("  ")) {
-        if (lastSlotType != "") {
+        if (lastSlotType !== undefined && lastSlotType !== "DroneBay") {
           slotIndex[lastSlotType]++;
         }
         continue;
@@ -110,7 +100,7 @@ export function useImportEft() {
       const attributes = eveData.typeDogma[itemTypeId]?.dogmaAttributes;
 
       /* Find what type of slot this item goes into. */
-      let slotType = undefined;
+      let slotType: EsfSlotType | "DroneBay" | undefined = undefined;
       if (slotType === undefined && effects !== undefined) {
         for (const effectId in effects) {
           slotType = effectIdMapping[effects[effectId].effectID];
@@ -128,18 +118,31 @@ export function useImportEft() {
       if (slotType === undefined) continue;
       lastSlotType = slotType;
 
-      const flag = slotType === "droneBay" ? 87 : esiFlagMapping[slotType][slotIndex[slotType]];
       let charge = undefined;
       if (chargeTypeId !== undefined) {
         charge = {
-          type_id: chargeTypeId,
+          typeId: chargeTypeId,
         };
       }
 
-      fit.items.push({
-        flag,
-        quantity: itemCount,
-        type_id: itemTypeId,
+      if (slotType === "DroneBay") {
+        fit.drones.push({
+          typeId: itemTypeId,
+          states: {
+            Active: itemCount,
+            Passive: 0,
+          },
+        });
+        continue;
+      }
+
+      fit.modules.push({
+        slot: {
+          type: slotType,
+          index: slotIndex[slotType],
+        },
+        typeId: itemTypeId,
+        state: "Active",
         charge,
       });
       slotIndex[slotType]++;

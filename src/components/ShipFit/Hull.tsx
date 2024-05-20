@@ -14,7 +14,7 @@ export const Hull = () => {
     return <></>;
   }
 
-  const shipTypeId = currentFit.fit.ship_type_id;
+  const shipTypeId = currentFit.fit.shipTypeId;
   if (shipTypeId === undefined) {
     return <></>;
   }

@@ -1,7 +1,9 @@
 import React from "react";
 
 import { Character } from "@/providers/CurrentCharacterProvider";
+import { EsfFit } from "@/providers/CurrentFitProvider";
 import { useEveData } from "@/providers/EveDataProvider";
+import { useImportEsiFitting } from "@/hooks/ImportEsiFitting";
 import { useLocalStorage } from "@/hooks/LocalStorage";
 
 import { CharactersContext, useCharactersInternal } from "../CharactersContext";
@@ -61,6 +63,7 @@ const createEmptyCharacter = (name: string): Character => {
 export const EsiCharactersProvider = (props: EsiProps) => {
   const characters = useCharactersInternal();
   const eveData = useEveData();
+  const importEsiFitting = useImportEsiFitting();
 
   const [firstLoad, setFirstLoad] = React.useState(true);
 
@@ -134,8 +137,8 @@ export const EsiCharactersProvider = (props: EsiProps) => {
 
       const skills = await getSkills(characterId, accessToken);
       if (skills === undefined) return;
-      const fittings = await getCharFittings(characterId, accessToken);
-      if (fittings === undefined) return;
+      const esiFittings = await getCharFittings(characterId, accessToken);
+      if (esiFittings === undefined) return;
 
       /* Ensure all skills are set; also those not learnt. */
       for (const typeId in eveData.typeIDs) {
@@ -143,6 +146,13 @@ export const EsiCharactersProvider = (props: EsiProps) => {
         if (skills[typeId] !== undefined) continue;
         skills[typeId] = 0;
       }
+
+      /* Convert all fittings to ESF format. */
+      const fittings = esiFittings
+        .map((fitting) => {
+          return importEsiFitting(fitting);
+        })
+        .filter((fitting): fitting is EsfFit => fitting !== null);
 
       setEsiCharacters((oldEsiCharacters: Record<string, Character>) => {
         return {
@@ -155,7 +165,7 @@ export const EsiCharactersProvider = (props: EsiProps) => {
         };
       });
     },
-    [setEsiCharacters, ensureAccessToken, eveData],
+    [setEsiCharacters, importEsiFitting, ensureAccessToken, eveData],
   );
 
   if (firstLoad) {

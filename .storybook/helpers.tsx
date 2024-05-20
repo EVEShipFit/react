@@ -36,9 +36,11 @@ export const withDecoratorFull = (Story: StoryFn) => (
 
 export const useFitSelection = (fit: EsfFit | null) => {
   const currentFit = useCurrentFit();
-  const setFit = currentFit.setFit;
+
+  const setFitRef = React.useRef(currentFit.setFit);
+  setFitRef.current = currentFit.setFit;
 
   React.useEffect(() => {
-    setFit(fit);
-  }, [setFit, fit]);
+    setFitRef.current(fit);
+  }, [fit]);
 };

@@ -72,7 +72,7 @@ const Hull = (props: { typeId: number; entry: ListingHull }) => {
 
               return (
                 <TreeLeaf
-                  key={`${fit.fit.ship_type_id}-${index}`}
+                  key={`${fit.fit.shipTypeId}-${index}`}
                   level={4}
                   content={fit.fit.name}
                   onClick={() => fitManager.setFit(fit.fit)}
@@ -166,13 +166,13 @@ export const HullListing = () => {
   const localFitsGrouped = React.useMemo(() => {
     const grouped: Record<string, ListingFit[]> = {};
     for (const fit of localFits.fittings) {
-      if (fit.ship_type_id === undefined) continue;
+      if (fit.shipTypeId === undefined) continue;
 
-      if (grouped[fit.ship_type_id] === undefined) {
-        grouped[fit.ship_type_id] = [];
+      if (grouped[fit.shipTypeId] === undefined) {
+        grouped[fit.shipTypeId] = [];
       }
 
-      grouped[fit.ship_type_id].push({
+      grouped[fit.shipTypeId].push({
         origin: "local",
         fit,
       });
@@ -186,13 +186,13 @@ export const HullListing = () => {
 
     const grouped: Record<string, ListingFit[]> = {};
     for (const fit of characterFittings) {
-      if (fit.ship_type_id === undefined) continue;
+      if (fit.shipTypeId === undefined) continue;
 
-      if (grouped[fit.ship_type_id] === undefined) {
-        grouped[fit.ship_type_id] = [];
+      if (grouped[fit.shipTypeId] === undefined) {
+        grouped[fit.shipTypeId] = [];
       }
 
-      grouped[fit.ship_type_id].push({
+      grouped[fit.shipTypeId].push({
         origin: "character",
         fit,
       });
@@ -213,7 +213,7 @@ export const HullListing = () => {
       if (hull.marketGroupID === undefined) continue;
       if (!hull.published) continue;
 
-      if (filter.currentHull && currentFit.fit?.ship_type_id !== parseInt(typeId)) continue;
+      if (filter.currentHull && currentFit.fit?.shipTypeId !== parseInt(typeId)) continue;
 
       const fits: ListingFit[] = [];
       if (anyFilter) {
@@ -221,7 +221,7 @@ export const HullListing = () => {
         if (filter.characterFits && Object.keys(characterFitsGrouped).includes(typeId))
           fits.push(...characterFitsGrouped[typeId]);
         if (fits.length == 0) {
-          if (!filter.currentHull || currentFit.fit?.ship_type_id !== parseInt(typeId)) continue;
+          if (!filter.currentHull || currentFit.fit?.shipTypeId !== parseInt(typeId)) continue;
         }
       } else {
         if (Object.keys(localFitsGrouped).includes(typeId)) fits.push(...localFitsGrouped[typeId]);

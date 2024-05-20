@@ -4,11 +4,20 @@ import React from "react";
 import { CharAttribute, ShipAttribute } from "@/components/ShipAttribute";
 import { useFitManager } from "@/providers/FitManagerProvider";
 import { useEveData } from "@/providers/EveDataProvider";
-import { StatisticsItem, useStatistics } from "@/providers/StatisticsProvider";
+import { useStatistics } from "@/providers/StatisticsProvider";
+import { CalculationItem } from "@/providers/DogmaEngineProvider";
 
 import styles from "./DroneBay.module.css";
 
-const DroneBayEntrySelected = ({ drone, index, isOpen }: { drone: StatisticsItem; index: number; isOpen: boolean }) => {
+const DroneBayEntrySelected = ({
+  drone,
+  index,
+  isOpen,
+}: {
+  drone: CalculationItem;
+  index: number;
+  isOpen: boolean;
+}) => {
   const fitManager = useFitManager();
 
   const onClick = React.useCallback(() => {
@@ -29,7 +38,7 @@ const DroneBayEntrySelected = ({ drone, index, isOpen }: { drone: StatisticsItem
   );
 };
 
-const DroneBayEntry = ({ name, drones }: { name: string; drones: StatisticsItem[] }) => {
+const DroneBayEntry = ({ name, drones }: { name: string; drones: CalculationItem[] }) => {
   const eveData = useEveData();
   const statistics = useStatistics();
   const fitManager = useFitManager();
@@ -93,8 +102,8 @@ export const DroneBay = () => {
   if (eveData === null || statistics === null) return <></>;
 
   /* Group drones by type_id */
-  const dronesGrouped: Record<string, StatisticsItem[]> = {};
-  for (const drone of statistics.items.filter((item) => item.flag == 87)) {
+  const dronesGrouped: Record<string, CalculationItem[]> = {};
+  for (const drone of statistics.items.filter((item) => item.slot.type == "DroneBay")) {
     const name = eveData.typeIDs?.[drone.type_id].name ?? "";
 
     if (dronesGrouped[name] === undefined) {
