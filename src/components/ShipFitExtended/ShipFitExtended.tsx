@@ -5,6 +5,7 @@ import { DroneBay } from "@/components/DroneBay";
 import { Icon } from "@/components/Icon";
 import { ShipAttribute } from "@/components/ShipAttribute";
 import { ShipFit } from "@/components/ShipFit";
+import { FitHistory } from "@/components/FitHistory";
 import { useCurrentFit } from "@/providers/CurrentFitProvider";
 import { useEveData } from "@/providers/EveDataProvider";
 
@@ -102,6 +103,10 @@ export const ShipFitExtended = () => {
       <div className={styles.cargoHold}>
         <ShipCargoHold />
         <ShipDroneBay />
+      </div>
+
+      <div className={styles.history}>
+        <FitHistory historySize={25} />
       </div>
 
       <div className={styles.cpuPg}>

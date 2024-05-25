@@ -1,0 +1,59 @@
+.fitHistory {
+  background-color: #111111;
+  color: #c5c5c5;
+  font-size: 15px;
+  margin: 0 auto;
+  padding: 5px;
+  position: relative;
+}
+
+.title {
+  margin-left: 16px;
+}
+
+.history {
+  display: flex;
+  margin-top: 8px;
+  width: 100%;
+}
+
+.history > img {
+  cursor: pointer;
+  height: 16px;
+  margin-top: 3px;
+  user-select: none;
+}
+
+.holder {
+  border: 1px solid #202020;
+  display: flex;
+  flex: 1;
+  width: 100%;
+}
+
+.entry {
+  background-color: #626262;
+  border-bottom: 3px solid #111111;
+  border-top: 3px solid #111111;
+  box-sizing: border-box;
+  cursor: pointer;
+  height: 19px;
+  margin-left: 3px;
+  user-select: none;
+  width: 9px;
+}
+.entry.odd {
+  background-color: #888888;
+}
+
+.entry.active {
+  background-color: #bfbfbf;
+  border: 0;
+  height: 19px;
+  width: 9px;
+}
+
+.inactive {
+  cursor: default !important;
+  filter: brightness(0.5);
+}

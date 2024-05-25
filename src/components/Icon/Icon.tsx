@@ -6,6 +6,8 @@ const iconMapping = {
   "align-time": "texture/classes/fitting/statsicons/aligntime.png",
   "armor-hp": "texture/classes/fitting/statsicons/armorhp.png",
   "armor-repair-rate": "texture/classes/fitting/statsicons/armorrepairrate.png",
+  "arrow-left": "texture/shared/triangleleft.png",
+  "arrow-right": "texture/shared/triangleright.png",
   "cargo-hold": "texture/windowicons/ships.png",
   "damage-alpha": "texture/classes/fitting/statsicons/alphastrike.png",
   "damage-dps": "texture/classes/fitting/statsicons/turretdps.png",
@@ -52,6 +54,10 @@ export interface IconProps {
   size?: number;
   /** Title of the icon. */
   title?: string;
+  /** Class name of the icon. */
+  className?: string;
+  /** Callback for when icon is clicked. */
+  onClick?: () => void;
 }
 
 /**
@@ -62,5 +68,13 @@ export const Icon = (props: IconProps) => {
   if (icon === undefined) {
     return <span>Unknown icon: {props.name}</span>;
   }
-  return <img src={`${defaultDataUrl}ui/${icon}`} width={props.size} title={props.title} />;
+  return (
+    <img
+      src={`${defaultDataUrl}ui/${icon}`}
+      width={props.size}
+      title={props.title}
+      className={props.className}
+      onClick={props.onClick}
+    />
+  );
 };
