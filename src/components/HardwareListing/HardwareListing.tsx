@@ -229,6 +229,8 @@ export const HardwareListing = () => {
         }
 
         if (filter.hullRestriction && statistics !== null) {
+          const shipType = statistics.hull.type_id;
+
           if (slotType === "Rig") {
             const attributeRigSize = eveData.attributeMapping.rigSize;
             const moduleRigSize = eveData.typeDogma[typeId]?.dogmaAttributes.find(
@@ -240,7 +242,10 @@ export const HardwareListing = () => {
           } else if (slotType === "DroneBay") {
             if (statistics.hull.attributes.get(eveData.attributeMapping.droneBandwidth)?.value === 0) continue;
           } else {
-            const shipType = statistics.hull.type_id;
+            if (slotType === "Low" && statistics.slots.Low === 0) continue;
+            if (slotType === "Medium" && statistics.slots.Medium === 0) continue;
+            if (slotType === "High" && statistics.slots.High === 0) continue;
+            if (slotType === "SubSystem" && statistics.slots.SubSystem === 0) continue;
 
             const volume = module.volume ?? 0;
             if (volume >= 3500) {
@@ -251,56 +256,56 @@ export const HardwareListing = () => {
 
               if (isCapitalSize === undefined || isCapitalSize === 0) continue;
             }
+          }
 
-            const shipGroup = eveData.typeIDs[shipType]?.groupID;
+          const shipGroup = eveData.typeIDs[shipType]?.groupID;
 
-            const canFitShipType = eveData.typeDogma[typeId]?.dogmaAttributes.filter(
-              (attr) =>
-                attr.attributeID === eveData.attributeMapping.fitsToShipType ||
-                attr.attributeID === eveData.attributeMapping.canFitShipType1 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipType2 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipType3 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipType4 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipType5 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipType6 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipType7 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipType8 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipType9 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipType10 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipType11,
-            );
-            /* If there is a restriction, check if this ship matches. */
-            if (canFitShipType.length > 0) {
-              if (canFitShipType.filter((attr) => attr.value === shipType).length === 0) continue;
-            }
+          const canFitShipType = eveData.typeDogma[typeId]?.dogmaAttributes.filter(
+            (attr) =>
+              attr.attributeID === eveData.attributeMapping.fitsToShipType ||
+              attr.attributeID === eveData.attributeMapping.canFitShipType1 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipType2 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipType3 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipType4 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipType5 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipType6 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipType7 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipType8 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipType9 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipType10 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipType11,
+          );
+          /* If there is a restriction, check if this ship matches. */
+          if (canFitShipType.length > 0) {
+            if (canFitShipType.filter((attr) => attr.value === shipType).length === 0) continue;
+          }
 
-            const canFitShipGroup = eveData.typeDogma[typeId]?.dogmaAttributes.filter(
-              (attr) =>
-                attr.attributeID === eveData.attributeMapping.canFitShipGroup01 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipGroup02 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipGroup03 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipGroup04 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipGroup05 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipGroup06 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipGroup07 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipGroup08 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipGroup09 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipGroup10 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipGroup11 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipGroup12 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipGroup13 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipGroup14 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipGroup15 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipGroup16 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipGroup17 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipGroup18 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipGroup19 ||
-                attr.attributeID === eveData.attributeMapping.canFitShipGroup20,
-            );
-            /* If there is a restriction, check if this ship matches. */
-            if (canFitShipGroup.length > 0) {
-              if (canFitShipGroup.filter((attr) => attr.value === shipGroup).length === 0) continue;
-            }
+          const canFitShipGroup = eveData.typeDogma[typeId]?.dogmaAttributes.filter(
+            (attr) =>
+              attr.attributeID === eveData.attributeMapping.canFitShipGroup01 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipGroup02 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipGroup03 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipGroup04 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipGroup05 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipGroup06 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipGroup07 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipGroup08 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipGroup09 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipGroup10 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipGroup11 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipGroup12 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipGroup13 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipGroup14 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipGroup15 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipGroup16 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipGroup17 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipGroup18 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipGroup19 ||
+              attr.attributeID === eveData.attributeMapping.canFitShipGroup20,
+          );
+          /* If there is a restriction, check if this ship matches. */
+          if (canFitShipGroup.length > 0) {
+            if (canFitShipGroup.filter((attr) => attr.value === shipGroup).length === 0) continue;
           }
         }
       } else {
