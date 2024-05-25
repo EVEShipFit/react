@@ -20,6 +20,7 @@ const iconMapping = {
   "fitting-drones": "texture/classes/fitting/filtericondrones.png",
   "fitting-hislot": "texture/classes/fitting/filtericonhighslot.png",
   "fitting-hull": "texture/classes/fitting/tabfittings.png",
+  "fitting-hull-restriction": "texture/classes/fitting/tabfittings.png",
   "fitting-local": "texture/windowicons/note.png",
   "fitting-lowslot": "texture/classes/fitting/filtericonlowslot.png",
   "fitting-medslot": "texture/classes/fitting/filtericonmediumslot.png",
