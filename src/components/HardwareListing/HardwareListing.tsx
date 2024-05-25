@@ -37,8 +37,9 @@ interface Filter {
   lowslot: boolean;
   medslot: boolean;
   hislot: boolean;
-  rig_subsystem: boolean;
+  rigSubsystem: boolean;
   drone: boolean;
+  hullRestriction: boolean;
   moduleWithCharge: ModuleCharge | undefined;
 }
 
@@ -121,8 +122,9 @@ export const HardwareListing = () => {
     lowslot: false,
     medslot: false,
     hislot: false,
-    rig_subsystem: false,
+    rigSubsystem: false,
     drone: false,
+    hullRestriction: false,
     moduleWithCharge: undefined,
   });
   const [selection, setSelection] = React.useState<"modules" | "charges">("modules");
@@ -218,12 +220,88 @@ export const HardwareListing = () => {
 
         if (slotType === undefined) continue;
 
-        if (filter.lowslot || filter.medslot || filter.hislot || filter.rig_subsystem || filter.drone) {
+        if (filter.lowslot || filter.medslot || filter.hislot || filter.rigSubsystem || filter.drone) {
           if (slotType === "Low" && !filter.lowslot) continue;
           if (slotType === "Medium" && !filter.medslot) continue;
           if (slotType === "High" && !filter.hislot) continue;
-          if ((slotType === "Rig" || slotType === "SubSystem") && !filter.rig_subsystem) continue;
+          if ((slotType === "Rig" || slotType === "SubSystem") && !filter.rigSubsystem) continue;
           if (module.categoryID === 18 && !filter.drone) continue;
+        }
+
+        if (filter.hullRestriction && statistics !== null) {
+          if (slotType === "Rig") {
+            const attributeRigSize = eveData.attributeMapping.rigSize;
+            const moduleRigSize = eveData.typeDogma[typeId]?.dogmaAttributes.find(
+              (attr) => attr.attributeID === attributeRigSize,
+            )?.value;
+            const shipRigSize = statistics.hull.attributes.get(attributeRigSize)?.value;
+
+            if (moduleRigSize !== shipRigSize) continue;
+          } else if (slotType === "DroneBay") {
+            if (statistics.hull.attributes.get(eveData.attributeMapping.droneBandwidth)?.value === 0) continue;
+          } else {
+            const shipType = statistics.hull.type_id;
+
+            const volume = module.volume ?? 0;
+            if (volume >= 3500) {
+              /* Modules with a volume of 3500 are considered capitals. */
+              const isCapitalSize = eveData.typeDogma[shipType]?.dogmaAttributes.find(
+                (attr) => attr.attributeID === eveData.attributeMapping.isCapitalSize,
+              )?.value;
+
+              if (isCapitalSize === undefined || isCapitalSize === 0) continue;
+            }
+
+            const shipGroup = eveData.typeIDs[shipType]?.groupID;
+
+            const canFitShipType = eveData.typeDogma[typeId]?.dogmaAttributes.filter(
+              (attr) =>
+                attr.attributeID === eveData.attributeMapping.fitsToShipType ||
+                attr.attributeID === eveData.attributeMapping.canFitShipType1 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipType2 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipType3 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipType4 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipType5 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipType6 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipType7 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipType8 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipType9 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipType10 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipType11,
+            );
+            /* If there is a restriction, check if this ship matches. */
+            if (canFitShipType.length > 0) {
+              if (canFitShipType.filter((attr) => attr.value === shipType).length === 0) continue;
+            }
+
+            const canFitShipGroup = eveData.typeDogma[typeId]?.dogmaAttributes.filter(
+              (attr) =>
+                attr.attributeID === eveData.attributeMapping.canFitShipGroup01 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipGroup02 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipGroup03 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipGroup04 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipGroup05 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipGroup06 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipGroup07 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipGroup08 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipGroup09 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipGroup10 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipGroup11 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipGroup12 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipGroup13 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipGroup14 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipGroup15 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipGroup16 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipGroup17 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipGroup18 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipGroup19 ||
+                attr.attributeID === eveData.attributeMapping.canFitShipGroup20,
+            );
+            /* If there is a restriction, check if this ship matches. */
+            if (canFitShipGroup.length > 0) {
+              if (canFitShipGroup.filter((attr) => attr.value === shipGroup).length === 0) continue;
+            }
+          }
         }
       } else {
         if (filter.moduleWithCharge !== undefined) {
@@ -340,7 +418,7 @@ export const HardwareListing = () => {
       charges: newChargeGroups,
       modules: newModuleGroups,
     };
-  }, [eveData, search, filter]);
+  }, [eveData, search, filter, statistics]);
 
   /* If the moduleWithCharge filter was set, validate if it is still valid. */
   if (
@@ -378,8 +456,8 @@ export const HardwareListing = () => {
           <Icon name="fitting-hislot" size={32} title="Filter: High Slot" />
         </span>
         <span
-          className={clsx({ [styles.selected]: filter.rig_subsystem })}
-          onClick={() => setFilter({ ...filter, rig_subsystem: !filter.rig_subsystem })}
+          className={clsx({ [styles.selected]: filter.rigSubsystem })}
+          onClick={() => setFilter({ ...filter, rigSubsystem: !filter.rigSubsystem })}
         >
           <Icon name="fitting-rig-subsystem" size={32} title="Filter: Rig & Subsystem Slots" />
         </span>
@@ -388,6 +466,12 @@ export const HardwareListing = () => {
           onClick={() => setFilter({ ...filter, drone: !filter.drone })}
         >
           <Icon name="fitting-drones" size={32} title="Filter: Drones" />
+        </span>
+        <span
+          className={clsx({ [styles.selected]: filter.hullRestriction })}
+          onClick={() => setFilter({ ...filter, hullRestriction: !filter.hullRestriction })}
+        >
+          <Icon name="fitting-hull-restriction" size={32} title="Filter: Hull Restrictions" />
         </span>
       </div>
       <div className={clsx(styles.filter, { [styles.collapsed]: selection !== "charges" })}>
