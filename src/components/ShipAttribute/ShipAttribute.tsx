@@ -23,14 +23,17 @@ export function useAttribute(type: "Ship" | "Char", props: AttributeProps) {
   const eveData = useEveData();
   const statistics = useStatistics();
 
-  if (eveData === null || statistics === null) return "";
-
-  const attributeId = eveData.attributeMapping[props.name] ?? 0;
   let value;
-  if (type === "Ship") {
-    value = statistics.hull.attributes.get(attributeId)?.value;
+  if (eveData === null || statistics === null) {
+    value = 0;
   } else {
-    value = statistics.char.attributes.get(attributeId)?.value;
+    const attributeId = eveData.attributeMapping[props.name] ?? 0;
+
+    if (type === "Ship") {
+      value = statistics.hull.attributes.get(attributeId)?.value;
+    } else {
+      value = statistics.char.attributes.get(attributeId)?.value;
+    }
   }
 
   if (value === undefined) {
