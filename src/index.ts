@@ -2,6 +2,7 @@ export * from "./components/CalculationDetail";
 export * from "./components/CharacterSelection";
 export * from "./components/DroneBay";
 export * from "./components/FitButtonBar";
+export * from "./components/FitHistory";
 export * from "./components/HardwareListing";
 export * from "./components/HullListing";
 export * from "./components/Icon";
