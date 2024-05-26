@@ -48,6 +48,9 @@ export const Usage = (props: {
       break;
   }
 
+  /* Don't try to draw more than 100%. */
+  if (usageUsed > usageTotal) usageUsed = usageTotal;
+
   const radius = 232;
   const degrees = props.angle;
   const usageDegrees = (degrees * usageUsed) / usageTotal;
