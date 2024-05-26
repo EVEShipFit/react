@@ -39,6 +39,7 @@
 .line > span {
   flex: 1;
   margin: 0px 5px;
+  white-space: nowrap;
 }
 
 .statistic {
