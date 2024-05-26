@@ -21,7 +21,7 @@ type Story = StoryObj<StoryProps>;
 const TestStory = () => {
   const currentFit = useCurrentFit();
 
-  return <div>Current Fit: {currentFit.fit?.name}</div>;
+  return <div>Current Fit: {currentFit.currentFit?.name}</div>;
 };
 
 export const Default: Story = {

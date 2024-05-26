@@ -26,10 +26,18 @@ interface Statistics extends Calculation {
   slots: StatisticsSlots;
 }
 
-const StatisticsContext = React.createContext<Statistics | null>(null);
+const StatisticsContext = React.createContext<{ statistics: Statistics | null; current: Statistics | null } | null>(
+  null,
+);
 
 export const useStatistics = () => {
-  return React.useContext(StatisticsContext);
+  const statistics = React.useContext(StatisticsContext);
+  return statistics === null ? null : statistics.statistics;
+};
+
+export const useCurrentStatistics = () => {
+  const statistics = React.useContext(StatisticsContext);
+  return statistics === null ? null : statistics.current ?? statistics.statistics;
 };
 
 interface StatisticsProps {
@@ -78,6 +86,10 @@ export const StatisticsProvider = (props: StatisticsProps) => {
   const currentCharacter = useCurrentCharacter();
   const dogmaEngine = useDogmaEngine();
 
+  const [lastStatistics, setLastStatistics] = React.useState<Statistics | null>(null);
+  const lastStatisticsRef = React.useRef<Statistics | null>(lastStatistics);
+  lastStatisticsRef.current = lastStatistics;
+
   const contextValue = React.useMemo(() => {
     const fit = currentFit.fit;
     const skills = currentCharacter.character?.skills;
@@ -101,8 +113,15 @@ export const StatisticsProvider = (props: StatisticsProps) => {
 
     CalculateSlots(eveData, statistics);
 
-    return statistics;
-  }, [eveData, dogmaEngine, currentFit.fit, currentCharacter.character?.skills]);
+    if (!currentFit.isPreview) {
+      setLastStatistics(statistics);
+    }
+
+    return {
+      statistics: statistics,
+      current: currentFit.isPreview ? lastStatisticsRef.current : statistics,
+    };
+  }, [eveData, dogmaEngine, currentFit.fit, currentFit.isPreview, currentCharacter.character?.skills]);
 
   return <StatisticsContext.Provider value={contextValue}>{props.children}</StatisticsContext.Provider>;
 };

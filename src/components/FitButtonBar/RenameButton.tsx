@@ -23,10 +23,10 @@ export const RenameButton = () => {
   }, [fitManager]);
 
   const openRename = React.useCallback(() => {
-    if (currentFit.fit === null) return;
-    setName(currentFit.fit.name);
+    if (currentFit.currentFit === null) return;
+    setName(currentFit.currentFit.name);
     setIsRenameOpen(true);
-  }, [currentFit.fit]);
+  }, [currentFit.currentFit]);
 
   return (
     <>

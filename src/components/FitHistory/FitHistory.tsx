@@ -27,12 +27,14 @@ export const FitHistory = (props: FitHistoryProps) => {
   historySizeRef.current = props.historySize;
 
   React.useEffect(() => {
-    const fit = currentFit.fit;
-    if (fit === null) return;
+    const fit = currentFit.currentFit;
+    if (fit === null || currentFit.isPreview) return;
     /* Store the fit as a JSON string, to ensure that any modifications
      * to the current doesn't impact the history. */
     const fitString = JSON.stringify(fit);
+    /* Do not store fits in the history that have no changes. */
     if (currentIndexRef.current !== -1 && historyRef.current[currentIndexRef.current] === fitString) return;
+    if (historyRef.current.length > 0 && historyRef.current[historyRef.current.length - 1] === fitString) return;
 
     setHistory((prev) => {
       if (prev.length >= historySizeRef.current) {
@@ -42,7 +44,7 @@ export const FitHistory = (props: FitHistoryProps) => {
       return [...prev, fitString];
     });
     setCurrentIndex(-1);
-  }, [currentFit.fit]);
+  }, [currentFit.currentFit, currentFit.isPreview]);
 
   React.useEffect(() => {
     if (currentIndex === -1) return;

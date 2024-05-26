@@ -103,7 +103,7 @@ export const DogmaEngineProvider = (props: DogmaEngineProps) => {
           modules: fit.modules.map((module) => ({
             type_id: module.typeId,
             slot: module.slot,
-            state: module.state,
+            state: module.state === "Preview" ? "Active" : module.state,
             charge:
               module.charge === undefined
                 ? undefined

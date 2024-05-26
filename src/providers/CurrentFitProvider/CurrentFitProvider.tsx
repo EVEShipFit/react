@@ -15,7 +15,7 @@ export interface EsfSlot {
 export interface EsfModule {
   typeId: number;
   slot: EsfSlot;
-  state: EsfState;
+  state: EsfState | "Preview";
   charge?: EsfCharge;
 }
 
@@ -42,13 +42,24 @@ export interface EsfFit {
 }
 
 interface CurrentFit {
+  /** The current fit to render. */
   fit: EsfFit | null;
+  /** The current fit, regardless of preview state. */
+  currentFit: EsfFit | null;
+  /** Whether the fit is a preview. */
+  isPreview: boolean;
+  /** Set the current fit. */
   setFit: React.Dispatch<React.SetStateAction<EsfFit | null>>;
+  /** Set a (temporary) preview fit, for the over-over effect on modules. */
+  setPreview: React.Dispatch<React.SetStateAction<EsfFit | null>>;
 }
 
 const CurrentFitContext = React.createContext<CurrentFit>({
   fit: null,
+  currentFit: null,
+  isPreview: false,
   setFit: () => {},
+  setPreview: () => {},
 });
 
 export const useCurrentFit = () => {
@@ -73,13 +84,17 @@ interface CurrentFitProps {
  */
 export const CurrentFitProvider = (props: CurrentFitProps) => {
   const [currentFit, setCurrentFit] = React.useState<EsfFit | null>(props.initialFit ?? null);
+  const [previewFit, setPreviewFit] = React.useState<EsfFit | null>(null);
 
   const contextValue = React.useMemo(() => {
     return {
-      fit: currentFit,
+      fit: previewFit ?? currentFit,
+      currentFit: currentFit,
+      isPreview: previewFit !== null,
       setFit: setCurrentFit,
+      setPreview: setPreviewFit,
     };
-  }, [currentFit, setCurrentFit]);
+  }, [previewFit, currentFit]);
 
   return <CurrentFitContext.Provider value={contextValue}>{props.children}</CurrentFitContext.Provider>;
 };

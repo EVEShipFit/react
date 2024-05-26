@@ -56,15 +56,20 @@ const OnItemDragStart = (
   };
 };
 
-const PreloadImage = (typeId: number): ((e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void) => {
-  return () => {
-    const img = new Image();
-    img.src = `https://images.evetech.net/types/${typeId}/icon?size=64`;
-  };
-};
-
 const ModuleGroup = (props: { level: number; group: ListingGroup; hideGroup?: boolean }) => {
   const fitManager = useFitManager();
+
+  const PreviewStart = React.useCallback(
+    (typeId: number, slotType: CalculationSlotType): void => {
+      if (slotType === "DroneBay") return;
+      fitManager.addItem(typeId, slotType, true);
+    },
+    [fitManager],
+  );
+
+  const PreviewEnd = React.useCallback((): void => {
+    fitManager.removePreview();
+  }, [fitManager]);
 
   const getChildren = React.useCallback(() => {
     return (
@@ -78,9 +83,13 @@ const ModuleGroup = (props: { level: number; group: ListingGroup; hideGroup?: bo
                 key={item.typeId}
                 level={2}
                 content={item.name}
-                onDoubleClick={() => fitManager.addItem(item.typeId, slotType)}
+                onDoubleClick={() => {
+                  PreviewEnd();
+                  fitManager.addItem(item.typeId, slotType);
+                }}
                 onDragStart={OnItemDragStart(item.typeId, slotType)}
-                onMouseEnter={PreloadImage(item.typeId)}
+                onMouseEnter={() => PreviewStart(item.typeId, slotType)}
+                onMouseLeave={() => PreviewEnd()}
               />
             );
           })}
@@ -95,7 +104,7 @@ const ModuleGroup = (props: { level: number; group: ListingGroup; hideGroup?: bo
           })}
       </>
     );
-  }, [fitManager, props.group, props.level]);
+  }, [fitManager, props.group, props.level, PreviewStart, PreviewEnd]);
 
   if (props.hideGroup) {
     return <TreeListing level={props.level} getChildren={getChildren} />;

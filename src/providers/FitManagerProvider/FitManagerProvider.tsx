@@ -7,13 +7,15 @@ import { useEveData } from "@/providers/EveDataProvider";
 interface FitManager {
   /** Set the current fit. */
   setFit: (fit: EsfFit) => void;
+  /** Remove the preview fit, reverting back to the actual fit. */
+  removePreview: () => void;
   /** Create a new fit of the given ship type. */
   createNewFit: (typeId: number) => void;
   /** Set the name of the current fit. */
   setName: (name: string) => void;
 
   /** Add an item (module, charge, drone) to the fit. */
-  addItem: (typeId: number, slot: EsfSlotType | "DroneBay" | "Charge") => void;
+  addItem: (typeId: number, slot: EsfSlotType | "DroneBay" | "Charge", preview?: boolean) => void;
 
   /** Set a module in a slot. */
   setModule: (slot: EsfSlot, typeId: number) => void;
@@ -37,6 +39,7 @@ interface FitManager {
 
 const FitManagerContext = React.createContext<FitManager>({
   setFit: () => {},
+  removePreview: () => {},
   createNewFit: () => {},
   setName: () => {},
 
@@ -71,11 +74,16 @@ export const FitManagerProvider = (props: FitManagerProps) => {
   const currentFit = useCurrentFit();
   const statistics = useStatistics();
   const setFit = currentFit.setFit;
+  const setPreview = currentFit.setPreview;
+
+  const currentFitRef = React.useRef<EsfFit | null>(currentFit.currentFit);
+  currentFitRef.current = currentFit.currentFit;
 
   const contextValue = React.useMemo(() => {
     if (eveData === null) {
       return {
         setFit: () => {},
+        removePreview: () => {},
         createNewFit: () => {},
         setName: () => {},
 
@@ -98,6 +106,9 @@ export const FitManagerProvider = (props: FitManagerProps) => {
       setFit: (fit: EsfFit) => {
         setFit(fit);
       },
+      removePreview: () => {
+        setPreview(null);
+      },
       createNewFit: (typeId: number) => {
         setFit({
           name: "Unnamed Fit",
@@ -119,8 +130,11 @@ export const FitManagerProvider = (props: FitManagerProps) => {
         });
       },
 
-      addItem: (typeId: number, slot: EsfSlotType | "DroneBay" | "Charge") => {
-        setFit((oldFit: EsfFit | null): EsfFit | null => {
+      addItem: (typeId: number, slot: EsfSlotType | "DroneBay" | "Charge", preview?: boolean) => {
+        const setFitOrPreview = preview ? setPreview : setFit;
+        setFitOrPreview((oldFit: EsfFit | null): EsfFit | null => {
+          /* Previews are always based on the current fit. */
+          if (preview) oldFit = currentFitRef.current;
           if (oldFit === null) return null;
 
           if (slot === "Charge") {
@@ -217,7 +231,7 @@ export const FitManagerProvider = (props: FitManagerProps) => {
                 },
                 typeId: typeId,
                 charge: undefined,
-                state: "Active",
+                state: preview ? "Preview" : "Active",
               },
             ],
           };
@@ -414,7 +428,7 @@ export const FitManagerProvider = (props: FitManagerProps) => {
         });
       },
     };
-  }, [eveData, statistics?.slots, setFit]);
+  }, [eveData, statistics?.slots, setFit, setPreview]);
 
   return <FitManagerContext.Provider value={contextValue}>{props.children}</FitManagerContext.Provider>;
 };

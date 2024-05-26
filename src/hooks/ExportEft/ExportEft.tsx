@@ -22,7 +22,7 @@ export function useExportEft() {
   const statistics = useStatistics();
 
   return (): string | null => {
-    const fit = currentFit.fit;
+    const fit = currentFit.currentFit;
 
     if (eveData === null || fit === null || statistics === null) return null;
 

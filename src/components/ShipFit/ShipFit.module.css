@@ -209,3 +209,7 @@
   transform: rotate(var(--reverse-rotation));
   stroke: #ffffff;
 }
+
+.preview {
+  filter: sepia(100%) hue-rotate(190deg) saturate(200%);
+}

@@ -24,7 +24,7 @@ const TestStory = ({ fit }: { fit: EsfFit | null }) => {
     currentFit.setFit(fit ?? null);
   });
 
-  return <pre>{JSON.stringify(currentFit.fit, null, 2)}</pre>;
+  return <pre>{JSON.stringify(currentFit.currentFit, null, 2)}</pre>;
 };
 
 export const Default: Story = {

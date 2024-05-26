@@ -2,17 +2,17 @@ import clsx from "clsx";
 import React from "react";
 
 import { IconName, Icon } from "@/components/Icon";
-import { useAttribute } from "@/components/ShipAttribute";
+import { ShipAttribute, useAttribute } from "@/components/ShipAttribute";
 
 import styles from "./ShipStatistics.module.css";
 
 export const RechargeRateItem = (props: { name: string; icon: IconName }) => {
-  const stringValue = useAttribute("Ship", {
+  const { value } = useAttribute("Ship", {
     name: props.name,
     fixed: 1,
   });
 
-  if (stringValue == "0.0") {
+  if (value == "0.0") {
     return (
       <span className={styles.statistic}>
         <span>
@@ -28,7 +28,7 @@ export const RechargeRateItem = (props: { name: string; icon: IconName }) => {
       <span>
         <Icon name={props.icon} size={24} />
       </span>
-      <span>{stringValue} hp/s</span>
+      <ShipAttribute name={props.name} fixed={1} unit="hp/s" />
     </span>
   );
 };

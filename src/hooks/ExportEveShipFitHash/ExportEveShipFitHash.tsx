@@ -55,8 +55,8 @@ export function useExportEveShipFitHash(hashOnly?: boolean) {
       setFitHash((hashOnly ? "" : "https://eveship.fit/") + `#fit:${newFitHash}`);
     }
 
-    createHash(currentFit.fit);
-  }, [currentFit.fit, hashOnly]);
+    createHash(currentFit.currentFit);
+  }, [currentFit.currentFit, hashOnly]);
 
   return fitHash;
 }

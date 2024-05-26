@@ -25,11 +25,11 @@ const TestStory = ({ fit }: { fit: EsfFit | null }) => {
   const currentFit = useCurrentFit();
   const statistics = useStatistics();
 
-  if (fit != currentFit.fit) {
+  if (fit != currentFit.currentFit) {
     currentFit.setFit(fit);
   }
 
-  if (currentFit.fit === null) {
+  if (currentFit.currentFit === null) {
     return <div>No fit selected</div>;
   }
   if (statistics === null) {
