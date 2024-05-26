@@ -4,7 +4,7 @@ import React from "react";
 import { defaultDataUrl } from "@/settings";
 import { Icon } from "@/components/Icon";
 import { TreeListing, TreeHeader, TreeLeaf } from "@/components/TreeListing";
-import { useStatistics } from "@/providers/StatisticsProvider";
+import { useCurrentStatistics } from "@/providers/StatisticsProvider";
 import { useFitManager } from "@/providers/FitManagerProvider";
 import { useEveData } from "@/providers/EveDataProvider";
 import { CalculationSlotType } from "@/providers/DogmaEngineProvider";
@@ -124,7 +124,7 @@ const ModuleGroup = (props: { level: number; group: ListingGroup; hideGroup?: bo
  */
 export const HardwareListing = () => {
   const eveData = useEveData();
-  const statistics = useStatistics();
+  const statistics = useCurrentStatistics();
 
   const [search, setSearch] = React.useState<string>("");
   const [filter, setFilter] = React.useState<Filter>({
