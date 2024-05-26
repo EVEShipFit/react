@@ -22,7 +22,7 @@ export const ShipStatistics = () => {
   const statistics = useStatistics();
 
   let capacitorState = "Stable";
-  const isStructure = eveData?.typeIDs[currentFit.fit?.shipTypeId ?? 0]?.categoryID === 65;
+  const isStructure = eveData?.typeIDs[currentFit.currentFit?.shipTypeId ?? 0]?.categoryID === 65;
 
   const attributeId = eveData?.attributeMapping.capacitorDepletesIn ?? 0;
   const capacitorDepletesIn = statistics?.hull.attributes.get(attributeId)?.value;
@@ -55,15 +55,14 @@ export const ShipStatistics = () => {
       >
         <CategoryLine>
           <span>
-            <ShipAttribute name="capacitorCapacity" fixed={1} /> GJ /{" "}
-            <ShipAttribute name="rechargeRate" fixed={2} divideBy={1000} /> s
+            <ShipAttribute name="capacitorCapacity" fixed={1} unit="GJ" /> /{" "}
+            <ShipAttribute name="rechargeRate" fixed={2} divideBy={1000} unit=" s" />
           </span>
         </CategoryLine>
         <CategoryLine>
           <span>
-            Δ <ShipAttribute name="capacitorPeakDelta" fixed={1} /> GJ/s (
-            <ShipAttribute name="capacitorPeakDeltaPercentage" fixed={1} />
-            %)
+            Δ <ShipAttribute name="capacitorPeakDelta" fixed={1} unit="GJ/s" /> (
+            <ShipAttribute name="capacitorPeakDeltaPercentage" fixed={1} unit="%" />)
           </span>
         </CategoryLine>
       </Category>
@@ -72,7 +71,7 @@ export const ShipStatistics = () => {
         headerLabel="Offense"
         headerContent={
           <span>
-            <ShipAttribute name="damageWithoutReloadDps" fixed={1} /> dps
+            <ShipAttribute name="damageWithoutReloadDps" fixed={1} unit="dps" />
           </span>
         }
       >
@@ -82,8 +81,8 @@ export const ShipStatistics = () => {
               <Icon name="damage-dps" size={24} />
             </span>
             <span>
-              <ShipAttribute name="damageWithoutReloadDps" fixed={1} /> dps (
-              <ShipAttribute name="damageWithReloadDps" fixed={1} /> dps)
+              <ShipAttribute name="damageWithoutReloadDps" fixed={1} unit="dps" /> (
+              <ShipAttribute name="damageWithReloadDps" fixed={1} unit="dps" />)
             </span>
           </span>
           <span title="Alpha Strike" className={styles.statistic}>
@@ -91,7 +90,7 @@ export const ShipStatistics = () => {
               <Icon name="damage-alpha" size={24} />
             </span>
             <span>
-              <ShipAttribute name="damageAlphaHp" fixed={0} /> HP
+              <ShipAttribute name="damageAlphaHp" fixed={0} unit="HP" />
             </span>
           </span>
         </CategoryLine>
@@ -101,7 +100,7 @@ export const ShipStatistics = () => {
         headerLabel="Defense"
         headerContent={
           <span>
-            <ShipAttribute name="ehp" fixed={0} roundDown /> ehp
+            <ShipAttribute name="ehp" fixed={0} roundDown unit="ehp" />
           </span>
         }
       >
@@ -128,9 +127,10 @@ export const ShipStatistics = () => {
               <Icon name="shield-hp" size={24} />
             </span>
             <span>
-              <ShipAttribute name="shieldCapacity" fixed={0} roundDown /> hp
+              <ShipAttribute name="shieldCapacity" fixed={0} roundDown unit="hp" />
               <br />
-              <ShipAttribute name="shieldRechargeRate" fixed={0} divideBy={1000} roundDown /> s<br />
+              <ShipAttribute name="shieldRechargeRate" fixed={0} divideBy={1000} roundDown unit="s" />
+              <br />
             </span>
           </span>
           <span style={{ flex: 2 }}>
@@ -146,7 +146,7 @@ export const ShipStatistics = () => {
               <Icon name="armor-hp" size={24} />
             </span>
             <span>
-              <ShipAttribute name="armorHP" fixed={0} roundDown /> hp
+              <ShipAttribute name="armorHP" fixed={0} roundDown unit="hp" />
             </span>
           </span>
           <span style={{ flex: 2 }}>
@@ -162,7 +162,7 @@ export const ShipStatistics = () => {
               <Icon name="hull-hp" size={24} />
             </span>
             <span>
-              <ShipAttribute name="hp" fixed={0} roundDown /> hp
+              <ShipAttribute name="hp" fixed={0} roundDown unit="hp" />
             </span>
           </span>
           <span style={{ flex: 2 }}>
@@ -178,7 +178,7 @@ export const ShipStatistics = () => {
         headerLabel="Targeting"
         headerContent={
           <span>
-            <ShipAttribute name="maxTargetRange" fixed={2} divideBy={1000} /> km
+            <ShipAttribute name="maxTargetRange" fixed={2} divideBy={1000} unit="km" />
           </span>
         }
       >
@@ -188,7 +188,7 @@ export const ShipStatistics = () => {
               <Icon name="sensor-strength" size={24} />
             </span>
             <span>
-              <ShipAttribute name="scanStrength" fixed={2} /> points
+              <ShipAttribute name="scanStrength" fixed={2} unit="points" />
             </span>
           </span>
           <span title="Scan Resolution" className={styles.statistic}>
@@ -196,7 +196,7 @@ export const ShipStatistics = () => {
               <Icon name="scan-resolution" size={24} />
             </span>
             <span>
-              <ShipAttribute name="scanResolution" fixed={0} /> mm
+              <ShipAttribute name="scanResolution" fixed={0} unit="mm" />
             </span>
           </span>
         </CategoryLine>
@@ -206,7 +206,7 @@ export const ShipStatistics = () => {
               <Icon name="signature-radius" size={24} />
             </span>
             <span>
-              <ShipAttribute name="signatureRadius" fixed={0} /> m
+              <ShipAttribute name="signatureRadius" fixed={0} unit="m" />
             </span>
           </span>
           <span title="Maximum Locked Targets" className={styles.statistic}>
@@ -214,7 +214,7 @@ export const ShipStatistics = () => {
               <Icon name="maximum-locked-targets" size={24} />
             </span>
             <span>
-              <ShipAttribute name="maxLockedTargets" fixed={0} />x
+              <ShipAttribute name="maxLockedTargets" fixed={0} unit="x" />
             </span>
           </span>
         </CategoryLine>
@@ -225,7 +225,7 @@ export const ShipStatistics = () => {
           headerLabel="Navigation"
           headerContent={
             <span>
-              <ShipAttribute name="maxVelocity" fixed={1} /> m/s
+              <ShipAttribute name="maxVelocity" fixed={1} unit="m/s" />
             </span>
           }
         >
@@ -235,7 +235,7 @@ export const ShipStatistics = () => {
                 <Icon name="mass" size={24} />
               </span>
               <span>
-                <ShipAttribute name="mass" fixed={2} divideBy={1000} /> t
+                <ShipAttribute name="mass" fixed={2} divideBy={1000} unit="t" />
               </span>
             </span>
             <span title="Inertia Modifier" className={styles.statistic}>
@@ -243,7 +243,7 @@ export const ShipStatistics = () => {
                 <Icon name="inertia-modifier" size={24} />
               </span>
               <span>
-                <ShipAttribute name="agility" fixed={4} />x
+                <ShipAttribute name="agility" fixed={4} unit="x" />
               </span>
             </span>
           </CategoryLine>
@@ -253,7 +253,7 @@ export const ShipStatistics = () => {
                 <Icon name="warp-speed" size={24} />
               </span>
               <span>
-                <ShipAttribute name="warpSpeedMultiplier" fixed={2} /> AU/s
+                <ShipAttribute name="warpSpeedMultiplier" fixed={2} unit="AU/s" />
               </span>
             </span>
             <span title="Align Time" className={styles.statistic}>
@@ -261,7 +261,7 @@ export const ShipStatistics = () => {
                 <Icon name="align-time" size={24} />
               </span>
               <span>
-                <ShipAttribute name="alignTime" fixed={2} />s
+                <ShipAttribute name="alignTime" fixed={2} unit="s" />
               </span>
             </span>
           </CategoryLine>
@@ -273,7 +273,7 @@ export const ShipStatistics = () => {
           headerLabel="Drones"
           headerContent={
             <span>
-              <ShipAttribute name="droneDamageDps" fixed={1} /> dps
+              <ShipAttribute name="droneDamageDps" fixed={1} unit="dps" />
             </span>
           }
         >
@@ -292,7 +292,7 @@ export const ShipStatistics = () => {
                 <Icon name="inertia-modifier" size={24} />
               </span>
               <span>
-                <CharAttribute name="droneControlDistance" fixed={2} divideBy={1000} /> km
+                <CharAttribute name="droneControlDistance" fixed={2} divideBy={1000} unit="km" />
               </span>
             </span>
           </CategoryLine>

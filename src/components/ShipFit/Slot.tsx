@@ -1,3 +1,4 @@
+import clsx from "clsx";
 import React from "react";
 
 import { Icon, IconName } from "@/components/Icon";
@@ -5,7 +6,7 @@ import { useEveData } from "@/providers/EveDataProvider";
 import { useStatistics } from "@/providers/StatisticsProvider";
 import { useFitManager } from "@/providers/FitManagerProvider";
 import { CalculationSlot } from "@/providers/DogmaEngineProvider";
-import { EsfSlot, EsfSlotType, EsfState } from "@/providers/CurrentFitProvider";
+import { EsfSlot, EsfSlotType, EsfState, useCurrentFit } from "@/providers/CurrentFitProvider";
 
 import styles from "./ShipFit.module.css";
 
@@ -20,8 +21,12 @@ export const Slot = (props: { type: EsfSlotType; index: number; fittable: boolea
   const eveData = useEveData();
   const statistics = useStatistics();
   const fitManager = useFitManager();
+  const currentFit = useCurrentFit();
 
   const module = statistics?.items.find((item) => item.slot.type === props.type && item.slot.index === props.index);
+  const fitModule = currentFit?.fit?.modules.find(
+    (item) => item.slot.type === props.type && item.slot.index === props.index,
+  );
   const active = module?.max_state !== "Passive" && module?.max_state !== "Online";
 
   const offlineState = React.useCallback(
@@ -199,8 +204,12 @@ export const Slot = (props: { type: EsfSlotType; index: number; fittable: boolea
         preserveAspectRatio="xMidYMin slice"
       >
         <use href="#slot" />
-        {props.fittable && module !== undefined && active && <use href="#slot-active" />}
-        {props.fittable && module !== undefined && !active && <use href="#slot-passive" />}
+        {props.fittable && fitModule?.state !== "Preview" && module !== undefined && active && (
+          <use href="#slot-active" />
+        )}
+        {props.fittable && fitModule?.state !== "Preview" && module !== undefined && !active && (
+          <use href="#slot-passive" />
+        )}
       </svg>
     </>
   );
@@ -233,6 +242,7 @@ export const Slot = (props: { type: EsfSlotType; index: number; fittable: boolea
           title={eveData.typeIDs[module.type_id].name}
           draggable={true}
           onDragStart={onDragStart}
+          className={clsx({ [styles.preview]: fitModule?.state === "Preview" })}
         />
       );
     }

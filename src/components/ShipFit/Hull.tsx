@@ -10,11 +10,11 @@ export interface ShipFitProps {
 
 export const Hull = () => {
   const currentFit = useCurrentFit();
-  if (currentFit.fit === null) {
+  if (currentFit.currentFit === null) {
     return <></>;
   }
 
-  const shipTypeId = currentFit.fit.shipTypeId;
+  const shipTypeId = currentFit.currentFit.shipTypeId;
   if (shipTypeId === undefined) {
     return <></>;
   }

@@ -16,13 +16,13 @@ export const SaveButton = () => {
 
   const saveBrowser = React.useCallback(
     (force?: boolean) => {
-      if (currentFit.fit === null) return;
+      if (currentFit.currentFit === null) return;
 
       setIsPopupOpen(false);
 
       if (!force) {
         for (const fit of localFits.fittings) {
-          if (fit.name === currentFit.fit.name) {
+          if (fit.name === currentFit.currentFit.name) {
             setIsAlreadyExistsOpen(true);
             return;
           }
@@ -30,9 +30,9 @@ export const SaveButton = () => {
       }
 
       setIsAlreadyExistsOpen(false);
-      localFits.addFit(currentFit.fit);
+      localFits.addFit(currentFit.currentFit);
     },
-    [localFits, currentFit.fit],
+    [localFits, currentFit.currentFit],
   );
 
   return (
@@ -60,7 +60,7 @@ export const SaveButton = () => {
       >
         <div>
           <div>
-            You have a local fitting with the name &quot;{currentFit.fit?.name}&quot;; do you want to update it?
+            You have a local fitting with the name &quot;{currentFit.currentFit?.name}&quot;; do you want to update it?
           </div>
           <div className={styles.alreadyExistsButtons}>
             <span className={clsx(styles.button, styles.buttonSmall)} onClick={() => saveBrowser(true)}>

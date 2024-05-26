@@ -1,11 +1,11 @@
 import React from "react";
 
-import { useAttribute } from "@/components/ShipAttribute";
+import { ShipAttribute, useAttribute } from "@/components/ShipAttribute";
 
 import styles from "./ShipStatistics.module.css";
 
 export const Resistance = (props: { name: string }) => {
-  const stringValue = useAttribute("Ship", {
+  const { value } = useAttribute("Ship", {
     name: props.name,
     fixed: 0,
     isResistance: true,
@@ -25,8 +25,8 @@ export const Resistance = (props: { name: string }) => {
 
   return (
     <span className={styles.resistance}>
-      <span className={styles.resistanceProgress} data-type={type} style={{ width: `${stringValue}%` }}></span>
-      <span>{stringValue} %</span>
+      <span className={styles.resistanceProgress} data-type={type} style={{ width: `${value}%` }}></span>
+      <ShipAttribute name={props.name} fixed={0} unit=" %" isResistance={true} />
     </span>
   );
 };

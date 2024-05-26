@@ -36,7 +36,7 @@ const ShipDroneBay = () => {
 
   if (eveData === null) return <></>;
 
-  const isStructure = eveData.typeIDs[currentFit.fit?.shipTypeId ?? 0]?.categoryID === 65;
+  const isStructure = eveData.typeIDs[currentFit.currentFit?.shipTypeId ?? 0]?.categoryID === 65;
 
   return (
     <>
@@ -77,7 +77,7 @@ const FitName = () => {
   return (
     <>
       <div className={styles.fitNameTitle}>Name</div>
-      <div className={styles.fitNameContent}>{currentFit.fit?.name}</div>
+      <div className={styles.fitNameContent}>{currentFit.currentFit?.name}</div>
     </>
   );
 };
@@ -118,7 +118,7 @@ export const ShipFitExtended = () => {
         </CpuPg>
       </div>
 
-      {currentFit.fit === null && <div className={styles.empty}>To start, select a hull on the left.</div>}
+      {currentFit.currentFit === null && <div className={styles.empty}>To start, select a hull on the left.</div>}
     </div>
   );
 };

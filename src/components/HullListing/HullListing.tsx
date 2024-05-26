@@ -213,7 +213,7 @@ export const HullListing = () => {
       if (hull.marketGroupID === undefined) continue;
       if (!hull.published) continue;
 
-      if (filter.currentHull && currentFit.fit?.shipTypeId !== parseInt(typeId)) continue;
+      if (filter.currentHull && currentFit.currentFit?.shipTypeId !== parseInt(typeId)) continue;
 
       const fits: ListingFit[] = [];
       if (anyFilter) {
@@ -221,7 +221,7 @@ export const HullListing = () => {
         if (filter.characterFits && Object.keys(characterFitsGrouped).includes(typeId))
           fits.push(...characterFitsGrouped[typeId]);
         if (fits.length == 0) {
-          if (!filter.currentHull || currentFit.fit?.shipTypeId !== parseInt(typeId)) continue;
+          if (!filter.currentHull || currentFit.currentFit?.shipTypeId !== parseInt(typeId)) continue;
         }
       } else {
         if (Object.keys(localFitsGrouped).includes(typeId)) fits.push(...localFitsGrouped[typeId]);
