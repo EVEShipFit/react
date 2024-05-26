@@ -275,11 +275,6 @@ export const HardwareListing = () => {
               attr.attributeID === eveData.attributeMapping.canFitShipType10 ||
               attr.attributeID === eveData.attributeMapping.canFitShipType11,
           );
-          /* If there is a restriction, check if this ship matches. */
-          if (canFitShipType.length > 0) {
-            if (canFitShipType.filter((attr) => attr.value === shipType).length === 0) continue;
-          }
-
           const canFitShipGroup = eveData.typeDogma[typeId]?.dogmaAttributes.filter(
             (attr) =>
               attr.attributeID === eveData.attributeMapping.canFitShipGroup01 ||
@@ -303,9 +298,13 @@ export const HardwareListing = () => {
               attr.attributeID === eveData.attributeMapping.canFitShipGroup19 ||
               attr.attributeID === eveData.attributeMapping.canFitShipGroup20,
           );
-          /* If there is a restriction, check if this ship matches. */
-          if (canFitShipGroup.length > 0) {
-            if (canFitShipGroup.filter((attr) => attr.value === shipGroup).length === 0) continue;
+
+          /* If there is a fit restriction, check if this ship matches. */
+          if (canFitShipType.length > 0 || canFitShipGroup.length > 0) {
+            const fitGroup = canFitShipGroup.find((attr) => attr.value === shipGroup);
+            const fitType = canFitShipType.find((attr) => attr.value === shipType);
+
+            if (fitGroup === undefined && fitType === undefined) continue;
           }
         }
       } else {
