@@ -1,4 +1,5 @@
 export * from "./components/CalculationDetail";
+export * from "./components/CargoBay";
 export * from "./components/CharacterSelection";
 export * from "./components/DroneBay";
 export * from "./components/FitButtonBar";

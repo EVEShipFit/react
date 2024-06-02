@@ -19,6 +19,8 @@ export interface AttributeProps {
   divideBy?: number;
   /** Whether to forcefully round down. */
   roundDown?: boolean;
+  /** Whether to forcefully round up. */
+  roundUp?: boolean;
 }
 
 export enum AttributeChange {
@@ -44,7 +46,10 @@ export function useAttribute(type: "Ship" | "Char", props: AttributeProps): { va
     value = 0;
     currentValue = 0;
   } else {
-    if (type === "Ship") {
+    if (type === "Ship" && props.name === "capacityUsed") {
+      value = statistics.capacityUsed;
+      currentValue = currentStatistics?.capacityUsed;
+    } else if (type === "Ship") {
       value = statistics.hull.attributes.get(attributeId)?.value;
       currentValue = currentStatistics?.hull.attributes.get(attributeId)?.value;
     } else {
@@ -82,7 +87,7 @@ export function useAttribute(type: "Ship" | "Char", props: AttributeProps): { va
 
   const k = Math.pow(10, props.fixed);
   if (k > 0) {
-    if (props.isResistance) {
+    if (props.isResistance || props.roundUp) {
       value -= 1 / k / 10;
       value = Math.ceil(value * k) / k;
     } else if (props.roundDown) {

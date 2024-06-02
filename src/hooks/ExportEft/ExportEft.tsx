@@ -60,6 +60,9 @@ export function useExportEft() {
       eft += "\n";
     }
 
+    /* Add an "end-of-modules" marker by having two newlines. */
+    eft += "\n";
+
     for (const drone of fit.drones) {
       const droneType = eveData.typeIDs[drone.typeId];
       if (droneType === undefined) continue;
@@ -70,8 +73,18 @@ export function useExportEft() {
       }
       eft += "\n";
     }
+    eft += "\n";
 
-    return eft;
+    for (const cargo of fit.cargo) {
+      const cargoType = eveData.typeIDs[cargo.typeId];
+      if (cargoType === undefined) continue;
+
+      eft += `${cargoType.name} x${cargo.quantity}`;
+      eft += "\n";
+    }
+    eft += "\n";
+
+    return eft.trim() + "\n";
   };
 }
 

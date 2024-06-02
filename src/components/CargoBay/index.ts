@@ -1,0 +1,1 @@
+export { CargoBay } from "./CargoBay";
