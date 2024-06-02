@@ -12,6 +12,7 @@ export * from "./components/ShipFit";
 export * from "./components/ShipFitExtended";
 export * from "./components/ShipStatistics";
 export * from "./components/TreeListing";
+export * from "./hooks/CleanImportFit";
 export * from "./hooks/Clipboard";
 export * from "./hooks/ExportEft";
 export * from "./hooks/ExportEveShipFitHash";

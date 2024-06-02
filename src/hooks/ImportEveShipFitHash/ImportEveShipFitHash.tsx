@@ -1,6 +1,7 @@
 import React from "react";
 
 import { EsfFit } from "@/providers/CurrentFitProvider";
+import { useCleanImportFit } from "@/hooks/CleanImportFit";
 
 import { decodeEsfFitV1 } from "./DecodeEsfFitV1";
 import { decodeEsfFitV2 } from "./DecodeEsfFitV2";
@@ -14,6 +15,7 @@ import { useFetchKillMail } from "./DecodeKillMail";
 export function useImportEveShipFitHash() {
   const fetchKillMail = useFetchKillMail();
   const decodeEft = useDecodeEft();
+  const cleanImportFit = useCleanImportFit();
 
   return async (fitHash: string): Promise<EsfFit | undefined | null> => {
     const fitPrefix = fitHash.split(":")[0];
@@ -40,6 +42,11 @@ export function useImportEveShipFitHash() {
         fit = await decodeEft(fitEncoded);
         break;
     }
+
+    if (fit !== null && fit !== undefined) {
+      fit = cleanImportFit(fit);
+    }
+
     return fit;
   };
 }

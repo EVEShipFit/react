@@ -2,6 +2,7 @@ import React from "react";
 
 import { EsfFit, EsfSlotType } from "@/providers/CurrentFitProvider";
 import { useEveData } from "@/providers/EveDataProvider";
+import { useCleanImportFit } from "@/hooks/CleanImportFit";
 
 /** Mapping between dogma effect IDs and slot types. */
 const effectIdMapping: Record<number, EsfSlotType | "DroneBay"> = {
@@ -20,6 +21,7 @@ const attributeIdMapping: Record<number, EsfSlotType | "DroneBay"> = {
  */
 export function useImportEft() {
   const eveData = useEveData();
+  const cleanImportFit = useCleanImportFit();
 
   return (eft: string): EsfFit | null => {
     if (eveData === null) return null;
@@ -148,7 +150,7 @@ export function useImportEft() {
       slotIndex[slotType]++;
     }
 
-    return fit;
+    return cleanImportFit(fit);
   };
 }
 
