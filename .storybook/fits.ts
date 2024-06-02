@@ -31,7 +31,17 @@ Loki Defensive - Covert Reconfiguration
 Loki Offensive - Launcher Efficiency Configuration
 Loki Propulsion - Wake Limiter
 
+
 Hammerhead II x1
+
+Covert Ops Cloaking Device II x2
+Nova Javelin Heavy Assault Missile x9000
+Nova Rage Heavy Assault Missile x9000
+Sisters Combat Scanner Probe x16
+Scourge Rage Heavy Assault Missile x330
+Sisters Core Scanner Probe x16
+Nanite Repair Paste x150
+'Packrat' Mobile Tractor Unit x1
 `,
 };
 

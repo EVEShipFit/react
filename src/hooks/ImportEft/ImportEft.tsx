@@ -67,10 +67,20 @@ export function useImportEft() {
       SubSystem: 1,
     };
 
-    let lastSlotType: EsfSlotType | "DroneBay" | undefined = undefined;
+    let lastSlotType: EsfSlotType | "DroneBay" | "CargoBay" | undefined = undefined;
+    let endOfModulesMarker = undefined;
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i];
-      if (line.trim() === "") continue;
+      if (line.trim() === "") {
+        /** Look for two empty newlines in a row. After this, no more high/med/low slot items will be presented. */
+        if (endOfModulesMarker === undefined) {
+          endOfModulesMarker = false;
+        } else if (endOfModulesMarker === false) {
+          endOfModulesMarker = true;
+        }
+        continue;
+      }
+      if (endOfModulesMarker !== true) endOfModulesMarker = undefined;
 
       /* Format is either of these:
        * - [Empty ...]
@@ -82,7 +92,7 @@ export function useImportEft() {
        */
 
       if (line.startsWith("[") || line.startsWith("  ")) {
-        if (lastSlotType !== undefined && lastSlotType !== "DroneBay") {
+        if (lastSlotType !== undefined && lastSlotType !== "DroneBay" && lastSlotType !== "CargoBay") {
           slotIndex[lastSlotType]++;
         }
         continue;
@@ -102,7 +112,7 @@ export function useImportEft() {
       const attributes = eveData.typeDogma[itemTypeId]?.dogmaAttributes;
 
       /* Find what type of slot this item goes into. */
-      let slotType: EsfSlotType | "DroneBay" | undefined = undefined;
+      let slotType: EsfSlotType | "DroneBay" | "CargoBay" | undefined = undefined;
       if (slotType === undefined && effects !== undefined) {
         for (const effectId in effects) {
           slotType = effectIdMapping[effects[effectId].effectID];
@@ -114,6 +124,9 @@ export function useImportEft() {
           slotType = attributeIdMapping[attributes[attributeId].attributeID];
           if (slotType) break;
         }
+      }
+      if (endOfModulesMarker === true && slotType !== "DroneBay") {
+        slotType = "CargoBay";
       }
 
       /* Ignore items we don't care about. */
@@ -134,6 +147,14 @@ export function useImportEft() {
             Active: itemCount,
             Passive: 0,
           },
+        });
+        continue;
+      }
+
+      if (slotType === "CargoBay") {
+        fit.cargo.push({
+          typeId: itemTypeId,
+          quantity: itemCount,
         });
         continue;
       }

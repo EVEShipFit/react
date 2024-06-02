@@ -1,0 +1,42 @@
+.cargoBay {
+  background-color: #111111;
+  border: 1px solid #333333;
+  color: #c5c5c5;
+  font-size: 15px;
+  padding: 5px;
+  position: relative;
+}
+
+.cargoBayEntry {
+  display: flex;
+  height: 32px;
+  padding: 4px;
+}
+.cargoBayEntry:hover {
+  background-color: #321d1d;
+}
+
+.cargoBayEntry > div {
+  margin-right: 8px;
+}
+
+.cargoBayEntry .middle {
+  flex-grow: 1;
+}
+
+.cargoBayEntry .amount {
+  line-height: 32px;
+  text-align: right;
+  width: 50px;
+}
+
+.cargoBayEntry .name {
+  line-height: 32px;
+  text-align: center;
+}
+
+.cargoBayEntry .close {
+  color: #909090;
+  cursor: pointer;
+  line-height: 32px;
+}

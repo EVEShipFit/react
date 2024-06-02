@@ -35,6 +35,11 @@ interface FitManager {
   activateDrones: (typeId: number, amount: number) => void;
   /** Remove all drones of a given type. */
   removeDrones: (typeId: number) => void;
+
+  /** Add a cargo item. */
+  addCargo: (typeId: number, amount: number) => void;
+  /** Remove a cargo item. */
+  removeCargo: (typeId: number) => void;
 }
 
 const FitManagerContext = React.createContext<FitManager>({
@@ -55,6 +60,9 @@ const FitManagerContext = React.createContext<FitManager>({
 
   activateDrones: () => {},
   removeDrones: () => {},
+
+  addCargo: () => {},
+  removeCargo: () => {},
 });
 
 export const useFitManager = () => {
@@ -99,6 +107,9 @@ export const FitManagerProvider = (props: FitManagerProps) => {
 
         activateDrones: () => {},
         removeDrones: () => {},
+
+        addCargo: () => {},
+        removeCargo: () => {},
       };
     }
 
@@ -424,6 +435,48 @@ export const FitManagerProvider = (props: FitManagerProps) => {
           return {
             ...oldFit,
             drones: oldFit.drones.filter((item) => item.typeId !== typeId),
+          };
+        });
+      },
+
+      addCargo: (typeId: number, amount: number) => {
+        setFit((oldFit: EsfFit | null): EsfFit | null => {
+          if (oldFit === null) return null;
+
+          const cargo = oldFit.cargo;
+          const index = cargo.findIndex((item) => item.typeId === typeId);
+
+          if (index === -1) {
+            return {
+              ...oldFit,
+              cargo: [
+                ...cargo,
+                {
+                  typeId,
+                  quantity: amount,
+                },
+              ],
+            };
+          }
+
+          const newCargo = [...cargo];
+          newCargo[index].quantity += amount;
+
+          return {
+            ...oldFit,
+            cargo: newCargo,
+          };
+        });
+      },
+      removeCargo: (typeId: number) => {
+        setFit((oldFit: EsfFit | null): EsfFit | null => {
+          if (oldFit === null) return null;
+          console.log(oldFit.cargo, typeId);
+          console.log(oldFit.cargo.filter((item) => item.typeId !== typeId));
+
+          return {
+            ...oldFit,
+            cargo: oldFit.cargo.filter((item) => item.typeId !== typeId),
           };
         });
       },

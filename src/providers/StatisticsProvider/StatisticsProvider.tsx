@@ -1,7 +1,7 @@
 import React from "react";
 
 import { EveData, useEveData } from "@/providers/EveDataProvider";
-import { useCurrentFit } from "@/providers/CurrentFitProvider";
+import { EsfFit, useCurrentFit } from "@/providers/CurrentFitProvider";
 import { useCurrentCharacter } from "@/providers/CurrentCharacterProvider";
 import { Calculation, useDogmaEngine } from "@/providers/DogmaEngineProvider";
 
@@ -24,6 +24,7 @@ const SlotAttributeMapping: Record<StatisticsSlotType, [string, string | null]> 
 
 interface Statistics extends Calculation {
   slots: StatisticsSlots;
+  capacityUsed: number;
 }
 
 const StatisticsContext = React.createContext<{ statistics: Statistics | null; current: Statistics | null } | null>(
@@ -73,6 +74,18 @@ const CalculateSlots = (eveData: EveData, statistics: Statistics) => {
   if (statistics.slots.SubSystem === 5) statistics.slots.SubSystem = 4;
 };
 
+const CalculateCargoBay = (eveData: EveData, fit: EsfFit): number => {
+  /* Calculate the volume of all cargo. */
+  const cargoVolume = fit.cargo.reduce((acc, cargo) => {
+    const type = eveData.typeIDs[cargo.typeId];
+    if (type === undefined) return acc;
+
+    return acc + (type.volume ?? 0) * cargo.quantity;
+  }, 0);
+
+  return cargoVolume;
+};
+
 /**
  * Calculates and keeps the statistics of the current fit.
  *
@@ -109,9 +122,11 @@ export const StatisticsProvider = (props: StatisticsProps) => {
         Launcher: 0,
         Turret: 0,
       },
+      capacityUsed: 0,
     };
 
     CalculateSlots(eveData, statistics);
+    statistics.capacityUsed = CalculateCargoBay(eveData, fit);
 
     if (!currentFit.isPreview) {
       setLastStatistics(statistics);

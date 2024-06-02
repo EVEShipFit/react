@@ -56,21 +56,28 @@
   margin-left: 5px;
 }
 
-.droneBay {
+.droneBay,
+.cargoBay {
   cursor: pointer;
   position: relative;
+  user-select: none;
   z-index: 100;
 }
-.droneBayOverlay {
+.droneBayOverlay,
+.cargoBayOverlay {
   display: none;
   position: absolute;
   bottom: 40px;
   left: 10px;
-  width: 350px;
+  width: 450px;
   z-index: 101;
 }
-.droneBayVisible {
+.droneBayVisible,
+.cargoBayVisible {
   display: block;
+}
+.cargoBayOverlay {
+  bottom: 80px;
 }
 
 .empty {
