@@ -97,11 +97,9 @@ export const fullFits: EsfFit[] = [
     shipTypeId: 29984,
     description: "",
     cargo: [
-      { quantity: 1, typeId: 35794 },
-      { quantity: 1, typeId: 35794 },
+      { quantity: 2, typeId: 35794 },
       { quantity: 1, typeId: 35795 },
       { quantity: 3720, typeId: 24492 },
-      { quantity: 396, typeId: 24492 },
       { quantity: 5472, typeId: 2679 },
       { quantity: 8, typeId: 30486 },
     ],

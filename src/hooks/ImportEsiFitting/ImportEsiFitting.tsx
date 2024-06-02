@@ -2,7 +2,8 @@ import React from "react";
 
 import { EsfCargo, EsfDrone, EsfFit, EsfModule } from "@/providers/CurrentFitProvider";
 import { useEveData } from "@/providers/EveDataProvider";
-import { esiFlagToEsfSlot } from "../ImportEveShipFitHash";
+import { esiFlagToEsfSlot } from "@/hooks/ImportEveShipFitHash";
+import { useCleanImportFit } from "@/hooks/CleanImportFit";
 
 export interface EsiFit {
   name: string;
@@ -21,6 +22,7 @@ export interface EsiFit {
  */
 export function useImportEsiFitting() {
   const eveData = useEveData();
+  const cleanImportFit = useCleanImportFit();
 
   return (esiFit: EsiFit): EsfFit | null => {
     if (eveData === null) return null;
@@ -63,14 +65,14 @@ export function useImportEsiFitting() {
       })
       .filter((item): item is EsfCargo => item !== undefined);
 
-    const fit: EsfFit = {
+    const fit: EsfFit = cleanImportFit({
       name: esiFit.name,
       description: esiFit.description,
       shipTypeId: esiFit.ship_type_id,
       modules,
       drones,
       cargo,
-    };
+    });
 
     return fit;
   };
