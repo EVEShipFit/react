@@ -34,8 +34,11 @@
 }
 
 .hull > img {
+  align-items: center;
   border-radius: 50%;
+  display: flex;
   height: calc(100% - 2 * 3%);
+  justify-content: space-evenly;
   left: 3%;
   opacity: 0.8;
   position: relative;
