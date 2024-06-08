@@ -20,7 +20,7 @@ import styles from "./ShipFit.module.css";
 /**
  * Render a ship fit similar to how it is done in-game.
  */
-export const ShipFit = (props: { withStats?: boolean }) => {
+export const ShipFit = (props: { withStats?: boolean; isPreview?: boolean }) => {
   const eveData = useEveData();
   const statistics = useStatistics();
 
@@ -55,7 +55,7 @@ export const ShipFit = (props: { withStats?: boolean }) => {
       <RingInner />
 
       <Hull />
-      <FitLink />
+      <FitLink isPreview={props.isPreview} />
 
       <RingTop>
         {props.withStats && (
