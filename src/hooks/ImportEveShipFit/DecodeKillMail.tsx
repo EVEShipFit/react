@@ -6,11 +6,11 @@ import { esiFlagToEsfSlot } from "./EsiFlags";
 export function useFetchKillMail() {
   const eveData = useEveData();
 
-  return async (killMailHash: string): Promise<EsfFit | null> => {
+  return async (killMailIdHash: string): Promise<EsfFit | null> => {
     if (eveData === null) return null;
 
-    /* The hash is in the format "id/hash". */
-    const [killmailId, killmailHash] = killMailHash.split("/", 2);
+    /* The string is in the format "id/hash". */
+    const [killmailId, killmailHash] = killMailIdHash.split("/", 2);
 
     /* Fetch the killmail from ESI. */
     const response = await fetch(`https://esi.evetech.net/v1/killmails/${killmailId}/${killmailHash}/`);

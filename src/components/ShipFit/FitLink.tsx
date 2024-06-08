@@ -1,12 +1,12 @@
 import React from "react";
 
 import { useClipboard } from "@/hooks/Clipboard";
-import { useExportEveShipFitHash } from "@/hooks/ExportEveShipFitHash";
+import { useExportEveShipFit } from "@/hooks/ExportEveShipFit";
 
 import styles from "./ShipFit.module.css";
 
 export const FitLink = (props: { isPreview?: boolean }) => {
-  const link = useExportEveShipFitHash();
+  const link = useExportEveShipFit();
   const { copy, copied } = useClipboard();
 
   const isRemote = typeof window !== "undefined";

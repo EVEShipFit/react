@@ -6,12 +6,12 @@ import { useFitSelection, withDecoratorFull } from "../../../.storybook/helpers"
 
 import { EsfFit } from "@/providers/CurrentFitProvider";
 
-import { ExportEveShipFitHash } from "./ExportEveShipFitHash";
+import { ExportEveShipFit } from "./ExportEveShipFit";
 
-type StoryProps = React.ComponentProps<typeof ExportEveShipFitHash> & { fit: EsfFit | null };
+type StoryProps = React.ComponentProps<typeof ExportEveShipFit> & { fit: EsfFit | null };
 
 const meta: Meta<StoryProps> = {
-  component: ExportEveShipFitHash,
+  component: ExportEveShipFit,
   tags: ["autodocs"],
 };
 
@@ -29,6 +29,6 @@ export const Default: Story = {
   render: ({ fit, ...args }) => {
     useFitSelection(fit);
 
-    return <ExportEveShipFitHash {...args} />;
+    return <ExportEveShipFit {...args} />;
   },
 };

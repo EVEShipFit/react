@@ -10,22 +10,19 @@ import { useDecodeEft } from "./DecodeEft";
 import { useFetchKillMail } from "./DecodeKillMail";
 
 /**
- * Convert a hash from window.location.hash to an ESI fit.
+ * Convert a encoded ESF fit to an ESF fit.
  */
-export function useImportEveShipFitHash() {
+export function useImportEveShipFit() {
   const fetchKillMail = useFetchKillMail();
   const decodeEft = useDecodeEft();
   const cleanImportFit = useCleanImportFit();
 
-  return async (fitHash: string): Promise<EsfFit | undefined | null> => {
-    const fitPrefix = fitHash.split(":")[0];
-    const fitVersion = fitHash.split(":")[1];
-    const fitEncoded = fitHash.split(":")[2];
-
-    if (fitPrefix !== "fit") return null;
+  return async (esfEncoded: string): Promise<EsfFit | undefined | null> => {
+    const esfType = esfEncoded.split(":")[0];
+    const fitEncoded = esfEncoded.split(":")[1];
 
     let fit = undefined;
-    switch (fitVersion) {
+    switch (esfType) {
       case "v1":
         fit = await decodeEsfFitV1(fitEncoded);
         break;
@@ -51,38 +48,38 @@ export function useImportEveShipFitHash() {
   };
 }
 
-export interface ImportEveShipFitHashProps {
-  /** The hash of the fit string. */
-  fitHash: string;
+export interface ImportEveShipFitProps {
+  /** The encoded ESF value. */
+  esfEncoded: string;
 }
 
 /**
- * `importEveShipFitHash` converts a hash from window.location.hash to an ESF fit.
+ * `importEveShipFit` converts a encoded ESF to an ESF fit.
  *
- * Note: do not use this React component itself, but the importEveShipFitHash() function instead.
+ * Note: do not use this React component itself, but the importEveShipFit() function instead.
  */
-export const ImportEveShipFitHash = (props: ImportEveShipFitHashProps) => {
-  const importEveShipFitHash = useImportEveShipFitHash();
+export const ImportEveShipFit = (props: ImportEveShipFitProps) => {
+  const importEveShipFit = useImportEveShipFit();
   const [fit, setFit] = React.useState<EsfFit | null | undefined>(undefined);
 
-  const importEveShipFitHashRef = React.useRef(importEveShipFitHash);
-  importEveShipFitHashRef.current = importEveShipFitHash;
+  const importEveShipFitRef = React.useRef(importEveShipFit);
+  importEveShipFitRef.current = importEveShipFit;
 
   React.useEffect(() => {
-    async function getFit(fitHash: string) {
-      setFit(await importEveShipFitHashRef.current(fitHash));
+    async function getFit(esfEncoded: string) {
+      setFit(await importEveShipFitRef.current(esfEncoded));
     }
 
-    getFit(props.fitHash);
-  }, [props.fitHash]);
+    getFit(props.esfEncoded);
+  }, [props.esfEncoded]);
 
-  if (props.fitHash === undefined) {
-    return <div>Select a fit hash.</div>;
+  if (props.esfEncoded === undefined) {
+    return <div>Select a encoded ESF fit.</div>;
   }
 
   return (
     <div>
-      Hash: <pre>{props.fitHash}</pre>
+      Encoded: <pre>{props.esfEncoded}</pre>
       Fit: <pre>{JSON.stringify(fit, null, 2)}</pre>
     </div>
   );
