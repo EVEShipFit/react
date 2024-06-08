@@ -148,7 +148,7 @@ export const ShipFitExtended = (props: { isPreview?: boolean }) => {
 
   return (
     <div className={clsx(styles.fit, { [styles.fitPreview]: props.isPreview })}>
-      <ShipFit withStats />
+      <ShipFit withStats isPreview={props.isPreview} />
 
       {props.isPreview !== true && (
         <div className={styles.fitName}>
