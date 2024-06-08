@@ -1,6 +1,7 @@
 import React from "react";
 
 import { useCurrentFit } from "@/providers/CurrentFitProvider";
+import { useEveData } from "@/providers/EveDataProvider";
 
 import styles from "./ShipFit.module.css";
 
@@ -9,8 +10,10 @@ export interface ShipFitProps {
 }
 
 export const Hull = () => {
+  const eveData = useEveData();
   const currentFit = useCurrentFit();
-  if (currentFit.currentFit === null) {
+
+  if (currentFit.currentFit === null || eveData === null) {
     return <></>;
   }
 
@@ -21,7 +24,10 @@ export const Hull = () => {
 
   return (
     <div className={styles.hull}>
-      <img src={`https://images.evetech.net/types/${shipTypeId}/render?size=1024`} />
+      <img
+        src={`https://images.evetech.net/types/${shipTypeId}/render?size=1024`}
+        alt={eveData.typeIDs[shipTypeId].name}
+      />
     </div>
   );
 };
