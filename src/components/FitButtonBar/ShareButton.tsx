@@ -1,12 +1,12 @@
 import React from "react";
 
 import { useClipboard } from "@/hooks/Clipboard";
-import { useExportEveShipFitHash } from "@/hooks/ExportEveShipFitHash";
+import { useExportEveShipFit } from "@/hooks/ExportEveShipFit";
 
 import styles from "./FitButtonBar.module.css";
 
 export const ShareButton = () => {
-  const link = useExportEveShipFitHash();
+  const link = useExportEveShipFit();
   const { copy, copied } = useClipboard();
 
   const onClick = React.useCallback(

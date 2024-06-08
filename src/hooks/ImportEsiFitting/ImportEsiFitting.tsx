@@ -2,7 +2,7 @@ import React from "react";
 
 import { EsfCargo, EsfDrone, EsfFit, EsfModule } from "@/providers/CurrentFitProvider";
 import { useEveData } from "@/providers/EveDataProvider";
-import { esiFlagToEsfSlot } from "@/hooks/ImportEveShipFitHash";
+import { esiFlagToEsfSlot } from "@/hooks/ImportEveShipFit";
 import { useCleanImportFit } from "@/hooks/CleanImportFit";
 
 export interface EsiFit {

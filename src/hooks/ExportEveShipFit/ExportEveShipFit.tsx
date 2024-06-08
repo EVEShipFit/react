@@ -37,44 +37,44 @@ async function encodeFit(fit: EsfFit): Promise<string> {
 /**
  * Returns a link to https://eveship.fit that contains the current fit.
  *
- * `hashOnly` controls whether to only show the hash, or the full link.
+ * `fullLink` controls whether to only show the esfEncoded part, or the full link.
  */
-export function useExportEveShipFitHash(hashOnly?: boolean) {
+export function useExportEveShipFit(fullLink?: boolean) {
   const currentFit = useCurrentFit();
 
-  const [fitHash, setFitHash] = React.useState<string | null>(null);
+  const [esfEncoded, setEsfEncoded] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    async function createHash(fit: EsfFit | null) {
+    async function createEsfEncoded(fit: EsfFit | null) {
       if (fit === null) {
-        setFitHash(null);
+        setEsfEncoded(null);
         return;
       }
 
-      const newFitHash = await encodeFit(fit);
-      setFitHash((hashOnly ? "" : "https://eveship.fit/") + `#fit:${newFitHash}`);
+      const newEsfEncoded = await encodeFit(fit);
+      setEsfEncoded((fullLink || fullLink === undefined ? "https://eveship.fit/?fit=" : "") + newEsfEncoded);
     }
 
-    createHash(currentFit.currentFit);
-  }, [currentFit.currentFit, hashOnly]);
+    createEsfEncoded(currentFit.currentFit);
+  }, [currentFit.currentFit, fullLink]);
 
-  return fitHash;
+  return esfEncoded;
 }
 
-export interface ExportEveShipFitHashProps {
-  /** Whether to only show the hash, not the full link. */
-  hashOnly?: boolean;
+export interface ExportEveShipFitProps {
+  /** Whether to only show the esfEncoded part, or the full link. */
+  fullLink?: boolean;
 }
 
 /**
- * `useExportEveShipFitHash` converts the current fit into a link to https://eveship.fit.
+ * `useExportEveShipFit` converts the current fit into a link to https://eveship.fit.
  *
- * Note: do not use this React component itself, but the `useExportEveShipFitHash` React hook instead.
+ * Note: do not use this React component itself, but the `useExportEveShipFit` React hook instead.
  */
-export const ExportEveShipFitHash = (props: ExportEveShipFitHashProps) => {
-  const exportEveShipFitHash = useExportEveShipFitHash(props.hashOnly);
+export const ExportEveShipFit = (props: ExportEveShipFitProps) => {
+  const exportEveShipFit = useExportEveShipFit(props.fullLink);
 
-  if (exportEveShipFitHash === null) return <></>;
+  if (exportEveShipFit === null) return <></>;
 
-  return <pre>{exportEveShipFitHash}</pre>;
+  return <pre>{exportEveShipFit}</pre>;
 };

@@ -1,4 +1,4 @@
-import { esiFlagToEsfSlot } from "@/hooks/ImportEveShipFitHash";
+import { esiFlagToEsfSlot } from "@/hooks/ImportEveShipFit";
 import { EsfCargo, EsfDrone, EsfFit, EsfModule } from "../CurrentFitProvider/CurrentFitProvider";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
