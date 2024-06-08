@@ -143,25 +143,29 @@ const FitName = () => {
  * also adds the cargo hold, drone bay, and CPU/PG usage at the
  * bottom of the fit.
  */
-export const ShipFitExtended = () => {
+export const ShipFitExtended = (props: { isPreview?: boolean }) => {
   const currentFit = useCurrentFit();
 
   return (
-    <div className={styles.fit}>
+    <div className={clsx(styles.fit, { [styles.fitPreview]: props.isPreview })}>
       <ShipFit withStats />
 
-      <div className={styles.fitName}>
-        <FitName />
-      </div>
+      {props.isPreview !== true && (
+        <div className={styles.fitName}>
+          <FitName />
+        </div>
+      )}
 
       <div className={styles.cargoHold}>
         <ShipCargoHold />
         <ShipDroneBay />
       </div>
 
-      <div className={styles.history}>
-        <FitHistory historySize={25} />
-      </div>
+      {props.isPreview !== true && (
+        <div className={styles.history}>
+          <FitHistory historySize={25} />
+        </div>
+      )}
 
       <div className={styles.cpuPg}>
         <CpuPg title="CPU">
