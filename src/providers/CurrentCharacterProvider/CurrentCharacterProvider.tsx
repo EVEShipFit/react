@@ -50,7 +50,7 @@ export const CurrentCharacterProvider = (props: CurrentCharacterProps) => {
   const characters = useCharactersInternal();
   const [currentCharacterId, setCurrentCharacterId] = useLocalStorage<string>(
     "currentCharacter",
-    props.initialCharacterId ?? ".all-0",
+    props.initialCharacterId ?? ".all-5",
   );
   const [firstLoad, setFirstLoad] = React.useState(true);
 
