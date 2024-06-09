@@ -3,14 +3,14 @@ export async function decompress(base64compressedBytes: string): Promise<string>
     Uint8Array.from(atob(base64compressedBytes.replace(/ /g, "+")), (c) => c.charCodeAt(0)),
   ]).stream();
   const decompressedStream = stream.pipeThrough(new DecompressionStream("gzip"));
-  const reader = decompressedStream.getReader();
+  const reader = decompressedStream.pipeThrough(new TextDecoderStream()).getReader();
 
   let result = "";
   while (true) {
     const { done, value } = await reader.read();
     if (done) break;
 
-    result += String.fromCharCode.apply(null, value);
+    result += value;
   }
 
   return result;
