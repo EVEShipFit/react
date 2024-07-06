@@ -96,7 +96,7 @@ const Effect = (props: { effect: CalculationItemAttributeEffect }) => {
       if (item === undefined) {
         sourceName = `Unknown ${sourceType}`;
       } else {
-        sourceName = `${sourceType}: ` + (eveData.typeIDs?.[item?.type_id]?.name ?? sourceName);
+        sourceName = `${sourceType}: ` + (eveData.types?.[item?.type_id]?.name ?? sourceName);
         attribute = item?.attributes.get(props.effect.source_attribute_id);
 
         const itemState = stateToInteger(item.state);

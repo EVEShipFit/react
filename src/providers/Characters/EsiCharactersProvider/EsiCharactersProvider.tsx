@@ -141,8 +141,8 @@ export const EsiCharactersProvider = (props: EsiProps) => {
       if (esiFittings === undefined) return;
 
       /* Ensure all skills are set; also those not learnt. */
-      for (const typeId in eveData.typeIDs) {
-        if (eveData?.typeIDs[typeId].categoryID !== 16) continue;
+      for (const typeId in eveData.types) {
+        if (eveData?.types[typeId].categoryID !== 16) continue;
         if (skills[typeId] !== undefined) continue;
         skills[typeId] = 0;
       }

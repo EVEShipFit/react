@@ -207,8 +207,8 @@ export const HullListing = () => {
     const anyFilter = filter.localFits || filter.characterFits;
 
     const grouped: ListingGroups = {};
-    for (const typeId in eveData.typeIDs) {
-      const hull = eveData.typeIDs[typeId];
+    for (const typeId in eveData.types) {
+      const hull = eveData.types[typeId];
       if (hull.categoryID !== 6) continue;
       if (hull.marketGroupID === undefined) continue;
       if (!hull.published) continue;
@@ -230,7 +230,7 @@ export const HullListing = () => {
 
       if (search !== "" && !hull.name.toLowerCase().includes(search.toLowerCase())) continue;
 
-      const group = eveData.groupIDs[hull.groupID]?.name ?? "Unknown Group";
+      const group = eveData.groups[hull.groupID]?.name ?? "Unknown Group";
       const race = factionIdToRace[hull.factionID ?? 0] ?? "NonEmpire";
 
       if (grouped[group] === undefined) {

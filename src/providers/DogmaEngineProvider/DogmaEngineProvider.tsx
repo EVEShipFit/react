@@ -5,7 +5,7 @@ import {
   DogmaEffect,
   TypeDogmaAttribute,
   TypeDogmaEffect,
-  TypeID,
+  Type,
   useEveData,
 } from "@/providers/EveDataProvider";
 import { EsfFit } from "@/providers/CurrentFitProvider";
@@ -88,8 +88,8 @@ export const DogmaEngineProvider = (props: DogmaEngineProps) => {
     window.get_dogma_effect = (effect_id: number): DogmaEffect | undefined => {
       return eveData.dogmaEffects[effect_id];
     };
-    window.get_type_id = (type_id: number): TypeID | undefined => {
-      return eveData.typeIDs[type_id];
+    window.get_type_id = (type_id: number): Type | undefined => {
+      return eveData.types[type_id];
     };
   }
 

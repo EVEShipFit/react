@@ -79,7 +79,7 @@ export function useFetchKillMail() {
     modules = modules
       .map((moduleOrCharge) => {
         /* Looks for items that are charges. */
-        if (eveData.typeIDs[moduleOrCharge.typeId]?.categoryID !== 8) return moduleOrCharge;
+        if (eveData.types[moduleOrCharge.typeId]?.categoryID !== 8) return moduleOrCharge;
 
         /* Find the module on the same slot. */
         const module = modules.find(

@@ -49,13 +49,13 @@ const DroneBayEntry = ({ name, drones }: { name: string; drones: CalculationItem
 
   if (eveData === null || statistics === null) return <></>;
 
-  const attributeDroneBandwidthUsedTotal = eveData.attributeMapping.droneBandwidthUsedTotal ?? 0;
+  const attributeDroneBandwidthLoad = eveData.attributeMapping.droneBandwidthLoad ?? 0;
   const attributeDroneActive = eveData.attributeMapping.droneActive ?? 0;
   const attributeDroneBandwidthUsed = eveData.attributeMapping.droneBandwidthUsed ?? 0;
   const attributeDroneBandwidth = eveData.attributeMapping.droneBandwidth ?? 0;
   const attributeMaxActiveDrones = eveData.attributeMapping.maxActiveDrones ?? 0;
 
-  const bandwidthUsed = statistics.hull.attributes.get(attributeDroneBandwidthUsedTotal)?.value ?? 0;
+  const bandwidthLoad = statistics.hull.attributes.get(attributeDroneBandwidthLoad)?.value ?? 0;
   const bandwidthAvailable = statistics.hull.attributes.get(attributeDroneBandwidth)?.value ?? 0;
   const dronesActive = statistics.hull.attributes.get(attributeDroneActive)?.value ?? 0;
   const maxDronesActive = statistics.char.attributes.get(attributeMaxActiveDrones)?.value ?? 0;
@@ -64,7 +64,7 @@ const DroneBayEntry = ({ name, drones }: { name: string; drones: CalculationItem
 
   let maxOpen = Math.max(
     0,
-    Math.min(maxDronesActive - dronesActive, Math.floor((bandwidthAvailable - bandwidthUsed) / droneBandwidth)),
+    Math.min(maxDronesActive - dronesActive, Math.floor((bandwidthAvailable - bandwidthLoad) / droneBandwidth)),
   );
   let index = 0;
 
@@ -104,7 +104,7 @@ export const DroneBay = () => {
   /* Group drones by type_id */
   const dronesGrouped: Record<string, CalculationItem[]> = {};
   for (const drone of statistics.items.filter((item) => item.slot.type == "DroneBay")) {
-    const name = eveData.typeIDs?.[drone.type_id].name ?? "";
+    const name = eveData.types?.[drone.type_id].name ?? "";
 
     if (dronesGrouped[name] === undefined) {
       dronesGrouped[name] = [];

@@ -27,8 +27,8 @@ export function useImportEft() {
     if (eveData === null) return null;
 
     function lookupTypeByName(name: string): number | undefined {
-      for (const typeId in eveData?.typeIDs) {
-        const type = eveData.typeIDs[typeId];
+      for (const typeId in eveData?.types) {
+        const type = eveData.types[typeId];
 
         if (type.name === name) {
           return parseInt(typeId);

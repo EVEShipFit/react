@@ -67,8 +67,8 @@
     "typescript-plugin-css-modules": "^5"
   },
   "peerDependencies": {
-    "@eveshipfit/data": "^9",
-    "@eveshipfit/dogma-engine": "^5",
+    "@eveshipfit/data": "^10",
+    "@eveshipfit/dogma-engine": "^6",
     "react": "^18",
     "react-dom": "^18"
   },

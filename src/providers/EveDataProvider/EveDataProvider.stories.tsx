@@ -20,9 +20,9 @@ const TestEveData = () => {
 
   return (
     <div>
-      TypeIDs: {Object.keys(eveData.typeIDs).length}
+      Types: {Object.keys(eveData.types).length}
       <br />
-      GroupIDs: {Object.keys(eveData.groupIDs).length}
+      Groups: {Object.keys(eveData.groups).length}
       <br />
       MarketGroups: {Object.keys(eveData.marketGroups).length}
       <br />

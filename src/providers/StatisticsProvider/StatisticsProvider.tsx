@@ -77,7 +77,7 @@ const CalculateSlots = (eveData: EveData, statistics: Statistics) => {
 const CalculateCargoBay = (eveData: EveData, fit: EsfFit): number => {
   /* Calculate the volume of all cargo. */
   const cargoVolume = fit.cargo.reduce((acc, cargo) => {
-    const type = eveData.typeIDs[cargo.typeId];
+    const type = eveData.types[cargo.typeId];
     if (type === undefined) return acc;
 
     return acc + (type.volume ?? 0) * cargo.quantity;

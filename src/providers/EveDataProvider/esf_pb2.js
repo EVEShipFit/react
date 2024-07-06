@@ -195,9 +195,9 @@ export const esf = $root.esf = (() => {
         return TypeDogma;
     })();
 
-    esf.TypeIDs = (function() {
+    esf.Types = (function() {
 
-        function TypeIDs(p) {
+        function Types(p) {
             this.entries = {};
             if (p)
                 for (var ks = Object.keys(p), i = 0; i < ks.length; ++i)
@@ -205,12 +205,12 @@ export const esf = $root.esf = (() => {
                         this[ks[i]] = p[ks[i]];
         }
 
-        TypeIDs.prototype.entries = emptyObject;
+        Types.prototype.entries = emptyObject;
 
-        TypeIDs.decode = async function decode(r, l) {
+        Types.decode = async function decode(r, l) {
             if (!(r instanceof $Reader))
                 r = $Reader.create(r);
-            var c = l === undefined ? r.len : r.pos + l, m = new $root.esf.TypeIDs(), k, value;
+            var c = l === undefined ? r.len : r.pos + l, m = new $root.esf.Types(), k, value;
             while (r.pos < c) {
                 if (r.need_data()) {
                     await r.fetch_data();
@@ -232,7 +232,7 @@ export const esf = $root.esf = (() => {
                                 k = r.int32();
                                 break;
                             case 2:
-                                value = $root.esf.TypeIDs.TypeID.decode(r, r.uint32());
+                                value = $root.esf.Types.Type.decode(r, r.uint32());
                                 break;
                             default:
                                 r.skipType(tag2 & 7);
@@ -250,31 +250,31 @@ export const esf = $root.esf = (() => {
             return m;
         };
 
-        TypeIDs.TypeID = (function() {
+        Types.Type = (function() {
 
-            function TypeID(p) {
+            function Type(p) {
                 if (p)
                     for (var ks = Object.keys(p), i = 0; i < ks.length; ++i)
                         if (p[ks[i]] != null)
                             this[ks[i]] = p[ks[i]];
             }
 
-            TypeID.prototype.name = "";
-            TypeID.prototype.groupID = 0;
-            TypeID.prototype.categoryID = 0;
-            TypeID.prototype.published = false;
-            TypeID.prototype.factionID = undefined;
-            TypeID.prototype.marketGroupID = undefined;
-            TypeID.prototype.metaGroupID = undefined;
-            TypeID.prototype.capacity = undefined;
-            TypeID.prototype.mass = undefined;
-            TypeID.prototype.radius = undefined;
-            TypeID.prototype.volume = undefined;
+            Type.prototype.name = "";
+            Type.prototype.groupID = 0;
+            Type.prototype.categoryID = 0;
+            Type.prototype.published = false;
+            Type.prototype.factionID = undefined;
+            Type.prototype.marketGroupID = undefined;
+            Type.prototype.metaGroupID = undefined;
+            Type.prototype.capacity = undefined;
+            Type.prototype.mass = undefined;
+            Type.prototype.radius = undefined;
+            Type.prototype.volume = undefined;
 
-            TypeID.decode = function decode(r, l) {
+            Type.decode = function decode(r, l) {
                 if (!(r instanceof $Reader))
                     r = $Reader.create(r);
-                var c = l === undefined ? r.len : r.pos + l, m = new $root.esf.TypeIDs.TypeID();
+                var c = l === undefined ? r.len : r.pos + l, m = new $root.esf.Types.Type();
                 while (r.pos < c) {
                     var t = r.uint32();
                     switch (t >>> 3) {
@@ -338,15 +338,15 @@ export const esf = $root.esf = (() => {
                 return m;
             };
 
-            return TypeID;
+            return Type;
         })();
 
-        return TypeIDs;
+        return Types;
     })();
 
-    esf.GroupIDs = (function() {
+    esf.Groups = (function() {
 
-        function GroupIDs(p) {
+        function Groups(p) {
             this.entries = {};
             if (p)
                 for (var ks = Object.keys(p), i = 0; i < ks.length; ++i)
@@ -354,12 +354,12 @@ export const esf = $root.esf = (() => {
                         this[ks[i]] = p[ks[i]];
         }
 
-        GroupIDs.prototype.entries = emptyObject;
+        Groups.prototype.entries = emptyObject;
 
-        GroupIDs.decode = async function decode(r, l) {
+        Groups.decode = async function decode(r, l) {
             if (!(r instanceof $Reader))
                 r = $Reader.create(r);
-            var c = l === undefined ? r.len : r.pos + l, m = new $root.esf.GroupIDs(), k, value;
+            var c = l === undefined ? r.len : r.pos + l, m = new $root.esf.Groups(), k, value;
             while (r.pos < c) {
                 if (r.need_data()) {
                     await r.fetch_data();
@@ -381,7 +381,7 @@ export const esf = $root.esf = (() => {
                                 k = r.int32();
                                 break;
                             case 2:
-                                value = $root.esf.GroupIDs.GroupID.decode(r, r.uint32());
+                                value = $root.esf.Groups.Group.decode(r, r.uint32());
                                 break;
                             default:
                                 r.skipType(tag2 & 7);
@@ -399,23 +399,23 @@ export const esf = $root.esf = (() => {
             return m;
         };
 
-        GroupIDs.GroupID = (function() {
+        Groups.Group = (function() {
 
-            function GroupID(p) {
+            function Group(p) {
                 if (p)
                     for (var ks = Object.keys(p), i = 0; i < ks.length; ++i)
                         if (p[ks[i]] != null)
                             this[ks[i]] = p[ks[i]];
             }
 
-            GroupID.prototype.name = "";
-            GroupID.prototype.categoryID = 0;
-            GroupID.prototype.published = false;
+            Group.prototype.name = "";
+            Group.prototype.categoryID = 0;
+            Group.prototype.published = false;
 
-            GroupID.decode = function decode(r, l) {
+            Group.decode = function decode(r, l) {
                 if (!(r instanceof $Reader))
                     r = $Reader.create(r);
-                var c = l === undefined ? r.len : r.pos + l, m = new $root.esf.GroupIDs.GroupID();
+                var c = l === undefined ? r.len : r.pos + l, m = new $root.esf.Groups.Group();
                 while (r.pos < c) {
                     var t = r.uint32();
                     switch (t >>> 3) {
@@ -445,10 +445,10 @@ export const esf = $root.esf = (() => {
                 return m;
             };
 
-            return GroupID;
+            return Group;
         })();
 
-        return GroupIDs;
+        return Groups;
     })();
 
     esf.MarketGroups = (function() {
