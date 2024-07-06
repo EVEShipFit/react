@@ -83,7 +83,7 @@ const ShipDroneBay = () => {
 
   if (eveData === null) return <></>;
 
-  const isStructure = eveData.typeIDs[currentFit.currentFit?.shipTypeId ?? 0]?.categoryID === 65;
+  const isStructure = eveData.types[currentFit.currentFit?.shipTypeId ?? 0]?.categoryID === 65;
 
   if (currentFit.fit?.drones.length === 0 && isOpen) {
     setIsOpen(false);
@@ -100,7 +100,7 @@ const ShipDroneBay = () => {
         </div>
         <div className={styles.cargoText}>
           <div>
-            <ShipAttribute name="droneCapacityUsed" fixed={1} />
+            <ShipAttribute name="droneCapacityLoad" fixed={1} />
           </div>
           <div>
             / {isStructure && <>0.0</>}
@@ -169,10 +169,10 @@ export const ShipFitExtended = (props: { isPreview?: boolean }) => {
 
       <div className={styles.cpuPg}>
         <CpuPg title="CPU">
-          <ShipAttribute name="cpuUnused" fixed={1} />/<ShipAttribute name="cpuOutput" fixed={1} />
+          <ShipAttribute name="cpuFree" fixed={1} />/<ShipAttribute name="cpuOutput" fixed={1} />
         </CpuPg>
         <CpuPg title="Power Grid">
-          <ShipAttribute name="powerUnused" fixed={1} />/<ShipAttribute name="powerOutput" fixed={1} />
+          <ShipAttribute name="powerFree" fixed={1} />/<ShipAttribute name="powerOutput" fixed={1} />
         </CpuPg>
       </div>
 

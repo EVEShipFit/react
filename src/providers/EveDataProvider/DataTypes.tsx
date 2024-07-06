@@ -13,7 +13,7 @@ export interface TypeDogma {
   dogmaEffects: TypeDogmaEffect[];
 }
 
-export interface TypeID {
+export interface Type {
   name: string;
   groupID: number;
   categoryID: number;
@@ -27,7 +27,7 @@ export interface TypeID {
   volume?: number;
 }
 
-export interface GroupID {
+export interface Group {
   name: string;
   categoryID: number;
   published: boolean;

@@ -2,7 +2,7 @@ import React from "react";
 
 import { defaultDataUrl } from "@/settings";
 
-import { DogmaAttribute, DogmaEffect, GroupID, MarketGroup, TypeDogma, TypeID } from "./DataTypes";
+import { DogmaAttribute, DogmaEffect, Group, MarketGroup, TypeDogma, Type } from "./DataTypes";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
@@ -10,8 +10,8 @@ import { DogmaAttribute, DogmaEffect, GroupID, MarketGroup, TypeDogma, TypeID } 
 import * as esf_pb2 from "./esf_pb2.js";
 
 export interface EveData {
-  typeIDs: Record<string, TypeID>;
-  groupIDs: Record<string, GroupID>;
+  types: Record<string, Type>;
+  groups: Record<string, Group>;
   marketGroups: Record<string, MarketGroup>;
   typeDogma: Record<string, TypeDogma>;
   dogmaEffects: Record<string, DogmaEffect>;
@@ -47,8 +47,8 @@ async function fetchDataFile(dataUrl: string, name: string, pb2: any): Promise<o
 }
 
 function isLoaded(dogmaData: EveData): boolean {
-  if (Object.keys(dogmaData.typeIDs).length === 0) return false;
-  if (Object.keys(dogmaData.groupIDs).length === 0) return false;
+  if (Object.keys(dogmaData.types).length === 0) return false;
+  if (Object.keys(dogmaData.groups).length === 0) return false;
   if (Object.keys(dogmaData.marketGroups).length === 0) return false;
   if (Object.keys(dogmaData.typeDogma).length === 0) return false;
   if (Object.keys(dogmaData.dogmaEffects).length === 0) return false;
@@ -58,13 +58,13 @@ function isLoaded(dogmaData: EveData): boolean {
 }
 
 /**
- * Provides information like TypeIDs, Dogma information, etc.
+ * Provides information like types, Dogma information, etc.
  *
  * ```typescript
  * const eveData = useEveData();
  *
  * if (eveData !== null) {
- *   console.log(eveData.typeIDs.length);
+ *   console.log(eveData.types.length);
  * }
  * ```
  */
@@ -72,8 +72,8 @@ export const EveDataProvider = (props: EveDataProps) => {
   const dataUrl = props.dataUrl ?? `${defaultDataUrl}sde/`;
   /* Initialize with empty data; we never set the context till everything is loaded. */
   const [dogmaData, setDogmaData] = React.useState<EveData>({
-    typeIDs: {},
-    groupIDs: {},
+    types: {},
+    groups: {},
     marketGroups: {},
     typeDogma: {},
     dogmaEffects: {},
@@ -97,8 +97,8 @@ export const EveDataProvider = (props: EveDataProps) => {
       });
     }
 
-    fetchAndLoadDataFile("typeIDs", esf_pb2.esf.TypeIDs);
-    fetchAndLoadDataFile("groupIDs", esf_pb2.esf.GroupIDs);
+    fetchAndLoadDataFile("types", esf_pb2.esf.Types);
+    fetchAndLoadDataFile("groups", esf_pb2.esf.Groups);
     fetchAndLoadDataFile("marketGroups", esf_pb2.esf.MarketGroups);
     fetchAndLoadDataFile("typeDogma", esf_pb2.esf.TypeDogma);
     fetchAndLoadDataFile("dogmaEffects", esf_pb2.esf.DogmaEffects);

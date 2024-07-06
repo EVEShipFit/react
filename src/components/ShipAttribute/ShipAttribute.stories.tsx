@@ -24,7 +24,7 @@ export const Default: Story = {
   },
   args: {
     fit: null,
-    name: "cpuUsed",
+    name: "cpuLoad",
   },
   decorators: [withDecoratorFull],
   render: ({ fit, ...args }) => {

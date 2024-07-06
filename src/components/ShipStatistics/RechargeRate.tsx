@@ -34,7 +34,7 @@ export const RechargeRateItem = (props: { name: string; icon: IconName }) => {
 };
 
 export const RechargeRate = () => {
-  const [moduleType, setModuleType] = React.useState("passiveShieldRecharge");
+  const [moduleType, setModuleType] = React.useState("passiveShieldRechargeRate");
   const [showDropdown, setShowDropdown] = React.useState(false);
 
   return (
@@ -64,10 +64,12 @@ export const RechargeRate = () => {
           </div>
           <div
             onClick={() => {
-              setModuleType("passiveShieldRecharge");
+              setModuleType("passiveShieldRechargeRate");
               setShowDropdown(false);
             }}
-            className={clsx({ [styles.rechargeRateDropdownContentSelected]: moduleType == "passiveShieldRecharge" })}
+            className={clsx({
+              [styles.rechargeRateDropdownContentSelected]: moduleType == "passiveShieldRechargeRate",
+            })}
           >
             Passive shield recharge
           </div>
@@ -85,8 +87,8 @@ export const RechargeRate = () => {
       <div onClick={() => setShowDropdown((current) => !current)}>
         {moduleType == "armorRepairRate" && <RechargeRateItem name="armorRepairRate" icon="armor-repair-rate" />}
         {moduleType == "hullRepairRate" && <RechargeRateItem name="hullRepairRate" icon="hull-repair-rate" />}
-        {moduleType == "passiveShieldRecharge" && (
-          <RechargeRateItem name="passiveShieldRecharge" icon="passive-shield-recharge" />
+        {moduleType == "passiveShieldRechargeRate" && (
+          <RechargeRateItem name="passiveShieldRechargeRate" icon="passive-shield-recharge" />
         )}
         {moduleType == "shieldBoostRate" && <RechargeRateItem name="shieldBoostRate" icon="shield-boost-rate" />}
       </div>

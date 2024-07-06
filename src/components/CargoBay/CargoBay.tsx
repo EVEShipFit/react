@@ -31,9 +31,9 @@ const CargoBayEntry = ({ name, cargo }: { name: string; cargo: EsfCargo }) => {
   }, [fitManager, cargo]);
 
   let slotType: CalculationSlotType | undefined = undefined;
-  if (eveData?.typeIDs[cargo.typeId]?.categoryID === 18) {
+  if (eveData?.types[cargo.typeId]?.categoryID === 18) {
     slotType = "DroneBay";
-  } else if (eveData?.typeIDs[cargo.typeId]?.categoryID === 8) {
+  } else if (eveData?.types[cargo.typeId]?.categoryID === 8) {
     slotType = "Charge";
   } else {
     slotType = eveData?.typeDogma[cargo.typeId]?.dogmaEffects
@@ -79,7 +79,7 @@ export const CargoBay = () => {
   /* Fetch name of all cargo items. */
   const cargoList: { name: string; item: EsfCargo }[] = [];
   for (const item of currentFit.fit.cargo) {
-    const name = eveData.typeIDs?.[item.typeId].name ?? "";
+    const name = eveData.types?.[item.typeId].name ?? "";
 
     cargoList.push({
       name,

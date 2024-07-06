@@ -11,8 +11,8 @@ interface DefaultCharacterProps {
 
 const CreateSkills = (eveData: EveData, level: number) => {
   const skills: Skills = {};
-  for (const typeId in eveData.typeIDs) {
-    if (eveData.typeIDs[typeId].categoryID !== 16) continue;
+  for (const typeId in eveData.types) {
+    if (eveData.types[typeId].categoryID !== 16) continue;
     skills[typeId] = level;
   }
 

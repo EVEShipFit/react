@@ -50,11 +50,19 @@ export function useAttribute(type: "Ship" | "Char", props: AttributeProps): { va
       value = statistics.capacityUsed;
       currentValue = currentStatistics?.capacityUsed;
     } else if (type === "Ship") {
-      value = statistics.hull.attributes.get(attributeId)?.value;
-      currentValue = currentStatistics?.hull.attributes.get(attributeId)?.value;
+      value =
+        statistics.hull.attributes.get(attributeId)?.value || eveData?.dogmaAttributes[attributeId]?.defaultValue || 0;
+      currentValue =
+        currentStatistics?.hull.attributes.get(attributeId)?.value ||
+        eveData?.dogmaAttributes[attributeId]?.defaultValue ||
+        0;
     } else {
-      value = statistics.char.attributes.get(attributeId)?.value;
-      currentValue = currentStatistics?.char.attributes.get(attributeId)?.value;
+      value =
+        statistics.char.attributes.get(attributeId)?.value || eveData?.dogmaAttributes[attributeId]?.defaultValue || 0;
+      currentValue =
+        currentStatistics?.char.attributes.get(attributeId)?.value ||
+        eveData?.dogmaAttributes[attributeId]?.defaultValue ||
+        0;
     }
   }
 

@@ -26,7 +26,7 @@ export const Hull = () => {
     <div className={styles.hull}>
       <img
         src={`https://images.evetech.net/types/${shipTypeId}/render?size=1024`}
-        alt={eveData.typeIDs[shipTypeId].name}
+        alt={eveData.types[shipTypeId].name}
       />
     </div>
   );

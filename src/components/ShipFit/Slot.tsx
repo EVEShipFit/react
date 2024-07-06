@@ -230,7 +230,7 @@ export const Slot = (props: { type: EsfSlotType; index: number; fittable: boolea
       item = (
         <img
           src={`https://images.evetech.net/types/${module.charge.type_id}/icon?size=64`}
-          title={`${eveData.typeIDs[module.type_id].name}\n${eveData.typeIDs[module.charge.type_id].name}`}
+          title={`${eveData.types[module.type_id].name}\n${eveData.types[module.charge.type_id].name}`}
           draggable={true}
           onDragStart={onDragStart}
         />
@@ -239,7 +239,7 @@ export const Slot = (props: { type: EsfSlotType; index: number; fittable: boolea
       item = (
         <img
           src={`https://images.evetech.net/types/${module.type_id}/icon?size=64`}
-          title={eveData.typeIDs[module.type_id].name}
+          title={eveData.types[module.type_id].name}
           draggable={true}
           onDragStart={onDragStart}
           className={clsx({ [styles.preview]: fitModule?.state === "Preview" })}

@@ -22,7 +22,7 @@ export const ShipStatistics = () => {
   const statistics = useStatistics();
 
   let capacitorState = "Stable";
-  const isStructure = eveData?.typeIDs[currentFit.currentFit?.shipTypeId ?? 0]?.categoryID === 65;
+  const isStructure = eveData?.types[currentFit.currentFit?.shipTypeId ?? 0]?.categoryID === 65;
 
   const attributeId = eveData?.attributeMapping.capacitorDepletesIn ?? 0;
   const capacitorDepletesIn = statistics?.hull.attributes.get(attributeId)?.value;
@@ -71,7 +71,7 @@ export const ShipStatistics = () => {
         headerLabel="Offense"
         headerContent={
           <span>
-            <ShipAttribute name="damageWithoutReloadDps" fixed={1} unit="dps" />
+            <ShipAttribute name="damagePerSecondWithoutReload" fixed={1} unit="dps" />
           </span>
         }
       >
@@ -81,8 +81,8 @@ export const ShipStatistics = () => {
               <Icon name="damage-dps" size={24} />
             </span>
             <span>
-              <ShipAttribute name="damageWithoutReloadDps" fixed={1} unit="dps" /> (
-              <ShipAttribute name="damageWithReloadDps" fixed={1} unit="dps" />)
+              <ShipAttribute name="damagePerSecondWithoutReload" fixed={1} unit="dps" /> (
+              <ShipAttribute name="damagePerSecondWithReload" fixed={1} unit="dps" />)
             </span>
           </span>
           <span title="Alpha Strike" className={styles.statistic}>
@@ -90,7 +90,7 @@ export const ShipStatistics = () => {
               <Icon name="damage-alpha" size={24} />
             </span>
             <span>
-              <ShipAttribute name="damageAlphaHp" fixed={0} unit="HP" />
+              <ShipAttribute name="damageAlpha" fixed={0} unit="HP" />
             </span>
           </span>
         </CategoryLine>
@@ -273,7 +273,7 @@ export const ShipStatistics = () => {
           headerLabel="Drones"
           headerContent={
             <span>
-              <ShipAttribute name="droneDamageDps" fixed={1} unit="dps" />
+              <ShipAttribute name="droneDamagePerSecond" fixed={1} unit="dps" />
             </span>
           }
         >
@@ -283,7 +283,7 @@ export const ShipStatistics = () => {
                 <Icon name="mass" size={24} />
               </span>
               <span>
-                <ShipAttribute name="droneBandwidthUsedTotal" fixed={0} />/
+                <ShipAttribute name="droneBandwidthLoad" fixed={0} />/
                 <ShipAttribute name="droneBandwidth" fixed={0} /> Mbit/sec
               </span>
             </span>

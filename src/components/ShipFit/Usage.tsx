@@ -38,13 +38,12 @@ export const Usage = (props: {
 
     case "cpu":
       usageTotal = statistics?.hull.attributes?.get(eveData.attributeMapping.cpuOutput ?? 0)?.value ?? 0;
-      usageUsed = usageTotal - (statistics?.hull.attributes?.get(eveData.attributeMapping.cpuUnused ?? 0)?.value ?? 0);
+      usageUsed = usageTotal - (statistics?.hull.attributes?.get(eveData.attributeMapping.cpuFree ?? 0)?.value ?? 0);
       break;
 
     case "pg":
       usageTotal = statistics?.hull.attributes?.get(eveData.attributeMapping.powerOutput ?? 0)?.value ?? 0;
-      usageUsed =
-        usageTotal - (statistics?.hull.attributes?.get(eveData.attributeMapping.powerUnused ?? 0)?.value ?? 0);
+      usageUsed = usageTotal - (statistics?.hull.attributes?.get(eveData.attributeMapping.powerFree ?? 0)?.value ?? 0);
       break;
   }
 

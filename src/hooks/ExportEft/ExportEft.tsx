@@ -28,7 +28,7 @@ export function useExportEft() {
 
     let eft = "";
 
-    const shipType = eveData.typeIDs[fit.shipTypeId];
+    const shipType = eveData.types[fit.shipTypeId];
     if (shipType === undefined) return null;
 
     eft += `[${shipType.name}, ${fit.name}]\n`;
@@ -41,7 +41,7 @@ export function useExportEft() {
           continue;
         }
 
-        const moduleType = eveData.typeIDs[module.typeId];
+        const moduleType = eveData.types[module.typeId];
         if (moduleType === undefined) {
           eft += "[Empty " + slotToEft[slotType] + "]\n";
           continue;
@@ -49,7 +49,7 @@ export function useExportEft() {
 
         eft += moduleType.name;
         if (module.charge !== undefined) {
-          const chargeType = eveData.typeIDs[module.charge.typeId];
+          const chargeType = eveData.types[module.charge.typeId];
           if (chargeType !== undefined) {
             eft += `, ${chargeType.name}`;
           }
@@ -64,7 +64,7 @@ export function useExportEft() {
     eft += "\n";
 
     for (const drone of fit.drones) {
-      const droneType = eveData.typeIDs[drone.typeId];
+      const droneType = eveData.types[drone.typeId];
       if (droneType === undefined) continue;
 
       eft += droneType.name;
@@ -76,7 +76,7 @@ export function useExportEft() {
     eft += "\n";
 
     for (const cargo of fit.cargo) {
-      const cargoType = eveData.typeIDs[cargo.typeId];
+      const cargoType = eveData.types[cargo.typeId];
       if (cargoType === undefined) continue;
 
       eft += `${cargoType.name} x${cargo.quantity}`;

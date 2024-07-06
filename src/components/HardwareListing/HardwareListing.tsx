@@ -161,7 +161,7 @@ export const HardwareListing = () => {
 
       modules.push({
         typeId: item.type_id,
-        name: eveData?.typeIDs?.[item.type_id].name ?? "Unknown",
+        name: eveData?.types?.[item.type_id].name ?? "Unknown",
         chargeGroupIDs,
         chargeSize: item.attributes.get(eveData?.attributeMapping.chargeSize ?? 0)?.value ?? -1,
       });
@@ -190,8 +190,8 @@ export const HardwareListing = () => {
       items: [],
     };
 
-    for (const typeId in eveData.typeIDs) {
-      const module = eveData.typeIDs[typeId];
+    for (const typeId in eveData.types) {
+      const module = eveData.types[typeId];
       /* Modules (7), Charges (8), Drones (18), Subsystems (32), and Structures (66) */
       if (
         module.categoryID !== 7 &&
@@ -267,7 +267,7 @@ export const HardwareListing = () => {
             }
           }
 
-          const shipGroup = eveData.typeIDs[shipType]?.groupID;
+          const shipGroup = eveData.types[shipType]?.groupID;
 
           const canFitShipType = eveData.typeDogma[typeId]?.dogmaAttributes.filter(
             (attr) =>

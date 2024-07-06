@@ -153,7 +153,7 @@ export const FitManagerProvider = (props: FitManagerProps) => {
               eveData.typeDogma[typeId]?.dogmaAttributes.find(
                 (attr) => attr.attributeID === eveData.attributeMapping?.chargeSize,
               )?.value ?? -1;
-            const groupID = eveData.typeIDs[typeId]?.groupID ?? -1;
+            const groupID = eveData.types[typeId]?.groupID ?? -1;
 
             const newModules = [];
             for (let module of oldFit.modules) {
@@ -319,7 +319,7 @@ export const FitManagerProvider = (props: FitManagerProps) => {
           eveData.typeDogma[typeId]?.dogmaAttributes.find(
             (attr) => attr.attributeID === eveData.attributeMapping?.chargeSize,
           )?.value ?? -1;
-        const groupID = eveData.typeIDs[typeId]?.groupID ?? -1;
+        const groupID = eveData.types[typeId]?.groupID ?? -1;
 
         setFit((oldFit: EsfFit | null): EsfFit | null => {
           if (oldFit === null) return null;
