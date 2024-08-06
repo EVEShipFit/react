@@ -20,7 +20,7 @@ import styles from "./ShipFit.module.css";
 /**
  * Render a ship fit similar to how it is done in-game.
  */
-export const ShipFit = (props: { withStats?: boolean; isPreview?: boolean }) => {
+export const ShipFit = (props: { withStats?: boolean; isPreview?: boolean; readOnly?: boolean }) => {
   const eveData = useEveData();
   const statistics = useStatistics();
 
@@ -123,28 +123,28 @@ export const ShipFit = (props: { withStats?: boolean; isPreview?: boolean }) => 
         </RingTopItem>
 
         <RingTopItem rotation={-36.5 + (71 / 7) * 0}>
-          <Slot type="High" index={1} fittable={slots.High >= 1} main />
+          <Slot type="High" index={1} fittable={slots.High >= 1} main readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={-36.5 + (71 / 7) * 1}>
-          <Slot type="High" index={2} fittable={slots.High >= 2} />
+          <Slot type="High" index={2} fittable={slots.High >= 2} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={-36.5 + (71 / 7) * 2}>
-          <Slot type="High" index={3} fittable={slots.High >= 3} />
+          <Slot type="High" index={3} fittable={slots.High >= 3} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={-36.5 + (71 / 7) * 3}>
-          <Slot type="High" index={4} fittable={slots.High >= 4} />
+          <Slot type="High" index={4} fittable={slots.High >= 4} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={-36.5 + (71 / 7) * 4}>
-          <Slot type="High" index={5} fittable={slots.High >= 5} />
+          <Slot type="High" index={5} fittable={slots.High >= 5} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={-36.5 + (71 / 7) * 5}>
-          <Slot type="High" index={6} fittable={slots.High >= 6} />
+          <Slot type="High" index={6} fittable={slots.High >= 6} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={-36.5 + (71 / 7) * 6}>
-          <Slot type="High" index={7} fittable={slots.High >= 7} />
+          <Slot type="High" index={7} fittable={slots.High >= 7} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={-36.5 + (71 / 7) * 7}>
-          <Slot type="High" index={8} fittable={slots.High >= 8} />
+          <Slot type="High" index={8} fittable={slots.High >= 8} readOnly={props.readOnly} />
         </RingTopItem>
 
         <RingTopItem rotation={43} background>
@@ -152,28 +152,28 @@ export const ShipFit = (props: { withStats?: boolean; isPreview?: boolean }) => 
         </RingTopItem>
 
         <RingTopItem rotation={53 + (72 / 7) * 0}>
-          <Slot type="Medium" index={1} fittable={slots.Medium >= 1} />
+          <Slot type="Medium" index={1} fittable={slots.Medium >= 1} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={53 + (72 / 7) * 1}>
-          <Slot type="Medium" index={2} fittable={slots.Medium >= 2} />
+          <Slot type="Medium" index={2} fittable={slots.Medium >= 2} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={53 + (72 / 7) * 2}>
-          <Slot type="Medium" index={3} fittable={slots.Medium >= 3} />
+          <Slot type="Medium" index={3} fittable={slots.Medium >= 3} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={53 + (72 / 7) * 3}>
-          <Slot type="Medium" index={4} fittable={slots.Medium >= 4} />
+          <Slot type="Medium" index={4} fittable={slots.Medium >= 4} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={53 + (72 / 7) * 4}>
-          <Slot type="Medium" index={5} fittable={slots.Medium >= 5} />
+          <Slot type="Medium" index={5} fittable={slots.Medium >= 5} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={53 + (72 / 7) * 5}>
-          <Slot type="Medium" index={6} fittable={slots.Medium >= 6} />
+          <Slot type="Medium" index={6} fittable={slots.Medium >= 6} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={53 + (72 / 7) * 6}>
-          <Slot type="Medium" index={7} fittable={slots.Medium >= 7} />
+          <Slot type="Medium" index={7} fittable={slots.Medium >= 7} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={53 + (72 / 7) * 7}>
-          <Slot type="Medium" index={8} fittable={slots.Medium >= 8} />
+          <Slot type="Medium" index={8} fittable={slots.Medium >= 8} readOnly={props.readOnly} />
         </RingTopItem>
 
         <RingTopItem rotation={133} background>
@@ -181,51 +181,51 @@ export const ShipFit = (props: { withStats?: boolean; isPreview?: boolean }) => 
         </RingTopItem>
 
         <RingTopItem rotation={142 + (72 / 7) * 0}>
-          <Slot type="Low" index={1} fittable={slots.Low >= 1} />
+          <Slot type="Low" index={1} fittable={slots.Low >= 1} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={142 + (72 / 7) * 1}>
-          <Slot type="Low" index={2} fittable={slots.Low >= 2} />
+          <Slot type="Low" index={2} fittable={slots.Low >= 2} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={142 + (72 / 7) * 2}>
-          <Slot type="Low" index={3} fittable={slots.Low >= 3} />
+          <Slot type="Low" index={3} fittable={slots.Low >= 3} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={142 + (72 / 7) * 3}>
-          <Slot type="Low" index={4} fittable={slots.Low >= 4} />
+          <Slot type="Low" index={4} fittable={slots.Low >= 4} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={142 + (72 / 7) * 4}>
-          <Slot type="Low" index={5} fittable={slots.Low >= 5} />
+          <Slot type="Low" index={5} fittable={slots.Low >= 5} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={142 + (72 / 7) * 5}>
-          <Slot type="Low" index={6} fittable={slots.Low >= 6} />
+          <Slot type="Low" index={6} fittable={slots.Low >= 6} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={142 + (72 / 7) * 6}>
-          <Slot type="Low" index={7} fittable={slots.Low >= 7} />
+          <Slot type="Low" index={7} fittable={slots.Low >= 7} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={142 + (72 / 7) * 7}>
-          <Slot type="Low" index={8} fittable={slots.Low >= 8} />
+          <Slot type="Low" index={8} fittable={slots.Low >= 8} readOnly={props.readOnly} />
         </RingTopItem>
 
         <RingTopItem rotation={-74 + (21 / 2) * 0}>
-          <Slot type="Rig" index={1} fittable={slots.Rig >= 1} />
+          <Slot type="Rig" index={1} fittable={slots.Rig >= 1} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={-74 + (21 / 2) * 1}>
-          <Slot type="Rig" index={2} fittable={slots.Rig >= 2} />
+          <Slot type="Rig" index={2} fittable={slots.Rig >= 2} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={-74 + (21 / 2) * 2}>
-          <Slot type="Rig" index={3} fittable={slots.Rig >= 3} />
+          <Slot type="Rig" index={3} fittable={slots.Rig >= 3} readOnly={props.readOnly} />
         </RingTopItem>
 
         <RingTopItem rotation={-128 + (38 / 3) * 0}>
-          <Slot type="SubSystem" index={1} fittable={slots.SubSystem >= 1} />
+          <Slot type="SubSystem" index={1} fittable={slots.SubSystem >= 1} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={-128 + (38 / 3) * 1}>
-          <Slot type="SubSystem" index={2} fittable={slots.SubSystem >= 2} />
+          <Slot type="SubSystem" index={2} fittable={slots.SubSystem >= 2} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={-128 + (38 / 3) * 2}>
-          <Slot type="SubSystem" index={3} fittable={slots.SubSystem >= 3} />
+          <Slot type="SubSystem" index={3} fittable={slots.SubSystem >= 3} readOnly={props.readOnly} />
         </RingTopItem>
         <RingTopItem rotation={-128 + (38 / 3) * 3}>
-          <Slot type="SubSystem" index={4} fittable={slots.SubSystem >= 4} />
+          <Slot type="SubSystem" index={4} fittable={slots.SubSystem >= 4} readOnly={props.readOnly} />
         </RingTopItem>
       </RingTop>
 

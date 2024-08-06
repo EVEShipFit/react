@@ -17,7 +17,13 @@ const stateRotation: Record<string, EsfState[]> = {
   Overload: ["Passive", "Online", "Active", "Overload"],
 };
 
-export const Slot = (props: { type: EsfSlotType; index: number; fittable: boolean; main?: boolean }) => {
+export const Slot = (props: {
+  type: EsfSlotType;
+  index: number;
+  fittable: boolean;
+  main?: boolean;
+  readOnly?: boolean;
+}) => {
   const eveData = useEveData();
   const statistics = useStatistics();
   const fitManager = useFitManager();
@@ -277,28 +283,36 @@ export const Slot = (props: { type: EsfSlotType; index: number; fittable: boolea
 
   return (
     <div className={styles.slotOuter} data-hasitem={module !== undefined}>
-      <div className={styles.slot} onClick={cycleState} data-state={state} onDrop={onDragEnd} onDragOver={onDragOver}>
+      <div
+        className={styles.slot}
+        onClick={props.readOnly !== true ? cycleState : undefined}
+        data-state={state}
+        onDrop={onDragEnd}
+        onDragOver={onDragOver}
+      >
         {svg}
         <div className={imageStyle}>{item}</div>
       </div>
-      <div className={styles.slotOptions}>
-        {module?.charge !== undefined && (
-          <svg viewBox="0 0 20 20" width={20} xmlns="http://www.w3.org/2000/svg" onClick={unfitCharge}>
-            <title>Remove Charge</title>
-            <use href="#uncharge" />
+      {props.readOnly !== true && (
+        <div className={styles.slotOptions}>
+          {module?.charge !== undefined && (
+            <svg viewBox="0 0 20 20" width={20} xmlns="http://www.w3.org/2000/svg" onClick={unfitCharge}>
+              <title>Remove Charge</title>
+              <use href="#uncharge" />
+            </svg>
+          )}
+          <svg viewBox="0 0 20 20" width={20} xmlns="http://www.w3.org/2000/svg" onClick={unfitModule}>
+            <title>Unfit Module</title>
+            <use href="#unfit" />
           </svg>
-        )}
-        <svg viewBox="0 0 20 20" width={20} xmlns="http://www.w3.org/2000/svg" onClick={unfitModule}>
-          <title>Unfit Module</title>
-          <use href="#unfit" />
-        </svg>
-        {module?.max_state !== "Passive" && (
-          <svg viewBox="0 0 20 20" width={20} xmlns="http://www.w3.org/2000/svg" onClick={offlineState}>
-            <title>Put Offline</title>
-            <use href="#offline" />
-          </svg>
-        )}
-      </div>
+          {module?.max_state !== "Passive" && (
+            <svg viewBox="0 0 20 20" width={20} xmlns="http://www.w3.org/2000/svg" onClick={offlineState}>
+              <title>Put Offline</title>
+              <use href="#offline" />
+            </svg>
+          )}
+        </div>
+      )}
     </div>
   );
 };
