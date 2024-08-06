@@ -30,7 +30,9 @@ declare global {
     get_dogma_attribute?: unknown;
     get_dogma_effects?: unknown;
     get_dogma_effect?: unknown;
-    get_type_id?: unknown;
+    get_type?: unknown;
+    type_name_to_id?: unknown;
+    attribute_name_to_id?: unknown;
   }
 }
 
@@ -88,8 +90,22 @@ export const DogmaEngineProvider = (props: DogmaEngineProps) => {
     window.get_dogma_effect = (effect_id: number): DogmaEffect | undefined => {
       return eveData.dogmaEffects[effect_id];
     };
-    window.get_type_id = (type_id: number): Type | undefined => {
+    window.get_type = (type_id: number): Type | undefined => {
       return eveData.types[type_id];
+    };
+    window.type_name_to_id = (name: string): number | undefined => {
+      for (const [id, type] of Object.entries(eveData.types)) {
+        if (type.name === name) {
+          return parseInt(id);
+        }
+      }
+    };
+    window.attribute_name_to_id = (name: string): number | undefined => {
+      for (const [id, attribute] of Object.entries(eveData.dogmaAttributes)) {
+        if (attribute.name === name) {
+          return parseInt(id);
+        }
+      }
     };
   }
 

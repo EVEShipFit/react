@@ -38,7 +38,7 @@ export const useStatistics = () => {
 
 export const useCurrentStatistics = () => {
   const statistics = React.useContext(StatisticsContext);
-  return statistics === null ? null : statistics.current ?? statistics.statistics;
+  return statistics === null ? null : (statistics.current ?? statistics.statistics);
 };
 
 interface StatisticsProps {
