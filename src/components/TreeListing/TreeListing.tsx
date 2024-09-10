@@ -49,7 +49,7 @@ export const TreeHeader = (props: { icon?: string; text: string; action?: React.
 export const TreeLeaf = (props: {
   level: number;
   height?: number;
-  icon?: IconName | `http://${string}` | `https://${string}`;
+  icon?: IconName | `//${string}` | `https://${string}`;
   iconTitle?: string;
   content: string;
   onClick?: (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
@@ -81,7 +81,7 @@ export const TreeLeaf = (props: {
         >
           {props.icon !== undefined && (
             <span className={styles.leafIcon}>
-              {props.icon.startsWith('http')
+              {['https://', '//'].some(i => props.icon!.startsWith(i))
                 ? <img src={props.icon} height={12} width={12} alt="" />
                 : <Icon name={props.icon as IconName} size={12} title={props.iconTitle} />}
             </span>
