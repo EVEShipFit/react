@@ -76,7 +76,7 @@ export function useAttribute(type: "Ship" | "Char", props: AttributeProps): { va
   let change = AttributeChange.Unchanged;
   if (currentValue !== undefined && currentValue !== value) {
     const highIsGood =
-      props.isResistance || props.name === "mass" ? false : eveData?.dogmaAttributes[attributeId]?.highIsGood;
+      props.isResistance || ["mass", "alignTime"].includes(props.name) ? false : eveData?.dogmaAttributes[attributeId]?.highIsGood;
 
     if (currentValue < value) {
       change = highIsGood ? AttributeChange.Increase : AttributeChange.Decrease;
