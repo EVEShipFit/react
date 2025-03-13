@@ -2,8 +2,9 @@ import React from "react";
 
 import { EsfCargo, EsfDrone, EsfFit, EsfModule } from "@/providers/CurrentFitProvider";
 import { useEveData } from "@/providers/EveDataProvider";
-import { esiFlagToEsfSlot } from "@/hooks/ImportEveShipFit";
 import { useCleanImportFit } from "@/hooks/CleanImportFit";
+
+import { esiFlagToEsiSlot } from "./EsiFlags";
 
 export interface EsiFit {
   name: string;
@@ -12,7 +13,7 @@ export interface EsiFit {
   items: {
     item_id: number;
     type_id: number;
-    flag: number;
+    flag: number | string;
     quantity: number;
   }[];
 }
@@ -29,12 +30,12 @@ export function useImportEsiFitting() {
 
     const modules = esiFit.items
       .map((item): EsfModule | undefined => {
-        const slot = esiFlagToEsfSlot[item.flag];
-        if (slot === undefined) return undefined;
+        const slot = esiFlagToEsiSlot(item.flag);
+        if (slot === undefined || slot.type !== "Module") return undefined;
 
         return {
           typeId: item.type_id,
-          slot,
+          slot: slot.module!,
           state: "Active",
         };
       })
@@ -42,7 +43,8 @@ export function useImportEsiFitting() {
 
     const drones = esiFit.items
       .map((item): EsfDrone | undefined => {
-        if (item.flag !== 87) return undefined;
+        const slot = esiFlagToEsiSlot(item.flag);
+        if (slot === undefined || slot.type !== "DroneBay") return undefined;
 
         return {
           typeId: item.type_id,
@@ -56,7 +58,8 @@ export function useImportEsiFitting() {
 
     const cargo = esiFit.items
       .map((item): EsfCargo | undefined => {
-        if (item.flag !== 5) return undefined;
+        const slot = esiFlagToEsiSlot(item.flag);
+        if (slot === undefined || slot.type !== "CargoBay") return undefined;
 
         return {
           typeId: item.type_id,

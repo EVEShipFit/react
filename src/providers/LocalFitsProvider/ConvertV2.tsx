@@ -1,4 +1,4 @@
-import { esiFlagToEsfSlot } from "@/hooks/ImportEveShipFit";
+import { esiFlagToEsiSlot } from "@/hooks/ImportEsiFitting";
 import { EsfCargo, EsfDrone, EsfFit, EsfModule } from "../CurrentFitProvider/CurrentFitProvider";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -6,11 +6,12 @@ export const ConvertV2 = (fit: any) => {
   const modules = fit.items
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .map((item: any): EsfModule | undefined => {
-      if (esiFlagToEsfSlot[item.flag] === undefined) return undefined;
+      const slot = esiFlagToEsiSlot(item.flag);
+      if (slot === undefined || slot.type !== "Module") return undefined;
 
       return {
         typeId: item.type_id,
-        slot: esiFlagToEsfSlot[item.flag],
+        slot: slot.module!,
         state: item.state ?? "Active",
         charge:
           item.charge === undefined
@@ -25,7 +26,8 @@ export const ConvertV2 = (fit: any) => {
   const drones = fit.items
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .map((item: any): EsfDrone | undefined => {
-      if (item.flag !== 87) return undefined;
+      const slot = esiFlagToEsiSlot(item.flag);
+      if (slot === undefined || slot.type !== "DroneBay") return undefined;
 
       return {
         typeId: item.type_id,
@@ -50,7 +52,8 @@ export const ConvertV2 = (fit: any) => {
   const cargo = fit.items
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     .map((item: any): EsfCargo | undefined => {
-      if (item.flag !== 5) return undefined;
+      const slot = esiFlagToEsiSlot(item.flag);
+      if (slot === undefined || slot.type !== "CargoBay") return undefined;
 
       return {
         typeId: item.type_id,
