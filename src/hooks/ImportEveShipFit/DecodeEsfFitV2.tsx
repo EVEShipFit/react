@@ -1,7 +1,7 @@
 import { EsfCargo, EsfDrone, EsfFit, EsfModule, EsfState } from "@/providers/CurrentFitProvider";
 
 import { decompress } from "./Decompress";
-import { esiFlagToEsfSlot } from "./EsiFlags";
+import { esiFlagToEsiSlot } from "@/hooks/ImportEsiFitting";
 
 export async function decodeEsfFitV2(fitCompressed: string): Promise<EsfFit | null> {
   const fitEncoded = await decompress(fitCompressed);
@@ -14,7 +14,8 @@ export async function decodeEsfFitV2(fitCompressed: string): Promise<EsfFit | nu
     .map((line): EsfModule | undefined => {
       const item = line.split(",");
       const flag = parseInt(item[0]);
-      if (esiFlagToEsfSlot[flag] === undefined) return undefined; // Skip anything not modules.
+      const slot = esiFlagToEsiSlot(flag);
+      if (slot === undefined || slot.type !== "Module") return undefined; // Skip anything not modules.
 
       let charge = undefined;
       if (item[3]) {
@@ -24,7 +25,7 @@ export async function decodeEsfFitV2(fitCompressed: string): Promise<EsfFit | nu
       }
 
       return {
-        slot: esiFlagToEsfSlot[flag],
+        slot: slot.module!,
         typeId: parseInt(item[1]),
         charge,
         state: (item[4] as EsfState) || "Active",
@@ -37,7 +38,8 @@ export async function decodeEsfFitV2(fitCompressed: string): Promise<EsfFit | nu
     .map((line): EsfDrone | undefined => {
       const item = line.split(",");
       const flag = parseInt(item[0]);
-      if (flag != 87) return undefined; // Skip anything not drones.
+      const slot = esiFlagToEsiSlot(flag);
+      if (slot === undefined || slot.type !== "DroneBay") return undefined; // Skip anything not drones.
 
       const quantity = parseInt(item[2]);
 
@@ -66,7 +68,8 @@ export async function decodeEsfFitV2(fitCompressed: string): Promise<EsfFit | nu
     .map((line): EsfCargo | undefined => {
       const item = line.split(",");
       const flag = parseInt(item[0]);
-      if (flag != 5) return undefined; // Skip anything not cargo.
+      const slot = esiFlagToEsiSlot(flag);
+      if (slot === undefined || slot.type !== "CargoBay") return undefined; // Skip anything not cargo.
 
       return {
         typeId: parseInt(item[1]),

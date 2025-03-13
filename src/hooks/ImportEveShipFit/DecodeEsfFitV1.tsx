@@ -1,7 +1,7 @@
 import { EsfCargo, EsfDrone, EsfFit, EsfModule } from "@/providers/CurrentFitProvider";
+import { esiFlagToEsiSlot } from "@/hooks/ImportEsiFitting";
 
 import { decompress } from "./Decompress";
-import { esiFlagToEsfSlot } from "./EsiFlags";
 
 export async function decodeEsfFitV1(fitCompressed: string): Promise<EsfFit | null> {
   const fitEncoded = await decompress(fitCompressed);
@@ -14,10 +14,11 @@ export async function decodeEsfFitV1(fitCompressed: string): Promise<EsfFit | nu
     .map((line): EsfModule | undefined => {
       const item = line.split(",");
       const flag = parseInt(item[0]);
-      if (esiFlagToEsfSlot[flag] === undefined) return undefined; // Skip anything not modules.
+      const slot = esiFlagToEsiSlot(flag);
+      if (slot === undefined || slot.type !== "Module") return undefined; // Skip anything not modules.
 
       return {
-        slot: esiFlagToEsfSlot[flag],
+        slot: slot.module!,
         typeId: parseInt(item[1]),
         state: "Active",
       };
@@ -29,7 +30,8 @@ export async function decodeEsfFitV1(fitCompressed: string): Promise<EsfFit | nu
     .map((line): EsfDrone | undefined => {
       const item = line.split(",");
       const flag = parseInt(item[0]);
-      if (flag != 87) return undefined; // Skip anything not drones.
+      const slot = esiFlagToEsiSlot(flag);
+      if (slot === undefined || slot.type !== "DroneBay") return undefined; // Skip anything not drones.
 
       return {
         typeId: parseInt(item[1]),
@@ -46,7 +48,8 @@ export async function decodeEsfFitV1(fitCompressed: string): Promise<EsfFit | nu
     .map((line): EsfCargo | undefined => {
       const item = line.split(",");
       const flag = parseInt(item[0]);
-      if (flag != 5) return undefined; // Skip anything not cargo.
+      const slot = esiFlagToEsiSlot(flag);
+      if (slot === undefined || slot.type !== "CargoBay") return undefined; // Skip anything not cargo.
 
       return {
         typeId: parseInt(item[1]),

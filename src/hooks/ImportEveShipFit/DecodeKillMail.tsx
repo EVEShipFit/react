@@ -1,7 +1,6 @@
 import { EsfCargo, EsfDrone, EsfFit, EsfModule } from "@/providers/CurrentFitProvider";
 import { useEveData } from "@/providers/EveDataProvider";
-
-import { esiFlagToEsfSlot } from "./EsiFlags";
+import { esiFlagToEsiSlot } from "@/hooks/ImportEsiFitting";
 
 export function useFetchKillMail() {
   const eveData = useEveData();
@@ -37,10 +36,11 @@ export function useFetchKillMail() {
     /* Find the modules from the item-list. */
     let modules = items
       .map((item): EsfModule | undefined => {
-        if (esiFlagToEsfSlot[item.flag] === undefined) return undefined; // Skip anything not modules.
+        const slot = esiFlagToEsiSlot(item.flag);
+        if (slot === undefined || slot.type !== "Module") return undefined; // Skip anything not modules.
 
         return {
-          slot: esiFlagToEsfSlot[item.flag],
+          slot: slot.module!,
           typeId: item.type_id,
           charge: undefined,
           state: "Active",
@@ -51,7 +51,8 @@ export function useFetchKillMail() {
     /* Find the drones from the item-list. */
     const drones = items
       .map((item): EsfDrone | undefined => {
-        if (item.flag !== 87) return undefined; // Skip anything not drones.
+        const slot = esiFlagToEsiSlot(item.flag);
+        if (slot === undefined || slot.type !== "DroneBay") return undefined; // Skip anything not drones.
 
         return {
           typeId: item.type_id,
@@ -66,7 +67,8 @@ export function useFetchKillMail() {
     /* Find the cargo from the item-list. */
     const cargo = items
       .map((item): EsfCargo | undefined => {
-        if (item.flag !== 5) return undefined; // Skip anything not cargo.
+        const slot = esiFlagToEsiSlot(item.flag);
+        if (slot === undefined || slot.type !== "CargoBay") return undefined; // Skip anything not cargo.
 
         return {
           typeId: item.type_id,
