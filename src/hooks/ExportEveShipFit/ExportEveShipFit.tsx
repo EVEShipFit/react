@@ -12,7 +12,7 @@ async function compress(str: string): Promise<string> {
     const { done, value } = await reader.read();
     if (done) break;
 
-    result += String.fromCharCode.apply(null, value);
+    result += String.fromCharCode.apply(null, [...value]);
   }
 
   return btoa(result);
