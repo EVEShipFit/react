@@ -80,6 +80,7 @@ const ModuleGroup = (props: { level: number; group: ListingGroup; hideGroup?: bo
             const slotType = item.slotType;
             return (
               <TreeLeaf
+                icon={`https://images.evetech.net/types/${item.typeId}/icon`}
                 key={item.typeId}
                 level={2}
                 content={item.name}
