@@ -33,7 +33,7 @@ export function useExportEft() {
 
     eft += `[${shipType.name}, ${fit.name}]\n`;
 
-    for (const slotType of ["High", "Medium", "Low", "Rig", "SubSystem"] as EsfSlotType[]) {
+    for (const slotType of ["Low", "Medium", "High", "Rig", "SubSystem"] as EsfSlotType[]) {
       for (let i = 1; i <= statistics.slots[slotType]; i++) {
         const module = fit.modules.find((item) => item.slot.type === slotType && item.slot.index === i);
         if (module === undefined) {
