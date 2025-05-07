@@ -56,7 +56,7 @@ const OnItemDragStart = (
   };
 };
 
-const ModuleGroup = (props: { level: number; group: ListingGroup; hideGroup?: boolean }) => {
+const ModuleGroup = (props: { level: number; group: ListingGroup; hideGroup?: number }) => {
   const fitManager = useFitManager();
 
   const PreviewStart = React.useCallback(
@@ -100,7 +100,12 @@ const ModuleGroup = (props: { level: number; group: ListingGroup; hideGroup?: bo
               props.group.groups[a].name.localeCompare(props.group.groups[b].name),
           )
           .map((groupId) => {
-            return <ModuleGroup key={groupId} level={props.level + 1} group={props.group.groups[groupId]} />;
+            return <ModuleGroup
+              key={groupId}
+              level={props.hideGroup ? props.level : props.level + 1}
+              group={props.group.groups[groupId]}
+              hideGroup={props.hideGroup ? props.hideGroup - 1 : 0}
+            />;
           })}
       </>
     );
@@ -523,10 +528,10 @@ export const HardwareListing = () => {
         </div>
       </div>
       <div className={clsx(styles.listingContent, { [styles.collapsed]: selection !== "modules" })}>
-        <ModuleGroup key="modules" level={0} group={modules} hideGroup={true} />
+        <ModuleGroup key="modules" level={0} group={modules} hideGroup={search ? 2 : 1} />
       </div>
       <div className={clsx(styles.listingContent, { [styles.collapsed]: selection !== "charges" })}>
-        <ModuleGroup key="charges" level={0} group={charges} hideGroup={true} />
+        <ModuleGroup key="charges" level={0} group={charges} hideGroup={1} />
       </div>
     </div>
   );
