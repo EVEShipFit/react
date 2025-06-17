@@ -54,6 +54,11 @@ export function useExportEft() {
             eft += `, ${chargeType.name}`;
           }
         }
+
+        if (module.state === "Passive") {
+          eft += " /offline";
+        }
+
         eft += "\n";
       }
 

@@ -98,14 +98,22 @@ export function useImportEft() {
         continue;
       }
 
-      const itemType = line.split(",")[0].split(" x")[0].split("[")[0].trim();
-      const itemCount = parseInt(line.split(",")[0].split(" x")[1]?.trim() ?? "1");
+      // The /offline suffix indicates whether the module is offline. Remove it before resolving the name.
+      let isOffline = false;
+      let itemLine = line;
+      if (itemLine.endsWith("/offline")) {
+        isOffline = true;
+        itemLine = itemLine.slice(0, -"/offline".length).trim();
+      }
+
+      const itemType = itemLine.split(",")[0].split(" x")[0].split("[")[0].trim();
+      const itemCount = parseInt(itemLine.split(",")[0].split(" x")[1]?.trim() ?? "1");
       const itemTypeId = lookupTypeByName(itemType);
       /* This can be a typo in the EFT, a field we don't know yet, or our eveData is incomplete.
        * Either way, there is not much we can do, then to skip, and hope that is fine. */
       if (itemTypeId === undefined) continue;
 
-      const chargeType = (line.split(",")[1] ?? "").trim();
+      const chargeType = (itemLine.split(",")[1] ?? "").trim();
       const chargeTypeId = lookupTypeByName(chargeType);
 
       const effects = eveData.typeDogma[itemTypeId]?.dogmaEffects;
@@ -165,7 +173,7 @@ export function useImportEft() {
           index: slotIndex[slotType],
         },
         typeId: itemTypeId,
-        state: "Active",
+        state: isOffline ? "Passive" : "Active",
         charge,
       });
       slotIndex[slotType]++;

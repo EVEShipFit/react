@@ -6,7 +6,7 @@ export const eftFits = {
 Caldari Navy Ballistic Control System
 Caldari Navy Ballistic Control System
 Caldari Navy Ballistic Control System
-Damage Control II
+Damage Control II /offline
 
 Gist X-Type Large Shield Booster
 Republic Fleet Large Cap Battery
@@ -146,7 +146,7 @@ export const fullFits: EsfFit[] = [
     shipTypeId: 29986,
     description: "",
     modules: [
-      { slot: { type: "Low", index: 1 }, typeId: 3530, state: "Active" },
+      { slot: { type: "Low", index: 1 }, typeId: 3530, state: "Passive" },
       { slot: { type: "Low", index: 2 }, typeId: 14072, state: "Active" },
       { slot: { type: "Low", index: 3 }, typeId: 14072, state: "Active" },
       { slot: { type: "Low", index: 4 }, typeId: 5839, state: "Active" },
