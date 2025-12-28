@@ -68,6 +68,7 @@ export function useImportEft() {
     };
 
     let lastSlotType: EsfSlotType | "DroneBay" | "CargoBay" | undefined = undefined;
+    let activeDrones = 0;
     let endOfModulesMarker = undefined;
     for (let i = 1; i < lines.length; i++) {
       const line = lines[i];
@@ -149,11 +150,13 @@ export function useImportEft() {
       }
 
       if (slotType === "DroneBay") {
+        const loadCount = Math.min(itemCount, 5 - activeDrones);
+        activeDrones += loadCount;
         fit.drones.push({
           typeId: itemTypeId,
           states: {
-            Active: itemCount,
-            Passive: 0,
+            Active: loadCount,
+            Passive: itemCount - loadCount,
           },
         });
         continue;
