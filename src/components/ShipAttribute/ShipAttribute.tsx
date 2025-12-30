@@ -109,6 +109,9 @@ export function useAttribute(type: "Ship" | "Char", props: AttributeProps): { va
   if (Object.is(value, -0)) {
     value = 0;
   }
+  if (props.isResistance) {
+    value = Math.max(value, 0);
+  }
 
   return {
     value: value.toLocaleString("en", {
