@@ -1,5 +1,9 @@
 # React Component library for EVEShip.fit
 
+> [!WARNING]
+> This repository is deprecated and no longer maintained.
+> Please see the [migration guide](https://github.com/EVEShipFit/eveship.fit/blob/main/docs/migration.md) on how to migrate.
+
 This repository contains all the [React](https://react.dev/) components used to build [EVEShip.fit](https://eveship.fit).
 
 ## Development
